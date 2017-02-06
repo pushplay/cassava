@@ -1,0 +1,55 @@
+{
+  "name": "cassava",
+  "version": "0.0.1",
+  "description": "Lightweight routing of AWS API Gateway objects in Lambda.",
+  "main": "dist/index.js",
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "clean": "rimraf ./dist",
+    "lint": "tslint --project tsconfig.json",
+    "prepublish": "npm run clean && npm run build && npm run lint && npm run test",
+    "test": "mocha --recursive --throw-deprecation --require ts-node/register \"src/**/*.test.ts\"",
+    "test:watch": "npm run test -- --watch --watch-extensions ts,tsx --growl"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Giftbit/cassava.git"
+  },
+  "keywords": [
+    "routing",
+    "apigateway",
+    "lambda",
+    "serverless",
+    "aws",
+    "cassava"
+  ],
+  "contributors": [
+    "Jeffery Grajkowski <pushplay@gmail.com> (https://github.com/pushplay/)"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Giftbit/cassava/issues"
+  },
+  "homepage": "https://github.com/Giftbit/cassava#readme",
+  "devDependencies": {
+    "@types/aws-lambda": "0.0.6",
+    "@types/chai": "^3.4.34",
+    "@types/cookie": "^0.1.29",
+    "@types/jsonwebtoken": "^7.2.0",
+    "@types/mocha": "^2.2.39",
+    "@types/node": "^7.0.5",
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0",
+    "rimraf": "^2.5.4",
+    "ts-node": "^2.0.0",
+    "tslint": "^4.4.2",
+    "typescript": "^2.1.5"
+  },
+  "dependencies": {
+    "cookie": "^0.3.1",
+    "jsonwebtoken": "^7.2.1"
+  }
+}
