@@ -1,13 +1,13 @@
 import * as chai from "chai";
 import * as cassava from "./";
-import {ProxyResponse} from "./ProxyResponse";
 import {createTestProxyEvent} from "./createTestProxyEvent";
 
 describe("Router", () => {
     it("calls the default route", async() => {
         const router = new cassava.Router();
+        router.logErrors = false;
 
-        const resp = await new Promise<ProxyResponse>((resolve, reject) => {
+        const resp = await new Promise<cassava.ProxyResponse>((resolve, reject) => {
             router.getLambdaHandler()(createTestProxyEvent("/foo/bar"), {} as any, (err, res) => {
                 if (err) {
                     reject(err);
@@ -23,6 +23,7 @@ describe("Router", () => {
 
     it("calls the first matching handler", async() => {
         const router = new cassava.Router();
+        router.logErrors = false;
 
         router.route("/foo/baz")
             .handler(() => {
@@ -37,7 +38,7 @@ describe("Router", () => {
                 throw new Error("don't handle either");
             });
 
-        const resp = await new Promise<ProxyResponse>((resolve, reject) => {
+        const resp = await new Promise<cassava.ProxyResponse>((resolve, reject) => {
             router.getLambdaHandler()(createTestProxyEvent("/foo/bar"), {} as any, (err, res) => {
                 if (err) {
                     reject(err);
@@ -53,6 +54,7 @@ describe("Router", () => {
 
     it("calls all post processors", async() => {
         const router = new cassava.Router();
+        router.logErrors = false;
 
         router.route("/foo/baz")
             .postProcessor(() => {
@@ -80,7 +82,7 @@ describe("Router", () => {
                 throw new Error("don't post process either");
             });
 
-        const resp = await new Promise<ProxyResponse>((resolve, reject) => {
+        const resp = await new Promise<cassava.ProxyResponse>((resolve, reject) => {
             router.getLambdaHandler()(createTestProxyEvent("/foo/bar"), {} as any, (err, res) => {
                 if (err) {
                     reject(err);

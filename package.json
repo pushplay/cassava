@@ -1,8 +1,9 @@
 {
   "name": "cassava",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Lightweight routing of AWS API Gateway objects in Lambda.",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "files": [
     "dist/"
   ],
