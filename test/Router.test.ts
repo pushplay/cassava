@@ -1,5 +1,5 @@
 import * as chai from "chai";
-import * as cassava from "./";
+import * as cassava from "../src";
 import {createTestProxyEvent} from "./createTestProxyEvent";
 
 describe("Router", () => {
