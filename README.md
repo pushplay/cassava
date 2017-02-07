@@ -1,4 +1,4 @@
-# cassava
+# Cassava
 Lightweight routing of AWS API Gateway objects.
 
 ## Routing
