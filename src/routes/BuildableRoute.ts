@@ -7,16 +7,13 @@ export class BuildableRoute implements Route, RouteBuilder {
     private settings: {
         handler?: (evt: RouterEvent) => Promise<RouterResponse>;
         postProcessor?: (evt: RouterEvent, resp: RouterResponse) => Promise<RouterResponse>;
-        pathString?: string;
         pathRegex?: RegExp;
+        pathRegexParamMap?: string[],
         method?: string;
     } = {};
 
     matches(evt: RouterEvent): boolean {
         if (this.settings.method && this.settings.method !== evt.httpMethod) {
-            return false;
-        }
-        if (this.settings.pathString && this.settings.pathString !== evt.path) {
             return false;
         }
         if (this.settings.pathRegex && !this.settings.pathRegex.test(evt.path)) {
@@ -27,7 +24,23 @@ export class BuildableRoute implements Route, RouteBuilder {
 
     handle(evt: RouterEvent): Promise<RouterResponse> {
         if (this.settings.handler) {
-            return this.settings.handler(evt);
+            const calculatedPathParameters: any = {};
+
+            // Map regex groups back to {pathParams}.
+            if (this.settings.pathRegexParamMap) {
+                const pathRegexExec = this.settings.pathRegex.exec(evt.path);
+                for (let i = 1; i < this.settings.pathRegexParamMap.length; i++) {
+                    calculatedPathParameters[this.settings.pathRegexParamMap[i]] = pathRegexExec[i];
+                }
+            }
+
+            return this.settings.handler({
+                ...evt,
+                pathParameters: {
+                    ...evt.pathParameters,
+                    ...calculatedPathParameters
+                }
+            });
         }
         return Promise.resolve(null);
     }
@@ -43,16 +56,31 @@ export class BuildableRoute implements Route, RouteBuilder {
         if (!path) {
             throw new Error("path cannot be null");
         }
-        if (this.settings.pathString || this.settings.pathRegex) {
+        if (this.settings.pathRegex) {
             throw new Error("path is already defined");
         }
+
         if (typeof path === "string") {
-            this.settings.pathString = path;
-        } else if (path instanceof RegExp) {
+            // Turn path into a regex, replace {pathParam}s with regex groups
+            // and build the map that maps the group index to the path param name.
+            this.settings.pathRegexParamMap = [""];
+            const sanitizedPathRegex = path
+                .replace(/[#-.]|[[-^]|[?|{}]/g, "\\$&")
+                .replace(/\\\{[a-zA-Z][a-zA-Z0-9]*\\\}/g, substr => {
+                    const pathParamName = substr.replace(/^\\\{/, "").replace(/\\\}/, "");
+                    this.settings.pathRegexParamMap.push(pathParamName);
+                    return "([0-9a-zA-Z\-._~!$&'()*+,;=:@%]+)";
+                });
+
+            path = new RegExp(sanitizedPathRegex);
+        }
+
+        if (path instanceof RegExp) {
             this.settings.pathRegex = path;
         } else {
             throw new Error("unknown path type");
         }
+
         return this;
     }
 
