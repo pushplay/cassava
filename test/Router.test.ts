@@ -52,6 +52,48 @@ describe("Router", () => {
         chai.assert.equal(resp.statusCode, 200, JSON.stringify(resp));
     });
 
+    it("matches from the start of the path", async() => {
+        const router = new cassava.Router();
+        router.logErrors = false;
+
+        router.route("/bar/foo")
+            .handler(async evt => ({body: {success: true}}));
+
+        const resp = await new Promise<cassava.ProxyResponse>((resolve, reject) => {
+            router.getLambdaHandler()(createTestProxyEvent("/foo"), {} as any, (err, res) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(res);
+                }
+            });
+        });
+
+        chai.assert.isObject(resp);
+        chai.assert.equal(resp.statusCode, 404, JSON.stringify(resp));
+    });
+
+    it("string paths are not case sensitive", async() => {
+        const router = new cassava.Router();
+        router.logErrors = false;
+
+        router.route("/foo")
+            .handler(async evt => ({body: {success: true}}));
+
+        const resp = await new Promise<cassava.ProxyResponse>((resolve, reject) => {
+            router.getLambdaHandler()(createTestProxyEvent("/Foo"), {} as any, (err, res) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(res);
+                }
+            });
+        });
+
+        chai.assert.isObject(resp);
+        chai.assert.equal(resp.statusCode, 200, JSON.stringify(resp));
+    });
+
     it("calls all post processors", async() => {
         const router = new cassava.Router();
         router.logErrors = false;
@@ -219,6 +261,31 @@ describe("Router", () => {
 
             const resp = await new Promise<cassava.ProxyResponse>((resolve, reject) => {
                 router.getLambdaHandler()(createTestProxyEvent("/foo"), {} as any, (err, res) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(res);
+                    }
+                });
+            });
+
+            chai.assert.isObject(resp);
+            chai.assert.equal(resp.statusCode, 404, JSON.stringify(resp));
+        });
+
+        it("doesn't match /foo/bar/baz to /foo/{bar}", async() => {
+            const router = new cassava.Router();
+            router.logErrors = false;
+
+            router.route("/foo/{bar}")
+                .handler(async evt => {
+                    return {
+                        body: evt.pathParameters["bar"]
+                    };
+                });
+
+            const resp = await new Promise<cassava.ProxyResponse>((resolve, reject) => {
+                router.getLambdaHandler()(createTestProxyEvent("/foo/bar/baz"), {} as any, (err, res) => {
                     if (err) {
                         reject(err);
                     } else {

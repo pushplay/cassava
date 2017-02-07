@@ -8,7 +8,7 @@ export class BuildableRoute implements Route, RouteBuilder {
         handler?: (evt: RouterEvent) => Promise<RouterResponse>;
         postProcessor?: (evt: RouterEvent, resp: RouterResponse) => Promise<RouterResponse>;
         pathRegex?: RegExp;
-        pathRegexParamMap?: string[],
+        regexGroupToPathParamMap?: string[],
         method?: string;
     } = {};
 
@@ -26,12 +26,13 @@ export class BuildableRoute implements Route, RouteBuilder {
         if (this.settings.handler) {
             const calculatedPathParameters: any = {};
 
-            // Map regex groups back to {pathParams}.
-            if (this.settings.pathRegexParamMap) {
-                const pathRegexExec = this.settings.pathRegex.exec(evt.path);
-                for (let i = 1; i < this.settings.pathRegexParamMap.length; i++) {
-                    calculatedPathParameters[this.settings.pathRegexParamMap[i]] = pathRegexExec[i];
+            // Map regex groups to pathParameters.
+            const pathRegexExec = this.settings.pathRegex.exec(evt.path);
+            for (let i = 1; i < pathRegexExec.length; i++) {
+                if (this.settings.regexGroupToPathParamMap && this.settings.regexGroupToPathParamMap[i]) {
+                    calculatedPathParameters[this.settings.regexGroupToPathParamMap[i]] = pathRegexExec[i];
                 }
+                calculatedPathParameters[i.toString()] = pathRegexExec[i];
             }
 
             return this.settings.handler({
@@ -63,16 +64,16 @@ export class BuildableRoute implements Route, RouteBuilder {
         if (typeof path === "string") {
             // Turn path into a regex, replace {pathParam}s with regex groups
             // and build the map that maps the group index to the path param name.
-            this.settings.pathRegexParamMap = [""];
+            this.settings.regexGroupToPathParamMap = [""];
             const sanitizedPathRegex = path
                 .replace(/[#-.]|[[-^]|[?|{}]/g, "\\$&")
                 .replace(/\\\{[a-zA-Z][a-zA-Z0-9]*\\\}/g, substr => {
                     const pathParamName = substr.replace(/^\\\{/, "").replace(/\\\}/, "");
-                    this.settings.pathRegexParamMap.push(pathParamName);
+                    this.settings.regexGroupToPathParamMap.push(pathParamName);
                     return "([0-9a-zA-Z\-._~!$&'()*+,;=:@%]+)";
                 });
 
-            path = new RegExp(sanitizedPathRegex);
+            path = new RegExp(`^${sanitizedPathRegex}$`, "i");
         }
 
         if (path instanceof RegExp) {
