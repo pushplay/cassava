@@ -1,6 +1,6 @@
 import * as chai from "chai";
-import * as cassava from "../src";
-import {createTestProxyEvent} from "./createTestProxyEvent";
+import * as cassava from "./";
+import {createTestProxyEvent} from "./_test/createTestProxyEvent";
 
 describe("Router", () => {
     it("calls the default route", async() => {

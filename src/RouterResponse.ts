@@ -1,3 +1,5 @@
+import * as cookie from "cookie";
+
 /**
  * An HTTP response that will be processed into a proper AWS API Gateway
  * ProxyResponse by the Router.
@@ -27,5 +29,5 @@ export interface RouterResponse {
 
 export interface RouterResponseCookie {
     value: string;
-    options?: CookieSerializeOptions;
+    options?: cookie.CookieSerializeOptions;
 }

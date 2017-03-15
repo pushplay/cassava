@@ -1,4 +1,4 @@
-import {ProxyEvent} from "../src/ProxyEvent";
+import {ProxyEvent} from "../ProxyEvent";
 
 const defaultTestProxyEvent: ProxyEvent = {
     resource: "/{proxy+}",
