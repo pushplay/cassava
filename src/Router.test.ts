@@ -327,5 +327,35 @@ describe("Router", () => {
             chai.assert.equal(resp.statusCode, 200, JSON.stringify(resp));
             chai.assert.equal(resp.body, "foo/originalbar");
         });
+
+        it("decodes values", async () => {
+            const router = new cassava.Router();
+            router.logErrors = false;
+
+            router.route("/path/{foo}/end")
+                .handler(async evt => {
+                    return {
+                        body: evt.pathParameters["foo"]
+                    };
+                });
+
+            const resp = await new Promise<cassava.ProxyResponse>((resolve, reject) => {
+                const inputEvt = createTestProxyEvent("/path/(%E2%95%AF%C2%B0%E2%96%A1%C2%B0%EF%BC%89%E2%95%AF%EF%B8%B5%20%E2%94%BB%E2%94%81%E2%94%BB/end");
+                inputEvt.pathParameters = {
+                    bar: "originalbar"
+                };
+                router.getLambdaHandler()(inputEvt, {} as any, (err, res) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(res);
+                    }
+                });
+            });
+
+            chai.assert.isObject(resp);
+            chai.assert.equal(resp.statusCode, 200, JSON.stringify(resp));
+            chai.assert.equal(resp.body, "(╯°□°）╯︵ ┻━┻");
+        });
     });
 });

@@ -29,10 +29,11 @@ export class BuildableRoute implements Route, RouteBuilder {
             // Map regex groups to pathParameters.
             const pathRegexExec = this.settings.pathRegex.exec(evt.path);
             for (let i = 1; i < pathRegexExec.length; i++) {
+                const pathValue = decodeURIComponent(pathRegexExec[i]);
                 if (this.settings.regexGroupToPathParamMap && this.settings.regexGroupToPathParamMap[i]) {
-                    calculatedPathParameters[this.settings.regexGroupToPathParamMap[i]] = pathRegexExec[i];
+                    calculatedPathParameters[this.settings.regexGroupToPathParamMap[i]] = pathValue;
                 }
-                calculatedPathParameters[i.toString()] = pathRegexExec[i];
+                calculatedPathParameters[i.toString()] = pathValue;
             }
 
             return this.settings.handler({
