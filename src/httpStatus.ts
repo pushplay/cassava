@@ -48,7 +48,7 @@ export const httpStatusCode = {
          * from that of the origin server's 200 (OK) response by a transforming
          * proxy.
          */
-        NON_AUTHORITATIVE_INFOMRATION: 203,
+        NON_AUTHORITATIVE_INFORMATION: 203,
 
         /**
          * The server has successfully fulfilled the request and there is no
@@ -257,7 +257,7 @@ export const httpStatusCode = {
     }
 };
 
-export const httpStatusString: {[statusCode: number]: string} = {
+export const httpStatusString: { [statusCode: number]: string } = {
     200: "OK",
     201: "Created",
     202: "Accepted",
