@@ -7,4 +7,5 @@ export {RouterResponse} from "./RouterResponse";
 export {RouterEvent} from "./RouterEvent";
 
 import * as routes from "./routes";
-export {routes}
+import * as testing from "./testing";
+export {routes, testing}

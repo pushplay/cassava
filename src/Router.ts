@@ -33,7 +33,7 @@ export class Router {
             throw new Error("route must have a matches() function");
         }
         if (!route.handle && !route.postProcess) {
-            throw new Error("route must have a handle() or postProcess() function");
+            throw new Error("route must have a handle() and/or postProcess() function");
         }
         this.routes.push(route);
     }

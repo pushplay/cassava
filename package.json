@@ -41,12 +41,14 @@
     "@types/cookie": "^0.3.0",
     "@types/mocha": "^2.2.40",
     "@types/node": "^7.0.8",
+    "@types/uuid": "^3.0.0",
     "chai": "^3.5.0",
     "mocha": "^3.2.0",
     "rimraf": "^2.6.1",
     "ts-node": "^2.1.0",
     "tslint": "^4.5.1",
-    "typescript": "^2.2.1"
+    "typescript": "^2.2.1",
+    "uuid": "3.1.0"
   },
   "dependencies": {
     "cookie": "^0.3.1"

@@ -3,13 +3,16 @@ import {RouterEvent} from "../RouterEvent";
 
 export interface Route {
     /**
-     * Test whether this Route matches the ProxyEvent.
+     * Test whether this Route matches the ProxyEvent. If true handle()
+     * and postProcess() will be called.
      */
     matches(evt: RouterEvent): boolean;
 
     /**
-     * Handle and respond to the ProxyEvent.  Resolves
-     * the Promise with null to not respond.
+     * Handle and respond to the ProxyEvent.
+     *
+     * Resolve the Promise with null to not respond and let other Routes
+     * handle it.  postProcess() will still be called in that case.
      */
     handle?: (evt: RouterEvent) => Promise<RouterResponse>;
 
