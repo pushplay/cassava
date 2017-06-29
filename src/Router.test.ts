@@ -1,14 +1,14 @@
 import * as chai from "chai";
 import * as cassava from "./";
 import {createTestProxyEvent} from "./testing/createTestProxyEvent";
-import {testLambdaHandler} from "./testing/index";
+import {testRouter} from "./testing/index";
 
 describe("Router", () => {
     it("calls the default route", async () => {
         const router = new cassava.Router();
         router.logErrors = false;
 
-        const resp = await testLambdaHandler(router.getLambdaHandler(), createTestProxyEvent("/foo/bar"));
+        const resp = await testRouter(router, createTestProxyEvent("/foo/bar"));
 
         chai.assert.isObject(resp);
         chai.assert.equal(resp.statusCode, 404, JSON.stringify(resp));
@@ -31,7 +31,7 @@ describe("Router", () => {
                 throw new Error("don't handle either");
             });
 
-        const resp = await testLambdaHandler(router.getLambdaHandler(), createTestProxyEvent("/foo/bar"));
+        const resp = await testRouter(router, createTestProxyEvent("/foo/bar"));
 
         chai.assert.isObject(resp);
         chai.assert.equal(resp.statusCode, 200, JSON.stringify(resp));
@@ -44,7 +44,7 @@ describe("Router", () => {
         router.route("/bar/foo")
             .handler(async evt => ({body: {success: true}}));
 
-        const resp = await testLambdaHandler(router.getLambdaHandler(), createTestProxyEvent("/foo"));
+        const resp = await testRouter(router, createTestProxyEvent("/foo"));
 
         chai.assert.isObject(resp);
         chai.assert.equal(resp.statusCode, 404, JSON.stringify(resp));
@@ -57,7 +57,7 @@ describe("Router", () => {
         router.route("/foo")
             .handler(async evt => ({body: {success: true}}));
 
-        const resp = await testLambdaHandler(router.getLambdaHandler(), createTestProxyEvent("/Foo"));
+        const resp = await testRouter(router, createTestProxyEvent("/Foo"));
 
         chai.assert.isObject(resp);
         chai.assert.equal(resp.statusCode, 200, JSON.stringify(resp));
@@ -93,7 +93,7 @@ describe("Router", () => {
                 throw new Error("don't post process either");
             });
 
-        const resp = await testLambdaHandler(router.getLambdaHandler(), createTestProxyEvent("/foo/bar"));
+        const resp = await testRouter(router, createTestProxyEvent("/foo/bar"));
 
         chai.assert.isObject(resp);
         chai.assert.equal(resp.statusCode, 200, JSON.stringify(resp));
@@ -116,7 +116,7 @@ describe("Router", () => {
                     };
                 });
 
-            const resp = await testLambdaHandler(router.getLambdaHandler(), createTestProxyEvent("/wuzzle"));
+            const resp = await testRouter(router, createTestProxyEvent("/wuzzle"));
 
             chai.assert.isObject(resp);
             chai.assert.equal(resp.statusCode, 200, JSON.stringify(resp));
@@ -134,7 +134,7 @@ describe("Router", () => {
                     };
                 });
 
-            const resp = await testLambdaHandler(router.getLambdaHandler(), createTestProxyEvent("/foo/bizzbuzz"));
+            const resp = await testRouter(router, createTestProxyEvent("/foo/bizzbuzz"));
 
             chai.assert.isObject(resp);
             chai.assert.equal(resp.statusCode, 200, JSON.stringify(resp));
@@ -152,7 +152,7 @@ describe("Router", () => {
                     };
                 });
 
-            const resp = await testLambdaHandler(router.getLambdaHandler(), createTestProxyEvent("/foo/bizzbuzz/baz"));
+            const resp = await testRouter(router, createTestProxyEvent("/foo/bizzbuzz/baz"));
 
             chai.assert.isObject(resp);
             chai.assert.equal(resp.statusCode, 200, JSON.stringify(resp));
@@ -170,7 +170,7 @@ describe("Router", () => {
                     };
                 });
 
-            const resp = await testLambdaHandler(router.getLambdaHandler(), createTestProxyEvent("/foo/bizzbuzz/12345"));
+            const resp = await testRouter(router, createTestProxyEvent("/foo/bizzbuzz/12345"));
 
             chai.assert.isObject(resp);
             chai.assert.equal(resp.statusCode, 200, JSON.stringify(resp));
@@ -188,7 +188,7 @@ describe("Router", () => {
                     };
                 });
 
-            const resp = await testLambdaHandler(router.getLambdaHandler(), createTestProxyEvent("/foo"));
+            const resp = await testRouter(router, createTestProxyEvent("/foo"));
 
             chai.assert.isObject(resp);
             chai.assert.equal(resp.statusCode, 404, JSON.stringify(resp));
@@ -205,7 +205,7 @@ describe("Router", () => {
                     };
                 });
 
-            const resp = await testLambdaHandler(router.getLambdaHandler(), createTestProxyEvent("/foo/bar/baz"));
+            const resp = await testRouter(router, createTestProxyEvent("/foo/bar/baz"));
 
             chai.assert.isObject(resp);
             chai.assert.equal(resp.statusCode, 404, JSON.stringify(resp));
@@ -222,7 +222,7 @@ describe("Router", () => {
                     };
                 });
 
-            const resp = await testLambdaHandler(router.getLambdaHandler(), createTestProxyEvent("/foo", "GET", {
+            const resp = await testRouter(router, createTestProxyEvent("/foo", "GET", {
                 pathParameters: {
                     bar: "originalbar"
                 }
@@ -244,7 +244,7 @@ describe("Router", () => {
                     };
                 });
 
-            const resp = await testLambdaHandler(router.getLambdaHandler(), createTestProxyEvent("/path/(%E2%95%AF%C2%B0%E2%96%A1%C2%B0%EF%BC%89%E2%95%AF%EF%B8%B5%20%E2%94%BB%E2%94%81%E2%94%BB/end", "GET", {
+            const resp = await testRouter(router, createTestProxyEvent("/path/(%E2%95%AF%C2%B0%E2%96%A1%C2%B0%EF%BC%89%E2%95%AF%EF%B8%B5%20%E2%94%BB%E2%94%81%E2%94%BB/end", "GET", {
                 pathParameters: {
                     bar: "originalbar"
                 }

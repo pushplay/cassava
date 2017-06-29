@@ -1,17 +1,21 @@
-import * as awslambda from "aws-lambda";
-import {ProxyResponse, ProxyResponseCallback} from "../ProxyResponse";
+import {ProxyResponse} from "../ProxyResponse";
 import {ProxyEvent} from "../ProxyEvent";
 import {createTestLambdaContext} from "./createTestLambdaContext";
+import {Router} from "../Router";
 export {createTestProxyEvent} from "./createTestProxyEvent";
 
 /**
- * Test the given lambdaHandler with the given ProxyEvent and return the result
+ * Test the given Router with the given ProxyEvent and return the result
  * in a Promise.  This plus `createTestProxyEvent` is the easiest way to test
  * a Router, especially with the async/await pattern.
  */
-export function testLambdaHandler(lambdaHandler: (evt: ProxyEvent, ctx: awslambda.Context, callback: ProxyResponseCallback) => void, proxyEvent: ProxyEvent): Promise<ProxyResponse> {
+export function testRouter(router: Router, proxyEvent: ProxyEvent): Promise<ProxyResponse> {
     return new Promise<ProxyResponse>((resolve, reject) => {
-        lambdaHandler(proxyEvent, createTestLambdaContext(proxyEvent), (err, res) => {
+        if (!router || !router.getLambdaHandler) {
+            reject("router must be an instance of Router");
+        }
+
+        router.getLambdaHandler()(proxyEvent, createTestLambdaContext(proxyEvent), (err, res) => {
             if (err) {
                 reject(err);
             } else {
