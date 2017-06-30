@@ -6,7 +6,7 @@ export function requireKeys(o: object, keys: string[], part: string = "member"):
     const existingKeys = Object.keys(o);
     for (const key of keys) {
         if (existingKeys.indexOf(key) === -1) {
-            throw new RestError(httpStatusCode.clientError.UNPROCESSABLE_ENTITY, `missing required ${part} ${key}`)
+            throw new RestError(httpStatusCode.clientError.UNPROCESSABLE_ENTITY, `missing required ${part} ${key}`);
         }
     }
 }
@@ -14,7 +14,7 @@ export function requireKeys(o: object, keys: string[], part: string = "member"):
 export function blacklistKeys(o: object, keys: string[], part: string = "member"): void {
     for (const key of Object.keys(o)) {
         if (keys.indexOf(key) !== -1) {
-            throw new RestError(httpStatusCode.clientError.UNPROCESSABLE_ENTITY, `unexpected ${part} ${key}`)
+            throw new RestError(httpStatusCode.clientError.UNPROCESSABLE_ENTITY, `unexpected ${part} ${key}`);
         }
     }
 }
@@ -22,7 +22,7 @@ export function blacklistKeys(o: object, keys: string[], part: string = "member"
 export function whitelistKeys(o: object, keys: string[], part: string = "member"): void {
     for (const key of Object.keys(o)) {
         if (keys.indexOf(key) === -1) {
-            throw new RestError(httpStatusCode.clientError.UNPROCESSABLE_ENTITY, `unexpected ${part} ${key}`)
+            throw new RestError(httpStatusCode.clientError.UNPROCESSABLE_ENTITY, `unexpected ${part} ${key}`);
         }
     }
 }

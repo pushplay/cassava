@@ -102,7 +102,7 @@ export class RouterEvent {
         if (typeof evt.body === "string" && (!this._headersLowerCase["content-type"] || /(application|text)\/(x-)?json/.test(this._headersLowerCase["content-type"]))) {
             try {
                 if ((evt as ProxyEvent).isBase64Encoded) {
-                    this.body = JSON.parse(Buffer.from(evt.body, "base64").toString())
+                    this.body = JSON.parse(Buffer.from(evt.body, "base64").toString());
                 } else {
                     this.body = JSON.parse(evt.body);
                 }
