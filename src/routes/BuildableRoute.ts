@@ -24,7 +24,7 @@ export class BuildableRoute implements Route, RouteBuilder {
 
     handle(evt: RouterEvent): Promise<RouterResponse> {
         if (this.settings.handler) {
-            const calculatedPathParameters: any = {};
+            const calculatedPathParameters = {...evt.pathParameters};
 
             // Map regex groups to pathParameters.
             const pathRegexExec = this.settings.pathRegex.exec(evt.path);
@@ -36,13 +36,9 @@ export class BuildableRoute implements Route, RouteBuilder {
                 calculatedPathParameters[i.toString()] = pathValue;
             }
 
-            return this.settings.handler({
-                ...evt,
-                pathParameters: {
-                    ...evt.pathParameters,
-                    ...calculatedPathParameters
-                }
-            });
+            const pathedRouterEvent = new RouterEvent(evt);
+            pathedRouterEvent.pathParameters = calculatedPathParameters;
+            return this.settings.handler(pathedRouterEvent);
         }
         return Promise.resolve(null);
     }
@@ -54,7 +50,7 @@ export class BuildableRoute implements Route, RouteBuilder {
         return Promise.resolve(resp);
     }
 
-    path(path: string|RegExp): this {
+    path(path: string | RegExp): this {
         if (!path) {
             throw new Error("path cannot be null");
         }

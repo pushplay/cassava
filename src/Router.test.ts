@@ -254,5 +254,23 @@ describe("Router", () => {
             chai.assert.equal(resp.statusCode, 200, JSON.stringify(resp));
             chai.assert.equal(resp.body, "(╯°□°）╯︵ ┻━┻");
         });
+
+        it("routes regex paths and fills in the matching groups", async () => {
+            const router = new cassava.Router();
+            router.logErrors = false;
+
+            router.route(/\/foo\/([^\/]*)\/(.*)/)
+                .handler(async evt => {
+                    return {
+                        body: evt.pathParameters["1"] + "-" + evt.pathParameters["2"] + "!"
+                    };
+                });
+
+            const resp = await testRouter(router, createTestProxyEvent("/foo/happy/birthday/to/you", "GET"));
+
+            chai.assert.isObject(resp);
+            chai.assert.equal(resp.statusCode, 200, JSON.stringify(resp));
+            chai.assert.equal(resp.body, "happy-birthday/to/you!");
+        });
     });
 });

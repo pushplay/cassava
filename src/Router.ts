@@ -2,10 +2,10 @@ import * as awslambda from "aws-lambda";
 import * as cookieLib from "cookie";
 import {DefaultRoute} from "./routes/DefaultRoute";
 import {ProxyEvent} from "./ProxyEvent";
-import {ProxyResponseCallback, ProxyResponse} from "./ProxyResponse";
+import {ProxyResponse, ProxyResponseCallback} from "./ProxyResponse";
 import {RestError} from "./RestError";
 import {Route} from "./routes/Route";
-import {RouteBuilder, BuildableRoute} from "./routes/BuildableRoute";
+import {BuildableRoute, RouteBuilder} from "./routes/BuildableRoute";
 import {RouterEvent} from "./RouterEvent";
 import {RouterResponse} from "./RouterResponse";
 import {httpStatusCode} from "./httpStatus";
@@ -16,15 +16,29 @@ export class Router {
     readonly routes: Route[] = [];
     readonly defaultRoute = new DefaultRoute();
 
-    route(path?: string | RegExp): RouteBuilder {
-        const route = new BuildableRoute();
-        if (path) {
+    route(path?: string | RegExp): RouteBuilder;
+    route<T extends Route>(route: T): T;
+    route(path?: string | RegExp | Route): RouteBuilder | Route {
+        if (!path) {
+            const route = new BuildableRoute();
+            this.routes.push(route);
+            return route;
+        } else if (typeof path === "string" || path instanceof RegExp) {
+            const route = new BuildableRoute();
             route.path(path);
+            this.routes.push(route);
+            return route;
+        } else if (path.matches && (path.handle || path.postProcess)) {
+            this.routes.push(path);
+            return path;
         }
-        this.routes.push(route);
-        return route;
+
+        throw new Error("Input must be a string or regex to create a new RouteBuilder, or an instance of Route.");
     }
 
+    /**
+     * @deprecated Use route(route) instead.
+     */
     addCustomRoute(route: Route): void {
         if (!route) {
             throw new Error("route cannot be null");
@@ -101,40 +115,7 @@ export class Router {
     }
 
     private proxyEventToRouterEvent(evt: ProxyEvent): RouterEvent {
-        let bodyParsed: any = null;
-        if (evt.body) {
-            try {
-                bodyParsed = JSON.parse(evt.body);
-            } catch (e) {
-                this.logErrors && console.log("error parsing body", e);
-            }
-        }
-
-        const headersLowerCase: {[key: string]: string} = {};
-        if (evt.headers) {
-            const headerKeys = Object.keys(evt.headers);
-            for (let i = 0, length = headerKeys.length; i < length; i++) {
-                const key = headerKeys[i];
-                headersLowerCase[key.toLowerCase()] = evt.headers[key];
-            }
-        }
-
-        let cookies: {[key: string]: string} = {};
-        if (headersLowerCase["cookie"]) {
-            try {
-                cookies = cookieLib.parse(headersLowerCase["cookie"]);
-            } catch (e) {
-                this.logErrors && console.log("error parsing cookies", e);
-            }
-        }
-
-        return {
-            bodyParsed: bodyParsed,
-            cookies: cookies,
-            headersLowerCase: headersLowerCase,
-            meta: {},
-            ... evt
-        };
+        return new RouterEvent(evt);
     }
 
     private routerResponseToProxyResponse(resp: RouterResponse): ProxyResponse {

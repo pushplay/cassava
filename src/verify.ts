@@ -27,14 +27,41 @@ export function whitelistKeys(o: object, keys: string[], part: string = "member"
     }
 }
 
-export function requireQueryParameters(event: RouterEvent, keys: string[]): void {
+
+export function requireQueryParameters(event: RouterEvent, ...keys: string[]): void {
     requireKeys(event.queryStringParameters || {}, keys, "query parameter");
 }
 
-export function blacklistQueryParameters(event: RouterEvent, keys: string[]): void {
+export function blacklistQueryParameters(event: RouterEvent, ...keys: string[]): void {
     blacklistKeys(event.queryStringParameters || {}, keys, "query parameter");
 }
 
-export function whitelistQueryParameters(event: RouterEvent, keys: string[]): void {
+export function whitelistQueryParameters(event: RouterEvent, ...keys: string[]): void {
     whitelistKeys(event.queryStringParameters || {}, keys, "query parameter");
+}
+
+
+export function requireHeaders(event: RouterEvent, ...keys: string[]): void {
+    requireKeys(event._headersLowerCase || {}, keys.map(k => k.toLowerCase()), "header");
+}
+
+export function blacklistHeaders(event: RouterEvent, ...keys: string[]): void {
+    blacklistKeys(event._headersLowerCase || {}, keys.map(k => k.toLowerCase()), "header");
+}
+
+export function whitelistHeaders(event: RouterEvent, ...keys: string[]): void {
+    whitelistKeys(event._headersLowerCase || {}, keys.map(k => k.toLowerCase()), "header");
+}
+
+
+export function requireCookies(event: RouterEvent, ...keys: string[]): void {
+    requireKeys(event.cookies || {}, keys, "cookie");
+}
+
+export function blacklistCookies(event: RouterEvent, ...keys: string[]): void {
+    blacklistKeys(event.cookies || {}, keys, "cookie");
+}
+
+export function whitelistCookies(event: RouterEvent, ...keys: string[]): void {
+    whitelistKeys(event.cookies || {}, keys, "cookie");
 }
