@@ -39,7 +39,7 @@ export class RouterEvent {
     /**
      * Request body (JSON.parsed if possible).
      */
-    body: object | string | null;
+    body: any;
 
     /**
      * All headers of the request.  Header keys are case-insensitive.
