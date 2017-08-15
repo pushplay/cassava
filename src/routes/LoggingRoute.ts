@@ -12,13 +12,13 @@ export class LoggingRoute implements Route {
     }
 
     async handle(evt: RouterEvent): Promise<RouterResponse> {
-        const msg = `${evt.httpMethod} ${evt.path}${this.queryMapToString(evt.queryStringParameters)} reqbody=${evt.body}`;
+        const msg = `${evt.httpMethod} ${evt.path}${this.queryMapToString(evt.queryStringParameters)} reqbody=${JSON.stringify(evt.body)}`;
         console.log(msg);
         return null;
     }
 
     async postProcess(evt: RouterEvent, resp: RouterResponse): Promise<RouterResponse> {
-        const msg = `${evt.httpMethod} ${evt.path}${this.queryMapToString(evt.queryStringParameters)} reqbody=${evt.body} status=${resp.statusCode || 200} respbody=${JSON.stringify(resp.body)}`;
+        const msg = `${evt.httpMethod} ${evt.path}${this.queryMapToString(evt.queryStringParameters)} reqbody=${JSON.stringify(evt.body)} status=${resp.statusCode || 200} respbody=${JSON.stringify(resp.body)}`;
         if (resp.statusCode >= 500) {
             console.error(msg);
         } else {
@@ -27,7 +27,7 @@ export class LoggingRoute implements Route {
         return resp;
     }
 
-    queryMapToString(queryStringParameters: {[key: string]: string} | null): string {
+    queryMapToString(queryStringParameters: { [key: string]: string } | null): string {
         if (!queryStringParameters) {
             return "";
         }
