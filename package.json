@@ -1,6 +1,6 @@
 {
   "name": "cassava",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "AWS API Gateway Router",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -36,21 +36,21 @@
   },
   "homepage": "https://github.com/Giftbit/cassava#readme",
   "devDependencies": {
-    "@types/aws-lambda": "^0.0.8",
-    "@types/chai": "^3.4.35",
-    "@types/cookie": "^0.3.0",
-    "@types/mocha": "^2.2.40",
-    "@types/node": "^7.0.8",
-    "@types/uuid": "^3.0.0",
-    "chai": "^3.5.0",
-    "mocha": "^3.2.0",
+    "@types/aws-lambda": "^0.0.16",
+    "@types/chai": "^4.0.4",
+    "@types/cookie": "^0.3.1",
+    "@types/mocha": "^2.2.42",
+    "@types/node": "^8.0.27",
+    "@types/uuid": "^3.4.2",
+    "chai": "^4.1.2",
+    "mocha": "^3.5.0",
     "rimraf": "^2.6.1",
-    "ts-node": "^2.1.0",
-    "tslint": "^4.5.1",
-    "typescript": "^2.2.1",
-    "uuid": "3.1.0"
+    "ts-node": "^3.3.0",
+    "tslint": "^5.7.0",
+    "typescript": "^2.5.2"
   },
   "dependencies": {
-    "cookie": "^0.3.1"
+    "cookie": "^0.3.1",
+    "uuid": "3.1.0"
   }
 }
