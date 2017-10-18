@@ -36,7 +36,7 @@ export class BuildableRoute implements Route, RouteBuilder {
                 calculatedPathParameters[i.toString()] = pathValue;
             }
 
-            const pathedRouterEvent = new RouterEvent(evt);
+            const pathedRouterEvent = Object.assign(new RouterEvent(), evt);
             pathedRouterEvent.pathParameters = calculatedPathParameters;
             return this.settings.handler(pathedRouterEvent);
         }
@@ -119,8 +119,11 @@ export class BuildableRoute implements Route, RouteBuilder {
 export interface RouteBuilder {
 
     path(path: string | RegExp): this;
+
     method(method: string): this;
+
     handler(handler: (evt: RouterEvent) => Promise<RouterResponse>): this;
+
     postProcessor(postProcessor: (evt: RouterEvent, resp: RouterResponse) => Promise<RouterResponse>): this;
 
 }

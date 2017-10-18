@@ -115,7 +115,46 @@ export class Router {
     }
 
     private proxyEventToRouterEvent(evt: ProxyEvent): RouterEvent {
-        return new RouterEvent(evt);
+        const r = new RouterEvent();
+
+        r.context = evt.context;
+        r.headers = evt.headers || {};
+        r.httpMethod = evt.httpMethod;
+        r.meta = {};
+        r.path = evt.path;
+        r.queryStringParameters = evt.queryStringParameters || {};
+        r.pathParameters = evt.pathParameters || {};
+        r.stageVariables = evt.stageVariables || {};
+
+        r._headersLowerCase = {};
+        for (const headerKey of Object.keys(r.headers)) {
+            r._headersLowerCase[headerKey.toLowerCase()] = r.headers[headerKey];
+        }
+
+        if (typeof evt.body === "string" && (!r._headersLowerCase["content-type"] || /(application|text)\/(x-)?json/.test(r._headersLowerCase["content-type"]))) {
+            try {
+                if ((evt as ProxyEvent).isBase64Encoded) {
+                    r.body = JSON.parse(Buffer.from(evt.body, "base64").toString());
+                } else {
+                    r.body = JSON.parse(evt.body);
+                }
+            } catch (e) {
+                throw new RestError(httpStatusCode.clientError.BAD_REQUEST, `Unable to parse JSON body: ${e.message}`);
+            }
+        } else {
+            r.body = evt.body;
+        }
+
+        r.cookies = {};
+        if (r._headersLowerCase["cookie"]) {
+            try {
+                r.cookies = cookieLib.parse(r._headersLowerCase["cookie"]);
+            } catch (e) {
+                throw new RestError(httpStatusCode.clientError.BAD_REQUEST, `Unable to parse cookies: ${e.message}`);
+            }
+        }
+
+        return r;
     }
 
     private routerResponseToProxyResponse(resp: RouterResponse): ProxyResponse {

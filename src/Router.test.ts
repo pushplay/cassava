@@ -104,6 +104,42 @@ describe("Router", () => {
         });
     });
 
+    describe("body handling", () => {
+        it("passes along the body", async () => {
+            const router = new cassava.Router();
+            router.logErrors = false;
+
+            router.route("/{foo}")
+                .handler(async evt => {
+                    return {
+                        body: evt.body
+                    };
+                });
+
+            const resp = await testRouter(router, createTestProxyEvent("/foo", "GET", {body: JSON.stringify({a: "a"})}));
+
+            chai.assert.isObject(resp);
+            chai.assert.equal(resp.body, JSON.stringify({a: "a"}));
+        });
+
+        it("passes along a JSON string body", async () => {
+            const router = new cassava.Router();
+            router.logErrors = false;
+
+            router.route("/{foo}")
+                .handler(async evt => {
+                    return {
+                        body: evt.body
+                    };
+                });
+
+            const resp = await testRouter(router, createTestProxyEvent("/foo", "GET", {body: JSON.stringify("imma string")}));
+
+            chai.assert.isObject(resp);
+            chai.assert.equal(resp.body, "imma string");
+        });
+    });
+
     describe("path parameters", () => {
         it("routes /{foo} and fills in the param", async () => {
             const router = new cassava.Router();

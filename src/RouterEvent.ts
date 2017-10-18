@@ -1,8 +1,3 @@
-import * as cookieLib from "cookie";
-import {ProxyEvent} from "./ProxyEvent";
-import {RestError} from "./RestError";
-import {httpStatusCode} from "./httpStatus";
-
 /**
  * Input to the HTTP router.  Based on the ProxyEvent but enriched.
  */
@@ -79,53 +74,6 @@ export class RouterEvent {
     queryStringParameters: { [key: string]: string };
 
     stageVariables: { [key: string]: string };
-
-    constructor(evt: ProxyEvent | RouterEvent) {
-        this.context = evt.context;
-        this.headers = evt.headers || {};
-        this.httpMethod = evt.httpMethod;
-        this.meta = (evt as RouterEvent).meta || {};
-        this.path = evt.path;
-        this.queryStringParameters = evt.queryStringParameters || {};
-        this.pathParameters = evt.pathParameters || {};
-        this.stageVariables = evt.stageVariables || {};
-
-        if ((evt as RouterEvent)._headersLowerCase) {
-            this._headersLowerCase = (evt as RouterEvent)._headersLowerCase;
-        } else {
-            this._headersLowerCase = {};
-            for (const headerKey of Object.keys(this.headers)) {
-                this._headersLowerCase[headerKey.toLowerCase()] = this.headers[headerKey];
-            }
-        }
-
-        if (typeof evt.body === "string" && (!this._headersLowerCase["content-type"] || /(application|text)\/(x-)?json/.test(this._headersLowerCase["content-type"]))) {
-            try {
-                if ((evt as ProxyEvent).isBase64Encoded) {
-                    this.body = JSON.parse(Buffer.from(evt.body, "base64").toString());
-                } else {
-                    this.body = JSON.parse(evt.body);
-                }
-            } catch (e) {
-                throw new RestError(httpStatusCode.clientError.BAD_REQUEST, `Unable to parse JSON body: ${e.message}`);
-            }
-        } else {
-            this.body = evt.body;
-        }
-
-        if ((evt as RouterEvent).cookies) {
-            this.cookies = (evt as RouterEvent).cookies;
-        } else {
-            this.cookies = {};
-            if (this._headersLowerCase["cookie"]) {
-                try {
-                    this.cookies = cookieLib.parse(this._headersLowerCase["cookie"]);
-                } catch (e) {
-                    throw new RestError(httpStatusCode.clientError.BAD_REQUEST, `Unable to parse cookies: ${e.message}`);
-                }
-            }
-        }
-    }
 
     getHeader(header: string): string {
         return this._headersLowerCase[header.toLowerCase()];
