@@ -105,21 +105,23 @@ describe("Router", () => {
     });
 
     describe("body handling", () => {
-        it("passes along the body", async () => {
+        it("passes along a JSON body", async () => {
             const router = new cassava.Router();
             router.logErrors = false;
 
             router.route("/{foo}")
                 .handler(async evt => {
+                    chai.assert.deepEqual(evt.body, body);
                     return {
                         body: evt.body
                     };
                 });
 
-            const resp = await testRouter(router, createTestProxyEvent("/foo", "GET", {body: JSON.stringify({a: "a"})}));
+            const body = {a: "a"};
+            const resp = await testRouter(router, createTestProxyEvent("/foo", "GET", {body: JSON.stringify(body)}));
 
             chai.assert.isObject(resp);
-            chai.assert.equal(resp.body, JSON.stringify({a: "a"}));
+            chai.assert.deepEqual(JSON.parse(resp.body), body);
         });
 
         it("passes along a JSON string body", async () => {
@@ -128,15 +130,70 @@ describe("Router", () => {
 
             router.route("/{foo}")
                 .handler(async evt => {
+                    chai.assert.deepEqual(evt.body, body);
                     return {
                         body: evt.body
                     };
                 });
 
-            const resp = await testRouter(router, createTestProxyEvent("/foo", "GET", {body: JSON.stringify("imma string")}));
+            const body = "imma string";
+            const resp = await testRouter(router, createTestProxyEvent("/foo", "GET", {
+                body: JSON.stringify(body)
+            }));
 
             chai.assert.isObject(resp);
-            chai.assert.equal(resp.body, "imma string");
+            chai.assert.deepEqual(JSON.parse(resp.body), body);
+        });
+
+        it("does not stringify a response body if the Content-Type is text/plain", async () => {
+            const router = new cassava.Router();
+            router.logErrors = false;
+
+            router.route("/{foo}")
+                .handler(async evt => {
+                    chai.assert.deepEqual(evt.body, body);
+                    return {
+                        body: evt.body,
+                        headers: {
+                            "Content-Type": "text/plain"
+                        }
+                    };
+                });
+
+            const body = "imma string";
+            const resp = await testRouter(router, createTestProxyEvent("/foo", "GET", {
+                body: JSON.stringify(body)
+            }));
+
+            chai.assert.isObject(resp);
+            chai.assert.deepEqual(resp.body, body);
+        });
+
+        it("does not stringify a request body if the Content-Type is text/plain", async () => {
+            const router = new cassava.Router();
+            router.logErrors = false;
+
+            router.route("/{foo}")
+                .handler(async evt => {
+                    chai.assert.deepEqual(evt.body, body);
+                    return {
+                        body: evt.body,
+                        headers: {
+                            "Content-Type": "text/plain"
+                        }
+                    };
+                });
+
+            const body = "\"imma string\"";
+            const resp = await testRouter(router, createTestProxyEvent("/foo", "GET", {
+                body: body,
+                headers: {
+                    "Content-Type": "text/plain"
+                }
+            }));
+
+            chai.assert.isObject(resp);
+            chai.assert.deepEqual(resp.body, body);
         });
     });
 
@@ -156,7 +213,7 @@ describe("Router", () => {
 
             chai.assert.isObject(resp);
             chai.assert.equal(resp.statusCode, 200, JSON.stringify(resp));
-            chai.assert.equal(resp.body, "wuzzle");
+            chai.assert.equal(resp.body, "\"wuzzle\"");
         });
 
         it("routes /foo/{bar} and fills in the param", async () => {
@@ -174,7 +231,7 @@ describe("Router", () => {
 
             chai.assert.isObject(resp);
             chai.assert.equal(resp.statusCode, 200, JSON.stringify(resp));
-            chai.assert.equal(resp.body, "foo/bizzbuzz");
+            chai.assert.equal(resp.body, "\"foo/bizzbuzz\"");
         });
 
         it("routes /foo/{bar}/baz and fills in the param", async () => {
@@ -192,7 +249,7 @@ describe("Router", () => {
 
             chai.assert.isObject(resp);
             chai.assert.equal(resp.statusCode, 200, JSON.stringify(resp));
-            chai.assert.equal(resp.body, "foo/bizzbuzz/baz");
+            chai.assert.equal(resp.body, "\"foo/bizzbuzz/baz\"");
         });
 
         it("routes /foo/{bar}/{baz} and fills in the params", async () => {
@@ -210,7 +267,7 @@ describe("Router", () => {
 
             chai.assert.isObject(resp);
             chai.assert.equal(resp.statusCode, 200, JSON.stringify(resp));
-            chai.assert.equal(resp.body, "foo/bizzbuzz/12345");
+            chai.assert.equal(resp.body, "\"foo/bizzbuzz/12345\"");
         });
 
         it("doesn't match /foo to /foo/{bar}", async () => {
@@ -266,7 +323,7 @@ describe("Router", () => {
 
             chai.assert.isObject(resp);
             chai.assert.equal(resp.statusCode, 200, JSON.stringify(resp));
-            chai.assert.equal(resp.body, "foo/originalbar");
+            chai.assert.equal(resp.body, "\"foo/originalbar\"");
         });
 
         it("decodes values", async () => {
@@ -288,7 +345,7 @@ describe("Router", () => {
 
             chai.assert.isObject(resp);
             chai.assert.equal(resp.statusCode, 200, JSON.stringify(resp));
-            chai.assert.equal(resp.body, "(╯°□°）╯︵ ┻━┻");
+            chai.assert.equal(resp.body, "\"(╯°□°）╯︵ ┻━┻\"");
         });
 
         it("routes regex paths and fills in the matching groups", async () => {
@@ -306,7 +363,7 @@ describe("Router", () => {
 
             chai.assert.isObject(resp);
             chai.assert.equal(resp.statusCode, 200, JSON.stringify(resp));
-            chai.assert.equal(resp.body, "happy-birthday/to/you!");
+            chai.assert.equal(resp.body, "\"happy-birthday/to/you!\"");
         });
     });
 });

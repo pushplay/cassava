@@ -158,26 +158,61 @@ export class Router {
     }
 
     private routerResponseToProxyResponse(resp: RouterResponse): ProxyResponse {
-        const headers = resp.headers || {};
-
         if (resp.cookies) {
             const cookieKeys = Object.keys(resp.cookies);
             for (let i = 0, length = cookieKeys.length; i < length; i++) {
                 const key = cookieKeys[i];
                 const value = resp.cookies[key];
                 const cookieString = typeof value === "string" ? cookieLib.serialize(key, value) : cookieLib.serialize(key, value.value, value.options);
-                if (headers["Set-Cookie"] && headers["Set-Cookie"].length) {
-                    headers["Set-Cookie"] += "; " + cookieString;
+                const setCookie = this.getResponseHeader(resp, "Set-Cookie");
+                if (setCookie) {
+                    this.setResponseHeader(resp, "Set-Cookie", `${setCookie}; ${cookieString}`);
                 } else {
-                    headers["Set-Cookie"] = cookieString;
+                    this.setResponseHeader(resp, "Set-Cookie", cookieString);
                 }
             }
         }
 
         return {
             statusCode: resp.statusCode || httpStatusCode.success.OK,
-            headers: headers,
-            body: typeof resp.body === "string" ? resp.body : JSON.stringify(resp.body)
+            headers: resp.headers || {},
+            body: this.shouldStringifyResponseBody(resp) ? JSON.stringify(resp.body) : resp.body
         };
+    }
+
+    private shouldStringifyResponseBody(resp: RouterResponse): boolean {
+        const contentType = this.getResponseHeader(resp, "Content-Type");
+        return typeof resp.body !== "string" || !contentType || contentType === "application/json" || contentType === "text/json" || contentType === "text/x-json";
+    }
+
+    private getResponseHeader(resp: RouterResponse, field: string): string {
+        if (!resp.headers) {
+            return null;
+        }
+
+        const fieldLower = field.toLowerCase();
+        for (const k of Object.keys(resp.headers)) {
+            if (k.toLowerCase() === fieldLower) {
+                return resp.headers[k];
+            }
+        }
+
+        return null;
+    }
+
+    private setResponseHeader(resp: RouterResponse, field: string, value: string): string {
+        if (!resp.headers) {
+            resp.headers = {};
+        }
+
+        const fieldLower = field.toLowerCase();
+        for (const k of Object.keys(resp.headers)) {
+            if (k.toLowerCase() === fieldLower) {
+                resp.headers[k] = value;
+                return;
+            }
+        }
+
+        resp.headers[field] = value;
     }
 }
