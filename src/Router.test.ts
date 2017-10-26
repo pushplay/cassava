@@ -2,6 +2,7 @@ import * as chai from "chai";
 import * as cassava from "./";
 import {createTestProxyEvent} from "./testing/createTestProxyEvent";
 import {testRouter} from "./testing/index";
+import {httpStatusString} from "./httpStatus";
 
 describe("Router", () => {
     it("calls the default route", async () => {
@@ -104,6 +105,48 @@ describe("Router", () => {
         });
     });
 
+    describe("error handling", () => {
+        it("relays error messages for RestErrors", async () => {
+            const router = new cassava.Router();
+            router.logErrors = false;
+
+            router.route("/foo")
+                .handler(async evt => {
+                    throw new cassava.RestError(400, "This is my custom error message")
+                });
+
+            const resp = await testRouter(router, createTestProxyEvent("/foo"));
+
+            chai.assert.isObject(resp);
+            chai.assert.equal(resp.statusCode, 400, JSON.stringify(resp));
+            chai.assert.isObject(JSON.parse(resp.body));
+            chai.assert.deepEqual(JSON.parse(resp.body), {
+                statusCode: 400,
+                message: "This is my custom error message"
+            });
+        });
+
+        it("does not leak error messages for non-RestErrors", async () => {
+            const router = new cassava.Router();
+            router.logErrors = false;
+
+            router.route("/foo")
+                .handler(async evt => {
+                    throw new Error("This error message should not be leaked")
+                });
+
+            const resp = await testRouter(router, createTestProxyEvent("/foo"));
+
+            chai.assert.isObject(resp);
+            chai.assert.equal(resp.statusCode, 500, JSON.stringify(resp));
+            chai.assert.isObject(JSON.parse(resp.body));
+            chai.assert.deepEqual(JSON.parse(resp.body), {
+                statusCode: 500,
+                message: httpStatusString[500]
+            });
+        });
+    });
+
     describe("body handling", () => {
         it("passes along a JSON body", async () => {
             const router = new cassava.Router();
@@ -151,9 +194,8 @@ describe("Router", () => {
 
             router.route("/{foo}")
                 .handler(async evt => {
-                    chai.assert.deepEqual(evt.body, body);
                     return {
-                        body: evt.body,
+                        body: body,
                         headers: {
                             "Content-Type": "text/plain"
                         }
@@ -161,9 +203,28 @@ describe("Router", () => {
                 });
 
             const body = "imma string";
-            const resp = await testRouter(router, createTestProxyEvent("/foo", "GET", {
-                body: JSON.stringify(body)
-            }));
+            const resp = await testRouter(router, createTestProxyEvent("/foo", "GET"));
+
+            chai.assert.isObject(resp);
+            chai.assert.deepEqual(resp.body, body);
+        });
+
+        it("does not stringify a response body if the Content-Type is text/html", async () => {
+            const router = new cassava.Router();
+            router.logErrors = false;
+
+            router.route("/{foo}")
+                .handler(async evt => {
+                    return {
+                        body: body,
+                        headers: {
+                            "Content-Type": "text/html"
+                        }
+                    };
+                });
+
+            const body = "<html><body>Hello world!</body></html>";
+            const resp = await testRouter(router, createTestProxyEvent("/foo", "GET"));
 
             chai.assert.isObject(resp);
             chai.assert.deepEqual(resp.body, body);
@@ -185,7 +246,7 @@ describe("Router", () => {
                 });
 
             const body = "\"imma string\"";
-            const resp = await testRouter(router, createTestProxyEvent("/foo", "GET", {
+            const resp = await testRouter(router, createTestProxyEvent("/foo", "POST", {
                 body: body,
                 headers: {
                     "Content-Type": "text/plain"

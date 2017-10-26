@@ -1,4 +1,5 @@
 import {httpStatusCode, httpStatusString} from "./httpStatus";
+import {RouterResponse} from "./RouterResponse";
 
 export class RestError extends Error {
     constructor(public statusCode: number = httpStatusCode.serverError.INTERNAL_SERVER_ERROR, message: string = httpStatusString[statusCode] || statusCode.toString()) {
@@ -9,10 +10,13 @@ export class RestError extends Error {
         }
     }
 
-    static stringify(err: Error): string {
-        return JSON.stringify({
-            message: err.message || "",
-            statusCode: (err as RestError).statusCode || httpStatusCode.serverError.INTERNAL_SERVER_ERROR
-        });
+    toResponse(): RouterResponse {
+        return {
+            statusCode: this.statusCode,
+            body: {
+                message: this.message,
+                statusCode: this.statusCode
+            }
+        };
     }
 }

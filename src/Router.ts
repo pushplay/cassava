@@ -13,8 +13,21 @@ import {httpStatusCode} from "./httpStatus";
 export class Router {
 
     logErrors = true;
+
+    /**
+     * Routes that will be tested against in order.
+     */
     readonly routes: Route[] = [];
+
+    /**
+     * The default route that will be matched if no other routes matched.
+     */
     readonly defaultRoute = new DefaultRoute();
+
+    /**
+     * The default error that will be shown when a plain Error is thrown.
+     */
+    readonly defaultError = new RestError();
 
     route(path?: string | RegExp): RouteBuilder;
     route<T extends Route>(route: T): T;
@@ -36,22 +49,6 @@ export class Router {
         throw new Error("Input must be a string or regex to create a new RouteBuilder, or an instance of Route.");
     }
 
-    /**
-     * @deprecated Use route(route) instead.
-     */
-    addCustomRoute(route: Route): void {
-        if (!route) {
-            throw new Error("route cannot be null");
-        }
-        if (!route.matches) {
-            throw new Error("route must have a matches() function");
-        }
-        if (!route.handle && !route.postProcess) {
-            throw new Error("route must have a handle() and/or postProcess() function");
-        }
-        this.routes.push(route);
-    }
-
     getLambdaHandler(): (evt: ProxyEvent, ctx: awslambda.Context, callback: ProxyResponseCallback) => void {
         return (evt: ProxyEvent, ctx: awslambda.Context, callback: ProxyResponseCallback) => {
             this.routeProxyEvent(evt)
@@ -59,11 +56,7 @@ export class Router {
                     callback(undefined, res);
                 }, err => {
                     this.logErrors && console.log("Error thrown during execution.\n", err);
-                    callback(null, {
-                        statusCode: err.statusCode || httpStatusCode.serverError.INTERNAL_SERVER_ERROR,
-                        headers: {},
-                        body: RestError.stringify(err)
-                    });
+                    callback(undefined, this.routerResponseToProxyResponse(this.defaultError.toResponse()));
                 });
         };
     }
@@ -75,7 +68,7 @@ export class Router {
         let resp: RouterResponse;
         const postProcessors: Route[] = [];
 
-        for (let routeIx = 0; routeIx < this.routes.length; routeIx++) {
+        for (let routeIx = 0; routeIx < this.routes.length && !resp; routeIx++) {
             const route = this.routes[routeIx];
             if (route.matches(evt)) {
                 if (route.postProcess) {
@@ -84,17 +77,9 @@ export class Router {
                 if (route.handle) {
                     try {
                         resp = await route.handle(evt);
-                        if (resp) {
-                            break;
-                        }
                     } catch (err) {
                         if (err instanceof RestError) {
-                            resp = {
-                                statusCode: err.statusCode || httpStatusCode.serverError.INTERNAL_SERVER_ERROR,
-                                headers: {},
-                                body: RestError.stringify(err)
-                            };
-                            break;
+                            resp = err.toResponse();
                         } else {
                             throw err;
                         }
