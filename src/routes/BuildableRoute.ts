@@ -10,6 +10,13 @@ export class BuildableRoute implements Route, RouteBuilder {
         pathRegex?: RegExp;
         regexGroupToPathParamMap?: string[],
         method?: string;
+        queryParams?: {
+            [param: string]: {
+                values?: string[];
+                validator?: (value: string) => boolean;
+                explanation?: string;
+            }
+        }
     } = {};
 
     matches(evt: RouterEvent): boolean {
@@ -118,12 +125,24 @@ export class BuildableRoute implements Route, RouteBuilder {
 
 export interface RouteBuilder {
 
+    /**
+     * Match requests with the given path.
+     */
     path(path: string | RegExp): this;
 
+    /**
+     * Match requests for the given method.
+     */
     method(method: string): this;
 
+    /**
+     * Set the handler for this Route.
+     */
     handler(handler: (evt: RouterEvent) => Promise<RouterResponse>): this;
 
+    /**
+     * Set the post processor for this Route.
+     */
     postProcessor(postProcessor: (evt: RouterEvent, resp: RouterResponse) => Promise<RouterResponse>): this;
 
 }
