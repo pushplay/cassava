@@ -11,40 +11,40 @@ describe("RouterEvent", () => {
         };
 
         it("can require the param is set", () => {
-            evt.requireQueryParam("a");
-            evt.requireQueryParam("b");
+            evt.requireQueryStringParameter("a");
+            evt.requireQueryStringParameter("b");
             chai.assert.throws(() => {
-                evt.requireQueryParam("bee");
+                evt.requireQueryStringParameter("bee");
             }, RestError);
             chai.assert.throws(() => {
-                evt.requireQueryParam("c");
+                evt.requireQueryStringParameter("c");
             }, RestError);
         });
 
         it("can require the param is one of a set of values", () => {
-            evt.requireQueryParam("a", ["a", "alpha", "aleph"]);
+            evt.requireQueryStringParameter("a", ["a", "alpha", "aleph"]);
             chai.assert.throws(() => {
-                evt.requireQueryParam("b", []);
+                evt.requireQueryStringParameter("b", []);
             }, RestError);
             chai.assert.throws(() => {
-                evt.requireQueryParam("b", ["beta"]);
+                evt.requireQueryStringParameter("b", ["beta"]);
             }, RestError);
             chai.assert.throws(() => {
-                evt.requireQueryParam("c", ["c", "charlie"]);
+                evt.requireQueryStringParameter("c", ["c", "charlie"]);
             }, RestError);
         });
 
         it("can require the param validates against a function", () => {
-            evt.requireQueryParam("a", () => true);
-            evt.requireQueryParam("a", a => a === "a");
+            evt.requireQueryStringParameter("a", () => true);
+            evt.requireQueryStringParameter("a", a => a === "a");
             chai.assert.throws(() => {
-                evt.requireQueryParam("b", () => false);
+                evt.requireQueryStringParameter("b", () => false);
             }, RestError);
             chai.assert.throws(() => {
-                evt.requireQueryParam("b", b => b !== "b");
+                evt.requireQueryStringParameter("b", b => b !== "b");
             }, RestError);
             chai.assert.throws(() => {
-                evt.requireQueryParam("c", () => true);
+                evt.requireQueryStringParameter("c", () => true);
             }, RestError);
         });
     });

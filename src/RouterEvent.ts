@@ -84,29 +84,29 @@ export class RouterEvent {
     /**
      * Require that the given query parameter is set.
      */
-    requireQueryParam(param: string): this;
+    requireQueryStringParameter(param: string): this;
 
     /**
      * Require that the given query parameter is set and has
      * one of the given values.
      */
-    requireQueryParam(param: string, values: string[], explanation?: string): this;
+    requireQueryStringParameter(param: string, values: string[], explanation?: string): this;
 
     /**
      * Require that the given query parameter is set and satisfies
      * the validator function.
      */
-    requireQueryParam(param: string, validator: (value: string) => boolean, explanation?: string): this;
+    requireQueryStringParameter(param: string, validator: (value: string) => boolean, explanation?: string): this;
 
-    requireQueryParam(param: string, valuesOrValidator?: string[] | ((value: string) => boolean), explanation?: string): this {
+    requireQueryStringParameter(param: string, valuesOrValidator?: string[] | ((value: string) => boolean), explanation?: string): this {
         if (!this.queryStringParameters[param]) {
             throw new RestError(400, explanation || `Required query parameter '${param}' is not set.`);
         }
         if (valuesOrValidator && Array.isArray(valuesOrValidator) && valuesOrValidator.indexOf(this.queryStringParameters[param]) === -1) {
-            throw new RestError(400, explanation || `Required query parameter '${param}' must be one of: ${valuesOrValidator.join(", ")}.`);
+            throw new RestError(400, explanation || `Required query parameter '${param}=${this.queryStringParameters[param]}' must be one of: ${valuesOrValidator.join(", ")}.`);
         }
         if (valuesOrValidator && typeof valuesOrValidator === "function" && !valuesOrValidator(this.queryStringParameters[param])) {
-            throw new RestError(400, explanation || `Required query parameter '${param}' is not a legal value.`);
+            throw new RestError(400, explanation || `Required query parameter '${param}=${this.queryStringParameters[param]}' is not a legal value.`);
         }
         return this;
     }
