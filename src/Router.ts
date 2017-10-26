@@ -8,7 +8,7 @@ import {Route} from "./routes/Route";
 import {BuildableRoute, RouteBuilder} from "./routes/BuildableRoute";
 import {RouterEvent} from "./RouterEvent";
 import {RouterResponse} from "./RouterResponse";
-import {httpStatusCode} from "./httpStatus";
+import {httpStatusCode, httpStatusString} from "./httpStatus";
 
 export class Router {
 
@@ -22,12 +22,12 @@ export class Router {
     /**
      * The default route that will be matched if no other routes matched.
      */
-    readonly defaultRoute = new DefaultRoute();
+    defaultRoute = new DefaultRoute();
 
     /**
      * The default error that will be shown when a plain Error is thrown.
      */
-    readonly defaultError = new RestError();
+    defaultError = new RestError();
 
     route(path?: string | RegExp): RouteBuilder;
     route<T extends Route>(route: T): T;
@@ -56,7 +56,7 @@ export class Router {
                     callback(undefined, res);
                 }, err => {
                     this.logErrors && console.log("Error thrown during execution.\n", err);
-                    callback(undefined, this.routerResponseToProxyResponse(this.defaultError.toResponse()));
+                    callback(undefined, this.routerResponseToProxyResponse(this.errorToRouterResponse(this.defaultError)));
                 });
         };
     }
@@ -79,7 +79,7 @@ export class Router {
                         resp = await route.handle(evt);
                     } catch (err) {
                         if (err instanceof RestError) {
-                            resp = err.toResponse();
+                            resp = this.errorToRouterResponse(err);
                         } else {
                             throw err;
                         }
@@ -88,7 +88,15 @@ export class Router {
             }
         }
         if (!resp) {
-            resp = await this.defaultRoute.handle(evt);
+            try {
+                resp = await this.defaultRoute.handle(evt);
+            } catch (err) {
+                if (err instanceof RestError) {
+                    resp = this.errorToRouterResponse(err);
+                } else {
+                    throw err;
+                }
+            }
         }
 
         while (postProcessors.length) {
@@ -140,6 +148,26 @@ export class Router {
         }
 
         return r;
+    }
+
+    private errorToRouterResponse(err: Error): RouterResponse {
+        if (err instanceof RestError) {
+            return {
+                statusCode: err.statusCode,
+                body: {
+                    message: err.message,
+                    statusCode: err.statusCode
+                }
+            };
+        }
+
+        return {
+            statusCode: httpStatusCode.serverError.INTERNAL_SERVER_ERROR,
+            body: {
+                message: httpStatusString[httpStatusCode.serverError.INTERNAL_SERVER_ERROR],
+                statusCode: httpStatusCode.serverError.INTERNAL_SERVER_ERROR
+            }
+        };
     }
 
     private routerResponseToProxyResponse(resp: RouterResponse): ProxyResponse {

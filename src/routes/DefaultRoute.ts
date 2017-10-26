@@ -14,6 +14,6 @@ export class DefaultRoute implements Route {
     }
 
     async handle(evt: RouterEvent): Promise<RouterResponse> {
-        return new RestError(DefaultRoute.statusCode, DefaultRoute.message).toResponse();
+        throw new RestError(DefaultRoute.statusCode, DefaultRoute.message);
     }
 }
