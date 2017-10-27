@@ -1,6 +1,9 @@
 import {httpStatusCode, httpStatusString} from "./httpStatus";
 
 export class RestError extends Error {
+
+    readonly isRestError = true;
+
     constructor(public statusCode: number = httpStatusCode.serverError.INTERNAL_SERVER_ERROR, message: string = httpStatusString[statusCode] || statusCode.toString()) {
         super(message);
 

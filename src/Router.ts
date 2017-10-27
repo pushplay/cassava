@@ -78,7 +78,7 @@ export class Router {
                     try {
                         resp = await route.handle(evt);
                     } catch (err) {
-                        if (err instanceof RestError) {
+                        if ((err as RestError).isRestError) {
                             resp = this.errorToRouterResponse(err);
                         } else {
                             throw err;
@@ -91,7 +91,7 @@ export class Router {
             try {
                 resp = await this.defaultRoute.handle(evt);
             } catch (err) {
-                if (err instanceof RestError) {
+                if ((err as RestError).isRestError) {
                     resp = this.errorToRouterResponse(err);
                 } else {
                     throw err;
@@ -151,12 +151,12 @@ export class Router {
     }
 
     private errorToRouterResponse(err: Error): RouterResponse {
-        if (err instanceof RestError) {
+        if ((err as RestError).isRestError) {
             return {
-                statusCode: err.statusCode,
+                statusCode: (err as RestError).statusCode,
                 body: {
                     message: err.message,
-                    statusCode: err.statusCode
+                    statusCode: (err as RestError).statusCode
                 }
             };
         }
