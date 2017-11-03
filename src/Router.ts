@@ -159,7 +159,7 @@ export class Router {
     }
 
     private errorToRouterResponse(err: Error): RouterResponse {
-        if ((err as RestError).isRestError) {
+        if (err && (err as RestError).isRestError) {
             return {
                 statusCode: (err as RestError).statusCode,
                 body: {
