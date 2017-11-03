@@ -101,7 +101,15 @@ export class Router {
 
         while (postProcessors.length) {
             const route = postProcessors.pop();
-            resp = await route.postProcess(evt, resp) || resp;
+            try {
+                resp = await route.postProcess(evt, resp) || resp;
+            } catch (err) {
+                if ((err as RestError).isRestError) {
+                    resp = this.errorToRouterResponse(err);
+                } else {
+                    throw err;
+                }
+            }
         }
 
         return this.routerResponseToProxyResponse(resp);

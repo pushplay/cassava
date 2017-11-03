@@ -3,6 +3,7 @@ import * as cassava from "./";
 import {createTestProxyEvent} from "./testing/createTestProxyEvent";
 import {testRouter} from "./testing/index";
 import {httpStatusString} from "./httpStatus";
+import {RestError} from "./RestError";
 
 describe("Router", () => {
     it("calls the default route", async () => {
@@ -106,7 +107,7 @@ describe("Router", () => {
     });
 
     describe("error handling", () => {
-        it("relays error messages for RestErrors", async () => {
+        it("relays error messages for RestErrors from handle()", async () => {
             const router = new cassava.Router();
             router.logErrors = false;
 
@@ -126,14 +127,64 @@ describe("Router", () => {
             });
         });
 
-        it("does not leak error messages for non-RestErrors", async () => {
+        it("relays error messages for RestErrors from postProcess()", async () => {
+            const router = new cassava.Router();
+            router.logErrors = false;
+
+            router.route({
+                matches: () => true,
+                postProcess: () => {
+                    throw new RestError(418, "I'm a teapot.")
+                }
+            });
+
+            router.route("/foo")
+                .handler(async evt => ({body: {success: true}}));
+
+            const resp = await testRouter(router, createTestProxyEvent("/foo"));
+
+            chai.assert.isObject(resp);
+            chai.assert.equal(resp.statusCode, 418, JSON.stringify(resp));
+            chai.assert.isObject(JSON.parse(resp.body));
+            chai.assert.deepEqual(JSON.parse(resp.body), {
+                statusCode: 418,
+                message: "I'm a teapot."
+            });
+        });
+
+        it("does not leak error messages for non-RestErrors from handle()", async () => {
             const router = new cassava.Router();
             router.logErrors = false;
 
             router.route("/foo")
-                .handler(async evt => {
+                .handler(async () => {
                     throw new Error("This error message should not be leaked")
                 });
+
+            const resp = await testRouter(router, createTestProxyEvent("/foo"));
+
+            chai.assert.isObject(resp);
+            chai.assert.equal(resp.statusCode, 500, JSON.stringify(resp));
+            chai.assert.isObject(JSON.parse(resp.body));
+            chai.assert.deepEqual(JSON.parse(resp.body), {
+                statusCode: 500,
+                message: httpStatusString[500]
+            });
+        });
+
+        it("does not leak error messages for non-RestErrors from postProcess()", async () => {
+            const router = new cassava.Router();
+            router.logErrors = false;
+
+            router.route({
+                matches: () => true,
+                postProcess: () => {
+                    throw new Error("I'm the world's angriest teapot and I will kill your whole family.")
+                }
+            });
+
+            router.route("/foo")
+                .handler(async evt => ({body: {success: true}}));
 
             const resp = await testRouter(router, createTestProxyEvent("/foo"));
 
