@@ -4,6 +4,7 @@ import {URL} from "url";
 import {ProxyEvent} from "../ProxyEvent";
 
 const randomableCharacters: string = "abcdefghijklmnopqrstuvwxyz0123456789";
+
 function randomString(length: number): string {
     let text = "";
     for (let i = 0; i < length; i++) {
@@ -64,6 +65,27 @@ export function createTestProxyEvent(url: string = "/", method: string = "GET", 
         },
         httpMethod: method,
         path: heavyUrl.pathname,
-        queryStringParameters: heavyUrl.search ? querystring.parse(heavyUrl.search.substring(1)) : null
+        queryStringParameters: deduplicateQueryStringParameters(heavyUrl.search ? querystring.parse(heavyUrl.search.substring(1)) : null)
     };
+}
+
+/**
+ * Turn a query params object that allows for duplicate query string values into one that doesn't.
+ * see: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-known-issues.html
+ */
+function deduplicateQueryStringParameters(params: { [key: string]: string | string[] }): { [key: string]: string } {
+    if (!params) {
+        return null;
+    }
+
+    const queryStringParameters: { [key: string]: string } = {};
+    for (const key in params) {
+        const value = params[key];
+        if (Array.isArray(value)) {
+            queryStringParameters[key] = value[value.length - 1];
+        } else {
+            queryStringParameters[key] = value;
+        }
+    }
+    return queryStringParameters;
 }

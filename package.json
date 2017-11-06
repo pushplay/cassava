@@ -10,8 +10,9 @@
   "scripts": {
     "build": "tsc",
     "clean": "rimraf ./dist",
+    "docs": "rimraf ./docs && typedoc src/ --out docs --mode modules --module commonjs --target es6 --excludePrivate --name Cassava && touch ./docs/.nojekyll && gh-pages -d docs -t",
     "lint": "tslint --project tsconfig.json",
-    "prepublishOnly": "npm run clean && npm run build && npm run lint && npm run test",
+    "prepublishOnly": "npm run clean && npm run build && npm run lint && npm run test && npm run docs",
     "test": "mocha --recursive --throw-deprecation --require ts-node/register \"src/**/*.test.ts\"",
     "test:watch": "npm run test -- --watch --watch-extensions ts,tsx --growl"
   },
@@ -43,10 +44,13 @@
     "@types/node": "^8.0.27",
     "@types/uuid": "^3.4.2",
     "chai": "^4.1.2",
+    "gh-pages": "^1.0.0",
     "mocha": "^3.5.0",
-    "rimraf": "^2.6.1",
+    "rimraf": "^2.6.2",
+    "touch": "^3.1.0",
     "ts-node": "^3.3.0",
     "tslint": "^5.7.0",
+    "typedoc": "^0.9.0",
     "typescript": "^2.5.2"
   },
   "dependencies": {

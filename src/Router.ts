@@ -29,8 +29,16 @@ export class Router {
      */
     defaultError = new RestError();
 
+    /**
+     * Start a BuildableRoute with the given string or regex path.
+     */
     route(path?: string | RegExp): RouteBuilder;
+
+    /**
+     * Add a custom Route.
+     */
     route<T extends Route>(route: T): T;
+
     route(path?: string | RegExp | Route): RouteBuilder | Route {
         if (!path) {
             const route = new BuildableRoute();
