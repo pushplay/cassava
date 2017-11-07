@@ -12,8 +12,6 @@ import {httpStatusCode, httpStatusString} from "./httpStatus";
 
 export class Router {
 
-    logErrors = true;
-
     /**
      * Routes that will be tested against in order.
      */
@@ -22,12 +20,17 @@ export class Router {
     /**
      * The default route that will be matched if no other routes matched.
      */
-    defaultRoute = new DefaultRoute();
+    defaultRoute: Route = new DefaultRoute();
 
     /**
-     * The default error that will be shown when a plain Error is thrown.
+     * The handler that will be called when non-RestErrors are thrown.
+     * The handler can return nothing, a RouterResponse, or a Promise that resolves
+     * to nothing or a RouterResponse.  If a RouterResponse or Promise or RouterResponse
+     * is returned that will be the response used.
+     *
+     * The default implementation is to log the error.
      */
-    defaultError = new RestError();
+    errorHandler: (err: Error) => Promise<RouterResponse | null | void> | RouterResponse | null | void = err => console.log("Error thrown during execution.\n", err);
 
     /**
      * Start a BuildableRoute with the given string or regex path.
@@ -63,8 +66,8 @@ export class Router {
                 .then(res => {
                     callback(undefined, res);
                 }, err => {
-                    this.logErrors && console.log("Error thrown during execution.\n", err);
-                    callback(undefined, this.routerResponseToProxyResponse(this.errorToRouterResponse(this.defaultError)));
+                    console.error("Catastrophic error thrown during execution.\n", err);
+                    callback(err);
                 });
         };
     }
@@ -73,7 +76,7 @@ export class Router {
         // Non-functional programming for speeeeed.
 
         const evt = this.proxyEventToRouterEvent(pevt);
-        let resp: RouterResponse;
+        let resp: RouterResponse | void = null;
         const postProcessors: Route[] = [];
 
         for (let routeIx = 0; routeIx < this.routes.length && !resp; routeIx++) {
@@ -86,24 +89,22 @@ export class Router {
                     try {
                         resp = await route.handle(evt);
                     } catch (err) {
-                        if ((err as RestError).isRestError) {
-                            resp = this.errorToRouterResponse(err);
-                        } else {
-                            throw err;
-                        }
+                        resp = await this.errorToRouterResponse(err);
                     }
                 }
             }
         }
         if (!resp) {
             try {
-                resp = await this.defaultRoute.handle(evt);
-            } catch (err) {
-                if ((err as RestError).isRestError) {
-                    resp = this.errorToRouterResponse(err);
-                } else {
-                    throw err;
+                if (!this.defaultRoute.handle) {
+                    throw new Error("Router's defaultRoute.handle is not defined.")
                 }
+                resp = await this.defaultRoute.handle(evt);
+                if (!resp) {
+                    throw new Error("Router's defaultRoute.handle() did not return a response.");
+                }
+            } catch (err) {
+                resp = await this.errorToRouterResponse(err);
             }
         }
 
@@ -112,11 +113,7 @@ export class Router {
             try {
                 resp = await route.postProcess(evt, resp) || resp;
             } catch (err) {
-                if ((err as RestError).isRestError) {
-                    resp = this.errorToRouterResponse(err);
-                } else {
-                    throw err;
-                }
+                resp = await this.errorToRouterResponse(err);
             }
         }
 
@@ -166,7 +163,7 @@ export class Router {
         return r;
     }
 
-    private errorToRouterResponse(err: Error): RouterResponse {
+    private async errorToRouterResponse(err: Error): Promise<RouterResponse> {
         if (err && (err as RestError).isRestError) {
             return {
                 statusCode: (err as RestError).statusCode,
@@ -175,6 +172,13 @@ export class Router {
                     statusCode: (err as RestError).statusCode
                 }
             };
+        }
+
+        if (this.errorHandler) {
+            const resp = await this.errorHandler(err);
+            if (resp) {
+                return resp;
+            }
         }
 
         return {
@@ -214,7 +218,7 @@ export class Router {
         return typeof resp.body !== "string" || !contentType || contentType === "application/json" || contentType === "text/json" || contentType === "text/x-json";
     }
 
-    private getResponseHeader(resp: RouterResponse, field: string): string {
+    private getResponseHeader(resp: RouterResponse, field: string): string | null {
         if (!resp.headers) {
             return null;
         }
@@ -229,7 +233,7 @@ export class Router {
         return null;
     }
 
-    private setResponseHeader(resp: RouterResponse, field: string, value: string): string {
+    private setResponseHeader(resp: RouterResponse, field: string, value: string): void {
         if (!resp.headers) {
             resp.headers = {};
         }
@@ -243,5 +247,9 @@ export class Router {
         }
 
         resp.headers[field] = value;
+    }
+
+    private isPromise<T>(res: void | T | Promise<T>): res is Promise<T> {
+        return res && typeof (res as Promise<T>).then === "function";
     }
 }

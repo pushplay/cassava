@@ -29,7 +29,7 @@ export class BuildableRoute implements Route, RouteBuilder {
         return true;
     }
 
-    handle(evt: RouterEvent): Promise<RouterResponse> {
+    handle(evt: RouterEvent): Promise<RouterResponse | null> {
         if (this.settings.handler) {
             const calculatedPathParameters = {...evt.pathParameters};
 
@@ -138,11 +138,11 @@ export interface RouteBuilder {
     /**
      * Set the handler for this Route.
      */
-    handler(handler: (evt: RouterEvent) => Promise<RouterResponse>): this;
+    handler(handler: (evt: RouterEvent) => Promise<RouterResponse | null | void> | RouterResponse | null | void): this;
 
     /**
      * Set the post processor for this Route.
      */
-    postProcessor(postProcessor: (evt: RouterEvent, resp: RouterResponse) => Promise<RouterResponse>): this;
+    postProcessor(postProcessor: (evt: RouterEvent, resp: RouterResponse) => Promise<RouterResponse | null | void> | RouterResponse | null | void): this;
 
 }

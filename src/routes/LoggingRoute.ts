@@ -11,20 +11,18 @@ export class LoggingRoute implements Route {
         return true;
     }
 
-    async handle(evt: RouterEvent): Promise<RouterResponse> {
+    handle(evt: RouterEvent): void {
         const msg = `${evt.httpMethod} ${evt.path}${this.queryMapToString(evt.queryStringParameters)} reqbody=${JSON.stringify(evt.body)}`;
         console.log(msg);
-        return null;
     }
 
-    async postProcess(evt: RouterEvent, resp: RouterResponse): Promise<RouterResponse> {
+    postProcess(evt: RouterEvent, resp: RouterResponse): void {
         const msg = `${evt.httpMethod} ${evt.path}${this.queryMapToString(evt.queryStringParameters)} reqbody=${JSON.stringify(evt.body)} status=${resp.statusCode || 200} respbody=${JSON.stringify(resp.body)}`;
         if (resp.statusCode >= 500) {
             console.error(msg);
         } else {
             console.log(msg);
         }
-        return resp;
     }
 
     queryMapToString(queryStringParameters: { [key: string]: string } | null): string {

@@ -14,12 +14,12 @@ export interface Route {
      * Resolve the Promise with null to not respond and let other Routes
      * handle it.  postProcess() will still be called in that case.
      */
-    handle?: (evt: RouterEvent) => Promise<RouterResponse>;
+    handle?: (evt: RouterEvent) => Promise<RouterResponse | null | void> | RouterResponse | null | void;
 
     /**
      * Post-process the response before it is sent.
      */
-    postProcess?: (evt: RouterEvent, resp: RouterResponse) => Promise<RouterResponse>;
+    postProcess?: (evt: RouterEvent, resp: RouterResponse) => Promise<RouterResponse | null | void> | RouterResponse | null | void;
 
     /**
      * Whether the route is enabled.
