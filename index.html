@@ -70,7 +70,8 @@
 │  ╰──╢ ╭─╮ ╠════ ╠════ ║ ╭─╮ │╲  ╱│ ╭─╮ │
 ╰─────╨─╯ ╰─╨─────╨─────╨─╯ ╰─╯ ╰╯ ╰─╯ ╰─╯
   AWS API Gateway Router
-</code></pre><h2 id="routing">Routing</h2>
+</code></pre><p>Find the full documentation at <a href="https://giftbit.github.io/cassava/">https://giftbit.github.io/cassava/</a> </p>
+				<h2 id="routing">Routing</h2>
 				<p>There are two ways to add routes to Cassava.</p>
 				<ul>
 					<li><code>route(string|RegExp)</code><ul>
@@ -86,6 +87,9 @@
 						</ul>
 					</li>
 				</ul>
+				<p>Cassava processes REST events by examining installed routes from top-to-bottom.  Cassava works downwards to find the first route that matches and responds, and then works back up to do any post-processing.</p>
+				<p>A route responds when it matches the event, has a <code>handle</code> function, and handles the event by returning a Promise that resolves to a non-null response.</p>
+				<p>A route can post-process the response when it matches the event, did not handle the event, and has a <code>postProcess</code> function.  Post processing can be used to modify the response or cause some side effect such as logging.</p>
 				<h2 id="example">Example</h2>
 				<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> cassava <span class="hljs-keyword">from</span> <span class="hljs-string">"cassava"</span>;
 
@@ -119,7 +123,7 @@ router.route({
         <span class="hljs-keyword">return</span> (evt.httpMethod === <span class="hljs-string">"PUT"</span> || evt.httpMethod === <span class="hljs-string">"PATCH"</span>) &amp;&amp;
             evt.path.startsWith(<span class="hljs-string">"/upload/"</span>);
     },
-    handle: <span class="hljs-function"><span class="hljs-params">evt</span> =&gt;</span> {
+    handle: <span class="hljs-keyword">async</span> evt =&gt; {
         <span class="hljs-comment">// ... store payload in evt.body</span>
         <span class="hljs-keyword">return</span> {
             statusCode: <span class="hljs-number">204</span>
@@ -172,6 +176,9 @@ router.route({
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="modules/_routes_buildableroute_.html">"routes/<wbr>Buildable<wbr>Route"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_routes_buildableroute_test_.html">"routes/<wbr>Buildable<wbr>Route.test"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="modules/_routes_defaultroute_.html">"routes/<wbr>Default<wbr>Route"</a>
