@@ -10,13 +10,6 @@ export class BuildableRoute implements Route, RouteBuilder {
         pathRegex?: RegExp;
         regexGroupToPathParamMap?: string[],
         method?: string;
-        queryParams?: {
-            [param: string]: {
-                values?: string[];
-                validator?: (value: string) => boolean;
-                explanation?: string;
-            }
-        }
     } = {};
 
     matches(evt: RouterEvent): boolean {
@@ -29,7 +22,7 @@ export class BuildableRoute implements Route, RouteBuilder {
         return true;
     }
 
-    handle(evt: RouterEvent): Promise<RouterResponse | null> {
+    handle(evt: RouterEvent): Promise<RouterResponse> | null {
         if (this.settings.handler) {
             const calculatedPathParameters = {...evt.pathParameters};
 
@@ -47,14 +40,14 @@ export class BuildableRoute implements Route, RouteBuilder {
             pathedRouterEvent.pathParameters = calculatedPathParameters;
             return this.settings.handler(pathedRouterEvent);
         }
-        return Promise.resolve(null);
+        return null;
     }
 
-    postProcess(evt: RouterEvent, resp: RouterResponse): Promise<RouterResponse> {
+    postProcess(evt: RouterEvent, resp: RouterResponse): Promise<RouterResponse> | null {
         if (this.settings.postProcessor) {
             return this.settings.postProcessor(evt, resp);
         }
-        return Promise.resolve(resp);
+        return null;
     }
 
     path(path: string | RegExp): this {
@@ -91,7 +84,7 @@ export class BuildableRoute implements Route, RouteBuilder {
 
     method(method: string): this {
         if (!method) {
-            throw new Error("method cannot be null");
+            throw new Error("method must be set");
         }
         if (this.settings.method) {
             throw new Error("method is already defined");

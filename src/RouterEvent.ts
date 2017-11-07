@@ -85,23 +85,23 @@ export class RouterEvent {
      * Require that the given query parameter is set.
      * If the parameter is not set a RestError is thrown.
      */
-    requireQueryStringParameter(param: string): this;
+    requireQueryStringParameter(param: string): void;
 
     /**
      * Require that the given query parameter is set and has
      * one of the given values.  If the parameter is not set or
      * does not take on one of the given values a RestError is thrown.
      */
-    requireQueryStringParameter(param: string, values: string[], explanation?: string): this;
+    requireQueryStringParameter(param: string, values: string[], explanation?: string): void;
 
     /**
      * Require that the given query parameter is set and satisfies
      * the validator function.  If the parameter is not set or
      * does not satisfy the given validator function a RestError is thrown.
      */
-    requireQueryStringParameter(param: string, validator: (value: string) => boolean, explanation?: string): this;
+    requireQueryStringParameter(param: string, validator: (value: string) => boolean, explanation?: string): void;
 
-    requireQueryStringParameter(param: string, valuesOrValidator?: string[] | ((value: string) => boolean), explanation?: string): this {
+    requireQueryStringParameter(param: string, valuesOrValidator?: string[] | ((value: string) => boolean), explanation?: string): void {
         if (!this.queryStringParameters[param]) {
             throw new RestError(400, explanation || `Required query parameter '${param}' is not set.`);
         }
@@ -111,7 +111,6 @@ export class RouterEvent {
         if (valuesOrValidator && typeof valuesOrValidator === "function" && !valuesOrValidator(this.queryStringParameters[param])) {
             throw new RestError(400, explanation || `Required query parameter '${param}=${this.queryStringParameters[param]}' is not a legal value.`);
         }
-        return this;
     }
 
     /**
@@ -134,21 +133,21 @@ export class RouterEvent {
     /**
      * Require that the given header field is set.
      */
-    requireHeader(field: string): this;
+    requireHeader(field: string): void;
 
     /**
      * Require that the given header field is set and has
      * one of the given values.
      */
-    requireHeader(field: string, values: string[], explanation?: string): this;
+    requireHeader(field: string, values: string[], explanation?: string): void;
 
     /**
      * Require that the given header field is set and satisfies
      * the validator function.
      */
-    requireHeader(field: string, validator: (value: string) => boolean, explanation?: string): this;
+    requireHeader(field: string, validator: (value: string) => boolean, explanation?: string): void;
 
-    requireHeader(field: string, valuesOrValidator?: string[] | ((value: string) => boolean), explanation?: string): this {
+    requireHeader(field: string, valuesOrValidator?: string[] | ((value: string) => boolean), explanation?: string): void {
         const fieldLowerCase = field.toLowerCase();
 
         if (!this._headersLowerCase[fieldLowerCase]) {
@@ -160,7 +159,6 @@ export class RouterEvent {
         if (valuesOrValidator && typeof valuesOrValidator === "function" && !valuesOrValidator(this._headersLowerCase[fieldLowerCase])) {
             throw new RestError(400, explanation || `Required header '${field}=${this._headersLowerCase[fieldLowerCase]}' is not a legal value.`);
         }
-        return this;
     }
 }
 

@@ -22,7 +22,7 @@ export interface RouterResponse {
 
     /**
      * The body of the response, which will be stringified unless
-     * headers["Content-Type"] is specified and not "application/json"
+     * `headers["Content-Type"]` is specified and not `"application/json"`
      * and the body is already a string.
      */
     body: any;
