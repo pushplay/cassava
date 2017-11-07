@@ -8,4 +8,5 @@ export {RouterEvent} from "./RouterEvent";
 
 import * as routes from "./routes";
 import * as testing from "./testing";
-export {routes, testing}
+
+export {routes, testing};
