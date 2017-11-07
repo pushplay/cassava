@@ -38,7 +38,7 @@ describe("Router", () => {
         chai.assert.equal(resp.statusCode, 200, JSON.stringify(resp));
     });
 
-    it("calls all post processors", async () => {
+    it("calls all matching, earlier post processors", async () => {
         const router = new cassava.Router();
 
         router.route("/foo/baz")
