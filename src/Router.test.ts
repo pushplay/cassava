@@ -413,6 +413,91 @@ describe("Router", () => {
                 chai.assert.equal(resp.statusCode, 400, JSON.stringify(resp));
                 chai.assert.isObject(JSON.parse(resp.body));
             });
+
+            describe("additionalParams", () => {
+                it("get added to the body of the response", async () => {
+                    const router = new cassava.Router();
+
+                    router.route("/foo")
+                        .handler(async evt => {
+                            throw new cassava.RestError(400, "This is my custom error message", {a: "alpha", b: "beta"})
+                        });
+
+                    const resp = await testRouter(router, createTestProxyEvent("/foo"));
+
+                    chai.assert.isObject(resp);
+                    chai.assert.equal(resp.statusCode, 400, JSON.stringify(resp));
+                    chai.assert.isObject(JSON.parse(resp.body));
+                    chai.assert.deepEqual(JSON.parse(resp.body), {
+                        statusCode: 400,
+                        message: "This is my custom error message",
+                        a: "alpha",
+                        b: "beta"
+                    });
+                });
+
+                it("override built-in properties", async () => {
+                    const router = new cassava.Router();
+
+                    router.route("/foo")
+                        .handler(async evt => {
+                            throw new cassava.RestError(400, "This is my custom error message", {
+                                statusCode: 123,
+                                message: "pretty sneaky, sis"
+                            })
+                        });
+
+                    const resp = await testRouter(router, createTestProxyEvent("/foo"));
+
+                    chai.assert.isObject(resp);
+                    chai.assert.equal(resp.statusCode, 400, JSON.stringify(resp));
+                    chai.assert.isObject(JSON.parse(resp.body));
+                    chai.assert.deepEqual(JSON.parse(resp.body), {
+                        statusCode: 123,
+                        message: "pretty sneaky, sis"
+                    });
+                });
+
+                it("can be empty", async () => {
+                    const router = new cassava.Router();
+
+                    router.route("/foo")
+                        .handler(async evt => {
+                            throw new cassava.RestError(400, "This is my custom error message", {})
+                        });
+
+                    const resp = await testRouter(router, createTestProxyEvent("/foo"));
+
+                    chai.assert.isObject(resp);
+                    chai.assert.equal(resp.statusCode, 400, JSON.stringify(resp));
+                    chai.assert.isObject(JSON.parse(resp.body));
+                    chai.assert.deepEqual(JSON.parse(resp.body), {
+                        statusCode: 400,
+                        message: "This is my custom error message"
+                    });
+                });
+
+                for (const value of [true, false, 0, 1, null, undefined, (): any => undefined]) {
+                    it(`can be ${value} (value is ignored)`, async () => {
+                        const router = new cassava.Router();
+
+                        router.route("/foo")
+                            .handler(async evt => {
+                                throw new cassava.RestError(400, "This is my custom error message", value as any)
+                            });
+
+                        const resp = await testRouter(router, createTestProxyEvent("/foo"));
+
+                        chai.assert.isObject(resp);
+                        chai.assert.equal(resp.statusCode, 400, JSON.stringify(resp));
+                        chai.assert.isObject(JSON.parse(resp.body));
+                        chai.assert.deepEqual(JSON.parse(resp.body), {
+                            statusCode: 400,
+                            message: "This is my custom error message"
+                        });
+                    });
+                }
+            });
         });
 
         describe("default error handling", () => {

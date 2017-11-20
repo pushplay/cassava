@@ -169,7 +169,8 @@ export class Router {
                 statusCode: (err as RestError).statusCode,
                 body: {
                     message: err.message,
-                    statusCode: (err as RestError).statusCode
+                    statusCode: (err as RestError).statusCode,
+                    ...(err as RestError).additionalParams
                 }
             };
         }
