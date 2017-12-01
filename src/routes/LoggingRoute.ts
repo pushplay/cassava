@@ -7,22 +7,32 @@ import {RouterResponse} from "../RouterResponse";
  */
 export class LoggingRoute implements Route {
 
+    constructor(public options: LoggingRouteOptions = {}) {
+    }
+
     matches(evt: RouterEvent): boolean {
         return true;
     }
 
     handle(evt: RouterEvent): void {
-        const msg = `${evt.httpMethod} ${evt.path}${this.queryMapToString(evt.queryStringParameters)} reqbody=${JSON.stringify(evt.body)}`;
-        console.log(msg);
+        let msg = `${evt.httpMethod} ${evt.path}${this.queryMapToString(evt.queryStringParameters)}`;
+        if (!this.options.hideRequestBody && evt.body != null) {
+            msg += ` reqbody=${JSON.stringify(evt.body)}`;
+        }
+        this.log(msg);
     }
 
     postProcess(evt: RouterEvent, resp: RouterResponse): void {
-        const msg = `${evt.httpMethod} ${evt.path}${this.queryMapToString(evt.queryStringParameters)} reqbody=${JSON.stringify(evt.body)} status=${resp.statusCode || 200} respbody=${JSON.stringify(resp.body)}`;
-        if (resp.statusCode >= 500) {
-            console.error(msg);
-        } else {
-            console.log(msg);
+        let msg = `${evt.httpMethod} ${evt.path}${this.queryMapToString(evt.queryStringParameters)}`;
+
+        if (!this.options.hideRequestBody && evt.body != null) {
+            msg += ` reqbody=${JSON.stringify(evt.body)}`;
         }
+        msg += ` status=${resp.statusCode || 200}`;
+        if (!this.options.hideResponseBody && resp.body != null) {
+            msg += ` respbody=${JSON.stringify(resp.body)}`;
+        }
+        this.log(msg);
     }
 
     queryMapToString(queryStringParameters: { [key: string]: string } | null): string {
@@ -35,4 +45,18 @@ export class LoggingRoute implements Route {
         }
         return "?" + keys.map(key => `${encodeURIComponent(key)}=${encodeURIComponent(queryStringParameters[key])}`).join("&");
     }
+
+    log(msg: string): void {
+        if (this.options.logFunction) {
+            this.options.logFunction(msg);
+        } else {
+            console.log(msg);
+        }
+    }
+}
+
+export interface LoggingRouteOptions {
+    hideRequestBody?: boolean;
+    hideResponseBody?: boolean;
+    logFunction?: (msg: string) => void;
 }
