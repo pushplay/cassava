@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>RouterResponseCookie | Cassava</title>
+	<title>FileSystemRouteConfig | Cassava</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,13 +56,13 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_routerresponse_.html">&quot;RouterResponse&quot;</a>
+					<a href="../modules/_routes_filesystemroute_.html">&quot;routes/FileSystemRoute&quot;</a>
 				</li>
 				<li>
-					<a href="_routerresponse_.routerresponsecookie.html">RouterResponseCookie</a>
+					<a href="_routes_filesystemroute_.filesystemrouteconfig.html">FileSystemRouteConfig</a>
 				</li>
 			</ul>
-			<h1>Interface RouterResponseCookie</h1>
+			<h1>Interface FileSystemRouteConfig</h1>
 		</div>
 	</div>
 </header>
@@ -73,7 +73,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">RouterResponseCookie</span>
+						<span class="target">FileSystemRouteConfig</span>
 					</li>
 				</ul>
 			</section>
@@ -84,8 +84,9 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_routerresponse_.routerresponsecookie.html#options" class="tsd-kind-icon">options</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_routerresponse_.routerresponsecookie.html#value" class="tsd-kind-icon">value</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_routes_filesystemroute_.filesystemrouteconfig.html#fspath" class="tsd-kind-icon">fs<wbr>Path</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_routes_filesystemroute_.filesystemrouteconfig.html#mimetypes" class="tsd-kind-icon">mime<wbr>Types</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_routes_filesystemroute_.filesystemrouteconfig.html#restpath" class="tsd-kind-icon">rest<wbr>Path</a></li>
 							</ul>
 						</section>
 					</div>
@@ -94,24 +95,58 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="options" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> options</h3>
-					<div class="tsd-signature tsd-kind-icon">options<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">CookieSerializeOptions</span></div>
+					<a name="fspath" class="tsd-anchor"></a>
+					<h3>fs<wbr>Path</h3>
+					<div class="tsd-signature tsd-kind-icon">fs<wbr>Path<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/3000c02/src/RouterResponse.ts#L33">RouterResponse.ts:33</a></li>
+							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/3000c02/src/routes/FileSystemRoute.ts#L392">routes/FileSystemRoute.ts:392</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The directory on the file system where the files are located.</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="value" class="tsd-anchor"></a>
-					<h3>value</h3>
-					<div class="tsd-signature tsd-kind-icon">value<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<a name="mimetypes" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> mime<wbr>Types</h3>
+					<div class="tsd-signature tsd-kind-icon">mime<wbr>Types<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/3000c02/src/RouterResponse.ts#L32">RouterResponse.ts:32</a></li>
+							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/3000c02/src/routes/FileSystemRoute.ts#L398">routes/FileSystemRoute.ts:398</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Additional mime-types.  Structure is a map of file extension (including .)
+							to mime-type.</p>
+						</div>
+					</div>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-index-signature">
+								<h5><span class="tsd-signature-symbol">[</span>ext: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">string</span></h5>
+							</li>
+						</ul>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="restpath" class="tsd-anchor"></a>
+					<h3>rest<wbr>Path</h3>
+					<div class="tsd-signature tsd-kind-icon">rest<wbr>Path<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/3000c02/src/routes/FileSystemRoute.ts#L387">routes/FileSystemRoute.ts:387</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The root of the rest path the files will be hosted from.</p>
+						</div>
+					</div>
 				</section>
 			</section>
 		</div>
@@ -136,7 +171,7 @@
 					<li class=" tsd-kind-external-module">
 						<a href="../modules/_routerevent_.html">"<wbr>Router<wbr>Event"</a>
 					</li>
-					<li class="current tsd-kind-external-module">
+					<li class=" tsd-kind-external-module">
 						<a href="../modules/_routerresponse_.html">"<wbr>Router<wbr>Response"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
@@ -151,7 +186,7 @@
 					<li class=" tsd-kind-external-module">
 						<a href="../modules/_routes_defaultroute_.html">"routes/<wbr>Default<wbr>Route"</a>
 					</li>
-					<li class=" tsd-kind-external-module">
+					<li class="current tsd-kind-external-module">
 						<a href="../modules/_routes_filesystemroute_.html">"routes/<wbr>File<wbr>System<wbr>Route"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
@@ -176,19 +211,22 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_routerresponse_.routerresponse.html" class="tsd-kind-icon">Router<wbr>Response</a>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="../classes/_routes_filesystemroute_.filesystemroute.html" class="tsd-kind-icon">File<wbr>System<wbr>Route</a>
 					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_routerresponse_.routerresponsecookie.html" class="tsd-kind-icon">Router<wbr>Response<wbr>Cookie</a>
+						<a href="_routes_filesystemroute_.filesystemrouteconfig.html" class="tsd-kind-icon">File<wbr>System<wbr>Route<wbr>Config</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_routerresponse_.routerresponsecookie.html#options" class="tsd-kind-icon">options</a>
+								<a href="_routes_filesystemroute_.filesystemrouteconfig.html#fspath" class="tsd-kind-icon">fs<wbr>Path</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_routerresponse_.routerresponsecookie.html#value" class="tsd-kind-icon">value</a>
+								<a href="_routes_filesystemroute_.filesystemrouteconfig.html#mimetypes" class="tsd-kind-icon">mime<wbr>Types</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_routes_filesystemroute_.filesystemrouteconfig.html#restpath" class="tsd-kind-icon">rest<wbr>Path</a>
 							</li>
 						</ul>
 					</li>
