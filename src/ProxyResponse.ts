@@ -11,12 +11,17 @@ export interface ProxyResponse {
     /**
      * Headers to set on the response.
      */
-    headers: {[key: string]: string};
+    headers: { [key: string]: string };
 
     /**
      * The string representation of the JSON to respond with.
      */
     body: string;
+
+    /**
+     * For binary support set this to `true` and base64 encode the body.
+     */
+    isBase64Encoded?: boolean;
 }
 
 export type ProxyResponseCallback = (error?: Error, result?: ProxyResponse) => void;

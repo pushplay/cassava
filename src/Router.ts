@@ -207,16 +207,28 @@ export class Router {
             }
         }
 
+        let isBase64Encoded = false;
+        let body: string;
+        const contentType = this.getResponseHeader(resp, "Content-Type");
+        if (resp.body instanceof Buffer) {
+            if (contentType && (contentType.startsWith("text/") || contentType.startsWith("application/json") || contentType.endsWith("+json") || contentType.endsWith("+xml"))) {
+                body = resp.body.toString("utf-8");
+            } else {
+                body = resp.body.toString("base64");
+                isBase64Encoded = true;
+            }
+        } else if (typeof resp.body !== "string" || !contentType || contentType === "application/json" || contentType === "text/json" || contentType === "text/x-json") {
+            body = JSON.stringify(resp.body);
+        } else {
+            body = resp.body;
+        }
+
         return {
             statusCode: resp.statusCode || httpStatusCode.success.OK,
             headers: resp.headers || {},
-            body: this.shouldStringifyResponseBody(resp) ? JSON.stringify(resp.body) : resp.body
+            body,
+            isBase64Encoded
         };
-    }
-
-    private shouldStringifyResponseBody(resp: RouterResponse): boolean {
-        const contentType = this.getResponseHeader(resp, "Content-Type");
-        return typeof resp.body !== "string" || !contentType || contentType === "application/json" || contentType === "text/json" || contentType === "text/x-json";
     }
 
     private getResponseHeader(resp: RouterResponse, field: string): string | null {
