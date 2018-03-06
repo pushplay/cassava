@@ -1,6 +1,6 @@
 import * as awslambda from "aws-lambda";
 import * as cookieLib from "cookie";
-import {URL} from "url";
+import * as url from "url";
 import {DefaultRoute, Route} from "./routes";
 import {ProxyEvent} from "./ProxyEvent";
 import {ProxyResponse, ProxyResponseCallback} from "./ProxyResponse";
@@ -164,7 +164,14 @@ export class Router {
     }
 
     private proxyPathToRouterPath(path: string): string {
-        return new URL(path, "http://host/").pathname.replace(/\/\/+/g, "/");
+        if (url.URL) {
+            // This constructor was added in Node v6.13.0.
+            return new url.URL(path, "http://host/").pathname.replace(/\/\/+/g, "/");
+        } else if (url.parse) {
+            return url.parse(path).pathname.replace(/\/\/+/g, "/");
+        } else {
+            throw new Error("No suitable URL parsing method in the 'url' package found.");
+        }
     }
 
     private async errorToRouterResponse(err: Error): Promise<RouterResponse> {
