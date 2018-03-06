@@ -78,6 +78,34 @@ describe("Router", () => {
         });
     });
 
+    describe("path resolution", async () => {
+        async function testPathMatching(path: string, route: string, isMatch: boolean): Promise<void> {
+            const router = new cassava.Router();
+            router.route(route)
+                .handler(() => ({
+                    body: {
+                        success: true
+                    }
+                }));
+            const resp = await testRouter(router, createTestProxyEvent(path));
+            chai.assert.isObject(resp);
+            chai.assert.equal(resp.statusCode, isMatch ? 200 : 404, `path ${path} ${isMatch ? "should match" : "should not match"} ${route}`);
+        }
+
+        it("resolves // at start by ignoring the next path element", () => testPathMatching("//foo/bar", "/bar", true));
+        it("resolves // in middle", () => testPathMatching("/foo//bar", "/foo/bar", true));
+        it("resolves /// in middle", () => testPathMatching("/foo///bar", "/foo/bar", true));
+        it("resolves // at end", () => testPathMatching("/foo/bar//", "/foo/bar/", true));
+        it("does not strip / at end", () => testPathMatching("/foo/bar/", "/foo/bar", false));
+        it("resolves . at start", () => testPathMatching("/./foo/bar", "/foo/bar", true));
+        it("resolves . in middle", () => testPathMatching("/foo/./bar", "/foo/bar", true));
+        it("resolves . at end", () => testPathMatching("/foo/bar/./", "/foo/bar/", true));
+        it("strips .. at start", () => testPathMatching("/../foo/bar", "/foo/bar", true));
+        it("resolves .. in middle", () => testPathMatching("/foo/baz/../bar", "/foo/bar", true));
+        it("resolves .. at end", () => testPathMatching("/foo/bar/baz/..", "/foo/bar/", true));
+        it("resolves too many ..s", () => testPathMatching("/foo/bar/../../../../..", "/", true));
+    });
+
     describe("accepted Route.handle() return types", () => {
         it("void passes through", async () => {
             const router = new cassava.Router();

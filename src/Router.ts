@@ -1,10 +1,10 @@
 import * as awslambda from "aws-lambda";
 import * as cookieLib from "cookie";
-import {DefaultRoute} from "./routes/DefaultRoute";
+import {URL} from "url";
+import {DefaultRoute, Route} from "./routes";
 import {ProxyEvent} from "./ProxyEvent";
 import {ProxyResponse, ProxyResponseCallback} from "./ProxyResponse";
 import {RestError} from "./RestError";
-import {Route} from "./routes/Route";
 import {BuildableRoute, RouteBuilder} from "./routes/BuildableRoute";
 import {RouterEvent} from "./RouterEvent";
 import {RouterResponse} from "./RouterResponse";
@@ -127,7 +127,7 @@ export class Router {
         r.headers = evt.headers || {};
         r.httpMethod = evt.httpMethod;
         r.meta = {};
-        r.path = evt.path;
+        r.path = this.proxyPathToRouterPath(evt.path);
         r.queryStringParameters = evt.queryStringParameters || {};
         r.pathParameters = evt.pathParameters || {};
         r.stageVariables = evt.stageVariables || {};
@@ -161,6 +161,10 @@ export class Router {
         }
 
         return r;
+    }
+
+    private proxyPathToRouterPath(path: string): string {
+        return new URL(path, "http://host/").pathname.replace(/\/\/+/g, "/");
     }
 
     private async errorToRouterResponse(err: Error): Promise<RouterResponse> {
