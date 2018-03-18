@@ -322,21 +322,21 @@ export class FileSystemRoute implements Route {
         ".zip": "application/zip"
     };
 
-    constructor(public config: FileSystemRouteConfig) {
+    constructor(public readonly config: FileSystemRouteConfig) {
         if (!config) {
-            throw new Error("options must be set");
+            throw new Error("config must be set");
         }
         if (typeof config.fsPath !== "string") {
-            throw new Error("options.fsPath must be set");
+            throw new Error("config.fsPath must be set");
         }
         if (typeof config.restPath !== "string") {
-            throw new Error("options.restPath must be set");
+            throw new Error("config.restPath must be set");
         }
         if (!config.restPath.startsWith("/")) {
-            throw new Error("options.restPath must start with '/'");
+            throw new Error("config.restPath must start with '/'");
         }
         if (!config.restPath.endsWith("/")) {
-            throw new Error("options.restPath must end with '/'");
+            throw new Error("config.restPath must end with '/'");
         }
     }
 
@@ -348,6 +348,10 @@ export class FileSystemRoute implements Route {
         const truePath = path.normalize(path.join(this.config.fsPath, evt.path.substring(this.config.restPath.length)));
         if (!truePath.startsWith(path.normalize(this.config.fsPath))) {
             // Someone is trying to ../ their way down the fs.
+            return Promise.resolve(null);
+        }
+
+        if (this.config.fileExtensionWhitelist && !this.config.fileExtensionWhitelist.find(ext => truePath.endsWith(ext))) {
             return Promise.resolve(null);
         }
 
@@ -392,8 +396,16 @@ export interface FileSystemRouteConfig {
     fsPath: string;
 
     /**
-     * Additional mime-types.  Structure is a map of file extension (including .)
-     * to mime-type.
+     * Optional list of file extensions to whitelist.  If set any files
+     * with extensions not in this list will not be served.
+     */
+    fileExtensionWhitelist?: string[];
+
+    /**
+     * Optional additional mime-types.  Structure is a map of file extension
+     * (including `.`) to mime-type.
+     *
+     * eg: {".foo": "text/foo"}
      */
     mimeTypes?: { [ext: string]: string };
 }

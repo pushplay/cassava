@@ -9,6 +9,7 @@ describe("FileSystemRoute", () => {
 
     const magicValue = "d14b4904-8dd8-4416-aa8d-7d3660c38dbe";
 
+    // .ts is already registered for video/mp2t which is annoying
     function assertIsThisFile(resp: ProxyResponse, contentType: string = "video/mp2t"): void {
         chai.assert.isObject(resp);
         chai.assert.equal(resp.statusCode, 200, JSON.stringify(resp));
@@ -103,5 +104,29 @@ describe("FileSystemRoute", () => {
         assertNotFound(await testRouter(router, createTestProxyEvent("/~/.bashrc")));
         assertNotFound(await testRouter(router, createTestProxyEvent("~/.bashrc")));
         assertNotFound(await testRouter(router, createTestProxyEvent("//bin/ls")));
+    });
+
+    describe("fileExtensionWhitelist", () => {
+        it("includes matching files", async () => {
+            const router = new cassava.Router();
+            router.route(new FileSystemRoute({
+                fsPath: __dirname,
+                restPath: "/awesome/",
+                fileExtensionWhitelist: [".ts"]
+            }));
+
+            assertIsThisFile(await testRouter(router, createTestProxyEvent("/awesome/FileSystemRoute.test.ts")));
+        });
+
+        it("excludes non-matching files", async () => {
+            const router = new cassava.Router();
+            router.route(new FileSystemRoute({
+                fsPath: __dirname,
+                restPath: "/awesome/",
+                fileExtensionWhitelist: [".txt"]
+            }));
+
+            assertNotFound(await testRouter(router, createTestProxyEvent("/awesome/FileSystemRoute.test.ts")));
+        });
     });
 });

@@ -126,6 +126,13 @@ export class RouterEvent {
      * in this list has to be set, but if any parameter is set that is not in
      * this list a RestError will be thrown.
      */
+    whitelistQueryStringParameters(...params: string[]): void {
+        whitelistKeys(this.queryStringParameters || {}, params, "query parameter");
+    }
+
+    /**
+     * @deprecated use whitelistQueryStringParameters()
+     */
     whitelistStringQueryParameters(...params: string[]): void {
         whitelistKeys(this.queryStringParameters || {}, params, "query parameter");
     }

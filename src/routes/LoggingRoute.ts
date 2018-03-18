@@ -7,7 +7,7 @@ import {RouterResponse} from "../RouterResponse";
  */
 export class LoggingRoute implements Route {
 
-    constructor(public options: LoggingRouteOptions = {}) {
+    constructor(public readonly options: LoggingRouteOptions = {}) {
     }
 
     matches(evt: RouterEvent): boolean {
