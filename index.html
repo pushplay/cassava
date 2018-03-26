@@ -84,10 +84,10 @@
 					</li>
 				</ul>
 				<p>Cassava processes REST events by examining installed routes from top-to-bottom.  Cassava works downwards to find the first route that matches and responds, and then works back up to do any post-processing.</p>
-				<p>A route responds when it matches the event, has a <code>handle</code> function, and handles the event by returning a Promise that resolves to a non-null response.</p>
-				<p>A route can post-process the response when it matches the event, did not handle the event, and has a <code>postProcess</code> function.  Post processing can be used to modify the response or cause some side effect such as logging.</p>
-				<h2 id="routebuilders">RouteBuilders</h2>
-				<p><a href="https://giftbit.github.io/cassava/interfaces/_routes_buildableroute_.routebuilder.html">RouteBuilders</a> are the simplest way to add a route to Cassava.  A RouteBuilder instance is started with <code>router.route(string)</code> or <code>router.route(RegExp)</code>, then with chained function calls you can specify the HTTP method, add a <code>handle</code> function or a <code>postProcess</code> function.</p>
+				<p>A route responds when: it matches the event, has a <code>handle</code> function, and handles the event by returning a response object or Promise that resolves to a response object.</p>
+				<p>A route can post-process the response when: it matches the event, did not handle the event, and has a <code>postProcess</code> function.  Post processing can be used to modify the response or cause some side effect such as logging.</p>
+				<h2 id="routebuilder">RouteBuilder</h2>
+				<p><a href="https://giftbit.github.io/cassava/interfaces/_routes_buildableroute_.routebuilder.html">RouteBuilder</a> is the simplest way to add a route to Cassava.  A RouteBuilder instance is started with <code>router.route(string)</code> or <code>router.route(RegExp)</code>, then with chained function calls you can specify the HTTP method, add a <code>handle</code> function or a <code>postProcess</code> function.</p>
 				<p>The details of handling and post-processing are covered later in this document.</p>
 				<p>For example...</p>
 				<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> cassava <span class="hljs-keyword">from</span> <span class="hljs-string">"cassava"</span>;
@@ -151,8 +151,66 @@ router.route({
 				<p><a href="https://giftbit.github.io/cassava/modules/_routerevent_.html">RouterEvents</a> are the input to <code>matches</code> and <code>handle</code> functions.  They fully describe all information about the REST request including the full body as streaming is not supported.</p>
 				<p>A <code>handle</code> function takes in a RouterEvent and can return the following: <code>null</code> or <code>undefined</code> to not handle the RouterEvent in which case further routes are consulted; a <a href="https://giftbit.github.io/cassava/interfaces/_routerresponse_.routerresponse.html">RouterResponse</a> that represents the response sent to the client; a Promise that resolves to <code>null</code> or <code>undefined</code> which will again let further routes handle the request; a Promise that resolves to a RouterResponse which again will be the response sent to the client.</p>
 				<p><a href="https://giftbit.github.io/cassava/interfaces/_routerresponse_.routerresponse.html">RouterResponses</a> include the body, an optional HTTP status code (defaults to 200), and optionally any headers that might be set.</p>
-				<p>A <code>postProcess</code> function takes in both the RouterEvent and the current RouterResponse.  It can return <code>null</code> or <code>undefined</code> or a Promise resolving to one of those to not affect the final response; or it can return a RouterResponse or a Promise resolving to a RouterResponse to change the response. </p>
-				<h2 id="the-name">The name</h2>
+				<p>A <code>postProcess</code> function takes in both the RouterEvent and the current RouterResponse.  It can return <code>null</code> or <code>undefined</code> or a Promise resolving to one of those to not affect the final response; or it can return a RouterResponse or a Promise resolving to a RouterResponse to change the response.</p>
+				<h2 id="routerevent-validation">RouterEvent Validation</h2>
+				<p><a href="https://giftbit.github.io/cassava/modules/_routerevent_.html">RouterEvent</a> comes with a number of utility functions to validate the event.</p>
+				<ul>
+					<li><code>blacklistQueryStringParameters(...params: string[])</code> disallow any of the given query parameters</li>
+					<li><code>requireHeader(field: string)</code> require that a header is set</li>
+					<li><code>requireHeader(field: string, values: string[], explanation?: string)</code> require that a header is set and takes one of a given list of values</li>
+					<li><code>requireHeader(field: string, validator: function, explanation?: string)</code> require that a header is set and satisfies the validator function</li>
+					<li><code>requireQueryStringParameter(param: string)</code> require that a query parameter is set</li>
+					<li><code>requireQueryStringParameter(param: string, values: string[], explanation?: string)</code> require that a query parameter is set and takes one of a given list of values</li>
+					<li><code>requireQueryStringParameter(param: string, validator: function, explanation?: string)</code> require that a query parameter is set and satisfies the validator function</li>
+					<li><code>validateBody(schema: Schema, options?: ValidateBodyOptions)</code> validate the request body using <a href="https://spacetelescope.github.io/understanding-json-schema/index.html">JSON Schema</a></li>
+					<li><code>whitelistQueryStringParameters(...params: string[])</code> disallow any query parameters other than the ones set</li>
+				</ul>
+				<p>An example:</p>
+				<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> cassava <span class="hljs-keyword">from</span> <span class="hljs-string">"cassava"</span>;
+
+<span class="hljs-keyword">const</span> router = <span class="hljs-keyword">new</span> cassava.Router();
+
+<span class="hljs-comment">// Get a location</span>
+router.route(<span class="hljs-string">"/locations/{locationId}"</span>)
+    .method(<span class="hljs-string">"GET"</span>)
+    .handler(<span class="hljs-keyword">async</span> evt =&gt; {
+        evt.whitelistQueryStringParameters();   <span class="hljs-comment">// don't allow any query params</span>
+        <span class="hljs-keyword">return</span> {
+            body: getLocationById(evt.pathParameters.locationId)
+        };
+    });
+
+<span class="hljs-comment">// Set a location</span>
+router.route(<span class="hljs-string">"/locations/{locationId}"</span>)
+    .method(<span class="hljs-string">"POST"</span>)
+    .handler(<span class="hljs-keyword">async</span> evt =&gt; {
+        evt.validateBody({
+             <span class="hljs-keyword">type</span>: <span class="hljs-string">"object"</span>,
+             properties: {
+                 latitude: { <span class="hljs-string">"type"</span>: <span class="hljs-string">"number"</span> },
+                 longitude: { <span class="hljs-string">"type"</span>: <span class="hljs-string">"number"</span> }
+             },
+             required: [<span class="hljs-string">"latitude"</span>, <span class="hljs-string">"longitude"</span>]
+         });
+        <span class="hljs-keyword">return</span> {
+            body: setLocationId(evt.pathParameters.locationId, evt.body)
+        };
+    });
+
+<span class="hljs-comment">// Query for locations</span>
+router.route(<span class="hljs-string">"/locations"</span>)
+    .method(<span class="hljs-string">"GET"</span>)
+    .handler(<span class="hljs-keyword">async</span> evt =&gt; {
+        evt.requireQueryStringParameter(<span class="hljs-string">"query"</span>);
+        <span class="hljs-keyword">return</span> {
+            body: getLocationsByQuery(evt.queryStringParameters.query)
+        };
+    });
+
+<span class="hljs-comment">// Install the router as the handler for this lambda.</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> handler = router.getLambdaHandler();
+</code></pre>
+				<h2 id="the-name">The Name</h2>
 				<p>Cassava is a starchy root vegetable grown all over the world.  The more you know.  ┈┅*</p>
 			</div>
 		</div>
