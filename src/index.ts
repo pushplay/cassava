@@ -5,6 +5,7 @@ export {RestError} from "./RestError";
 export {Router} from "./Router";
 export {RouterResponse} from "./RouterResponse";
 export {RouterEvent} from "./RouterEvent";
+export {ValidateBodyOptions} from "./ValidateBodyOptions";
 
 import * as routes from "./routes";
 import * as testing from "./testing";

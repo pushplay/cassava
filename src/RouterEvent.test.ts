@@ -127,7 +127,7 @@ describe("RouterEvent", () => {
         });
     });
 
-    describe("whitelistStringQueryParameters()", () => {
+    describe("whitelistQueryStringParameters()", () => {
         const evt = new RouterEvent();
         evt.queryStringParameters = {
             o: "oscar",
@@ -140,18 +140,65 @@ describe("RouterEvent", () => {
 
         it("doesn't throw an error if all keys are whitelisted", () => {
             const emptyEvt = new RouterEvent();
-            emptyEvt.whitelistStringQueryParameters();
+            emptyEvt.whitelistQueryStringParameters();
 
-            evt.whitelistStringQueryParameters("o", "b", "j", "e", "c", "t");
+            evt.whitelistQueryStringParameters("o", "b", "j", "e", "c", "t");
         });
 
         it("throws an error if a key is not listed", () => {
             chai.assert.throws(() => {
-                evt.whitelistStringQueryParameters();
+                evt.whitelistQueryStringParameters();
             });
             chai.assert.throws(() => {
-                evt.whitelistStringQueryParameters("o", "b", "j");
+                evt.whitelistQueryStringParameters("o", "b", "j");
             });
+        });
+    });
+
+    describe("validateBody()", () => {
+        const coordinateSchema = {
+            "id": "http://json-schema.org/geo",
+            "$schema": "http://json-schema.org/draft-06/schema#",
+            "description": "A geographical coordinate",
+            "type": "object",
+            "properties": {
+                "latitude": {"type": "number"},
+                "longitude": {"type": "number"}
+            }
+        };
+
+        it("validates a valid body", () => {
+            const evt = new RouterEvent();
+            evt.body = {
+                latitude: 49.2391,
+                longitude: -124.0227
+            };
+            evt.validateBody(coordinateSchema);
+        });
+
+        it("throws a RestError on an invalid body", () => {
+            const evt = new RouterEvent();
+            evt.body = {
+                latitude: "49.2391",
+                longitude: "-124.0227"
+            };
+            chai.assert.throws(() => evt.validateBody(coordinateSchema));
+        });
+
+        it("allows customization of the RestError status code", () => {
+            const evt = new RouterEvent();
+            evt.body = {
+                latitude: "49.2391",
+                longitude: "-124.0227"
+            };
+            let error: RestError;
+            try {
+                evt.validateBody(coordinateSchema, {httpStatusCode: 432});
+            } catch (e) {
+                error = e;
+            }
+            chai.assert.isDefined(error, "expected error to be thrown");
+            chai.assert.equal(error.statusCode, 432);
         });
     });
 });

@@ -1,8 +1,10 @@
+import * as jsonschema from "jsonschema";
+import {RestError} from "./RestError";
+import {ValidateBodyOptions} from "./ValidateBodyOptions";
+
 /**
  * Input to the HTTP router.  Based on the ProxyEvent but enriched.
  */
-import {RestError} from "./RestError";
-
 export class RouterEvent {
 
     context: {
@@ -75,8 +77,14 @@ export class RouterEvent {
      */
     queryStringParameters: { [key: string]: string };
 
+    /**
+     * Configuration attributes associated with a deployment stage of an API.
+     */
     stageVariables: { [key: string]: string };
 
+    /**
+     * Get the value for the given header key.
+     */
     getHeader(header: string): string {
         return this._headersLowerCase[header.toLowerCase()];
     }
@@ -165,6 +173,26 @@ export class RouterEvent {
         }
         if (valuesOrValidator && typeof valuesOrValidator === "function" && !valuesOrValidator(this._headersLowerCase[fieldLowerCase])) {
             throw new RestError(400, explanation || `Required header '${field}=${this._headersLowerCase[fieldLowerCase]}' is not a legal value.`);
+        }
+    }
+
+    /**
+     * Validate the body of the request using JSON Schema.
+     *
+     * JSON Schema is a concise way to define a valid JSON object.
+     * The spec and examples can be found at http://json-schema.org/
+     * with additional help at
+     * https://spacetelescope.github.io/understanding-json-schema/index.html .
+     *
+     * The actual implementation comes from https://github.com/tdegrunt/jsonschema .
+     */
+    validateBody(schema: jsonschema.Schema, options?: ValidateBodyOptions): void {
+        const result = jsonschema.validate(this.body, schema, options);
+        if (result.errors.length) {
+            throw new RestError(
+                options && typeof options.httpStatusCode === "number" ? options.httpStatusCode : 422,
+                `The ${this.httpMethod} body has ${result.errors.length} validation error(s): ${result.errors.map(e => e.toString()).join(", ")}.`
+            );
         }
     }
 }
