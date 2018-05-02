@@ -1,7 +1,6 @@
 import * as chai from "chai";
 import * as cassava from "../";
-import {createTestProxyEvent} from "../testing/createTestProxyEvent";
-import {testRouter} from "../testing/index";
+import {createTestProxyEvent, testRouter} from "../testing";
 
 describe("BuildableRoute", () => {
     it("matches from the start of the path", async () => {
@@ -16,7 +15,7 @@ describe("BuildableRoute", () => {
         chai.assert.equal(resp.statusCode, 404, JSON.stringify(resp));
     });
 
-    it("string paths are not case sensitive", async () => {
+    it("has case-insensitive string paths", async () => {
         const router = new cassava.Router();
 
         router.route("/foo")
@@ -186,6 +185,150 @@ describe("BuildableRoute", () => {
             chai.assert.isObject(resp);
             chai.assert.equal(resp.statusCode, 200, JSON.stringify(resp));
             chai.assert.equal(resp.body, "\"happy-birthday/to/you!\"");
+        });
+    });
+
+    describe("Accept header matching with contentTypes()", () => {
+        const jsonContent = {a: "alpha", b: "bravo"};
+        const htmlContent = "<html><body>A is for Alpha. B is for Bravo.</body></html>";
+        const xmlContent = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<a>alpha</a><b>bravo</b>";
+        const csvContent = "a,b\nalpha,bravo";
+
+        it("matches when there is no Accept header", async () => {
+            const router = new cassava.Router();
+
+            router.route("/path")
+                .contentTypes("application/json")
+                .handler(async evt => {
+                    return {
+                        body: jsonContent
+                    };
+                });
+
+            const resp = await testRouter(router, createTestProxyEvent("/path", "GET", {headers: {}}));
+            chai.assert.isObject(resp);
+            chai.assert.equal(resp.statusCode, 200, JSON.stringify(resp));
+            chai.assert.equal(resp.body, JSON.stringify(jsonContent));
+            chai.assert.equal(resp.headers["Content-Type"], "application/json");
+        });
+
+        it("matches an exact Accept to an exact Content-Type", async () => {
+            const router = new cassava.Router();
+
+            router.route("/path")
+                .contentTypes("application/json")
+                .handler(async evt => {
+                    return {
+                        body: jsonContent
+                    };
+                });
+
+            const resp = await testRouter(router, createTestProxyEvent("/path", "GET", {headers: {Accept: "application/json"}}));
+            chai.assert.isObject(resp);
+            chai.assert.equal(resp.statusCode, 200, JSON.stringify(resp));
+            chai.assert.equal(resp.body, JSON.stringify(jsonContent));
+            chai.assert.equal(resp.headers["Content-Type"], "application/json");
+        });
+
+        it("matches an exact Accept to a list of exact Content-Types", async () => {
+            const router = new cassava.Router();
+
+            router.route("/path")
+                .contentTypes("application/json", "text/html")
+                .handler(async evt => {
+                    return {
+                        headers: {
+                            "Content-Type": "text/html"
+                        },
+                        body: htmlContent
+                    };
+                });
+
+            const resp = await testRouter(router, createTestProxyEvent("/path", "GET", {headers: {Accept: "text/html"}}));
+            chai.assert.isObject(resp);
+            chai.assert.equal(resp.statusCode, 200, JSON.stringify(resp));
+            chai.assert.equal(resp.body, htmlContent);
+            chai.assert.equal(resp.headers["Content-Type"], "text/html");
+        });
+
+        it("matches a list Accept with q values to an exact Content-Type", async () => {
+            const router = new cassava.Router();
+
+            router.route("/path")
+                .contentTypes("application/xml")
+                .handler(async evt => {
+                    return {
+                        headers: {
+                            "Content-Type": "application/xml"
+                        },
+                        body: xmlContent
+                    };
+                });
+
+            const resp = await testRouter(router, createTestProxyEvent("/path", "GET", {headers: {Accept: "text/html, application/xhtml+xml, application/xml;q=0.9, */*;q=0.8"}}));
+            chai.assert.isObject(resp);
+            chai.assert.equal(resp.statusCode, 200, JSON.stringify(resp));
+            chai.assert.equal(resp.body, xmlContent);
+            chai.assert.equal(resp.headers["Content-Type"], "application/xml");
+        });
+
+        it("matches a */* Accept to an exact Content-Type", async () => {
+            const router = new cassava.Router();
+
+            router.route("/path")
+                .contentTypes("application/xml")
+                .handler(async evt => {
+                    return {
+                        headers: {
+                            "Content-Type": "text/csv"
+                        },
+                        body: csvContent
+                    };
+                });
+
+            const resp = await testRouter(router, createTestProxyEvent("/path", "GET", {headers: {Accept: "text/html, application/xhtml+xml, application/xml;q=0.9, */*;q=0.8"}}));
+            chai.assert.isObject(resp);
+            chai.assert.equal(resp.statusCode, 200, JSON.stringify(resp));
+            chai.assert.equal(resp.body, csvContent);
+            chai.assert.equal(resp.headers["Content-Type"], "text/csv");
+        });
+
+        it("rejects a complete mismatch to one Content-Type", async () => {
+            const router = new cassava.Router();
+
+            router.route("/path")
+                .contentTypes("text/csv")
+                .handler(async evt => {
+                    return {
+                        headers: {
+                            "Content-Type": "text/csv"
+                        },
+                        body: csvContent
+                    };
+                });
+
+            const resp = await testRouter(router, createTestProxyEvent("/path", "GET", {headers: {Accept: "text/html, application/xhtml+xml, application/xml;q=0.9"}}));
+            chai.assert.isObject(resp);
+            chai.assert.equal(resp.statusCode, 404, JSON.stringify(resp));
+        });
+
+        it("rejects a complete mismatch to a list of Content-Types", async () => {
+            const router = new cassava.Router();
+
+            router.route("/path")
+                .contentTypes("application/json", "text/csv")
+                .handler(async evt => {
+                    return {
+                        headers: {
+                            "Content-Type": "text/csv"
+                        },
+                        body: csvContent
+                    };
+                });
+
+            const resp = await testRouter(router, createTestProxyEvent("/path", "GET", {headers: {Accept: "text/html, application/xhtml+xml, application/xml;q=0.9"}}));
+            chai.assert.isObject(resp);
+            chai.assert.equal(resp.statusCode, 404, JSON.stringify(resp));
         });
     });
 });

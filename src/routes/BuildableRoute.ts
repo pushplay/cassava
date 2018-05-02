@@ -1,3 +1,4 @@
+import Negotiator = require("negotiator");
 import {Route} from "./Route";
 import {RouterEvent} from "../RouterEvent";
 import {RouterResponse} from "../RouterResponse";
@@ -10,6 +11,7 @@ export class BuildableRoute implements Route, RouteBuilder {
         pathRegex?: RegExp;
         regexGroupToPathParamMap?: string[],
         method?: string;
+        responseContentMimeTypes?: string[];
     } = {};
 
     matches(evt: RouterEvent): boolean {
@@ -18,6 +20,12 @@ export class BuildableRoute implements Route, RouteBuilder {
         }
         if (this.settings.pathRegex && !this.settings.pathRegex.test(evt.path)) {
             return false;
+        }
+        if (this.settings.responseContentMimeTypes) {
+            const negotiator = new Negotiator({headers: evt._headersLowerCase});
+            if (!negotiator.mediaType(this.settings.responseContentMimeTypes)) {
+                return false;
+            }
         }
         return true;
     }
@@ -64,8 +72,8 @@ export class BuildableRoute implements Route, RouteBuilder {
             this.settings.regexGroupToPathParamMap = [""];
             const sanitizedPathRegex = path
                 .replace(/[#-.]|[[-^]|[?|{}]/g, "\\$&")
-                .replace(/\\\{[a-zA-Z][a-zA-Z0-9]*\\\}/g, substr => {
-                    const pathParamName = substr.replace(/^\\\{/, "").replace(/\\\}/, "");
+                .replace(/\\{[a-zA-Z][a-zA-Z0-9]*\\}/g, substr => {
+                    const pathParamName = substr.replace(/^\\{/, "").replace(/\\}/, "");
                     this.settings.regexGroupToPathParamMap.push(pathParamName);
                     return "([0-9a-zA-Z\-._~!$&'()*+,;=:@%]+)";
                 });
@@ -84,12 +92,23 @@ export class BuildableRoute implements Route, RouteBuilder {
 
     method(method: string): this {
         if (!method) {
-            throw new Error("method must be set");
+            throw new Error("method cannot be null");
         }
         if (this.settings.method) {
             throw new Error("method is already defined");
         }
         this.settings.method = method;
+        return this;
+    }
+
+    contentTypes(...responseContentMimeTypes: string[]): this {
+        if (!responseContentMimeTypes.length) {
+            throw new Error("contentTypes cannot be empty");
+        }
+        if (this.settings.responseContentMimeTypes) {
+            throw new Error("contentTypes is already defined");
+        }
+        this.settings.responseContentMimeTypes = responseContentMimeTypes;
         return this;
     }
 
@@ -127,6 +146,11 @@ export interface RouteBuilder {
      * Match requests for the given method.
      */
     method(method: string): this;
+
+    /**
+     * Match requests for clients than can accept one of the given content types.
+     */
+    contentTypes(...responseContentMimeTypes: string[]): this;
 
     /**
      * Set the handler for this Route.

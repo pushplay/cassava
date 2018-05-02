@@ -230,6 +230,9 @@ export class Router {
             }
         } else if (typeof resp.body !== "string" || !contentType || contentType === "application/json" || contentType === "text/json" || contentType === "text/x-json") {
             body = JSON.stringify(resp.body);
+            if (!contentType) {
+                this.setResponseHeader(resp, "Content-Type", "application/json");
+            }
         } else {
             body = resp.body;
         }
