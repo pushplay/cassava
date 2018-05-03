@@ -1,11 +1,10 @@
 import * as awslambda from "aws-lambda";
 import * as cookieLib from "cookie";
 import * as url from "url";
-import {DefaultRoute, Route} from "./routes";
+import {BuildableRoute, DefaultRoute, Route, RouteBuilder} from "./routes";
 import {ProxyEvent} from "./ProxyEvent";
 import {ProxyResponse, ProxyResponseCallback} from "./ProxyResponse";
 import {RestError} from "./RestError";
-import {BuildableRoute, RouteBuilder} from "./routes/BuildableRoute";
 import {RouterEvent} from "./RouterEvent";
 import {RouterResponse} from "./RouterResponse";
 import {httpStatusCode, httpStatusString} from "./httpStatus";
@@ -171,6 +170,7 @@ export class Router {
             // This constructor was added in Node v6.13.0.
             return new url.URL(path, "http://host/").pathname.replace(/\/\/+/g, "/");
         } else if (url.parse) {
+            // This method was deprecated in Node v6.13.0.
             return url.parse(path).pathname.replace(/\/\/+/g, "/");
         } else {
             throw new Error("No suitable URL parsing method in the 'url' package found.");
