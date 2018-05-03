@@ -1,7 +1,7 @@
 import * as chai from "chai";
 import * as cassava from "../";
 import {createTestProxyEvent, testRouter} from "../testing";
-import {jsonSerializer} from "./serializers";
+import {jsonSerializer} from "../serializers";
 
 describe("BuildableRoute", () => {
     it("matches from the start of the path", async () => {

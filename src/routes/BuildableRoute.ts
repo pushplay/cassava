@@ -171,7 +171,7 @@ export interface RouteBuilder {
      * eg:
      * ```
      * serializers({
-     *  "application/json": body => JSON.stringify(body),
+     *  "application/json": cassava.serializers.jsonSerializer,
      *  "text/plain": body => body.toString()
      * })
      * ```
@@ -182,11 +182,13 @@ export interface RouteBuilder {
 
     /**
      * Set the handler for this Route.
+     * @see routes.Route.handle
      */
     handler(handler: (evt: RouterEvent) => Promise<RouterResponse | null | void> | RouterResponse | null | void): this;
 
     /**
      * Set the post processor for this Route.
+     * @see routes.Route.postProcess
      */
     postProcessor(postProcessor: (evt: RouterEvent, resp: RouterResponse) => Promise<RouterResponse | null | void> | RouterResponse | null | void): this;
 

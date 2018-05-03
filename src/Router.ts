@@ -19,18 +19,21 @@ export class Router {
 
     /**
      * The default route that will be matched if no other routes matched.
+     *
+     * The default implementation is to return a 404 response.
      */
     defaultRoute: Route = new DefaultRoute();
 
     /**
      * The handler that will be called when non-RestErrors are thrown.
      * The handler can return nothing, a RouterResponse, or a Promise that resolves
-     * to nothing or a RouterResponse.  If a RouterResponse or Promise or RouterResponse
-     * is returned that will be the response used.
+     * such.  If a RouterResponse or Promise of RouterResponse is returned that will
+     * be the response used.
      *
      * The default implementation is to log the error.
      */
-    errorHandler: (err: Error) => Promise<RouterResponse | null | void> | RouterResponse | null | void = err => console.log("Error thrown during execution.\n", err);
+    errorHandler: (err: Error) => Promise<RouterResponse | null | void> | RouterResponse | null | void
+        = err => console.log("Error thrown during execution.\n", err);
 
     /**
      * Start a BuildableRoute with the given string or regex path.

@@ -3,5 +3,5 @@ export function jsonSerializer(body: any): string {
 }
 
 export function textSerializer(body: any): string {
-    return typeof body === "string" ? body : JSON.stringify(body);
+    return body.toString();
 }

@@ -7,6 +7,9 @@ import {ValidateBodyOptions} from "./ValidateBodyOptions";
  */
 export class RouterEvent {
 
+    /**
+     * API Gateway event context.
+     */
     context: {
         accountId: string,
         apiId: string,
@@ -58,7 +61,9 @@ export class RouterEvent {
     httpMethod: string;
 
     /**
-     * A work area for Routes to add properties to.
+     * A work area for Routes to add properties to.  This can be used
+     * to sneak information from routes that preprocess to later routes;
+     * for example auth credentials.
      */
     meta: { [name: string]: any };
 
@@ -139,13 +144,6 @@ export class RouterEvent {
     }
 
     /**
-     * @deprecated use whitelistQueryStringParameters()
-     */
-    whitelistStringQueryParameters(...params: string[]): void {
-        whitelistKeys(this.queryStringParameters || {}, params, "query parameter");
-    }
-
-    /**
      * Require that the given header field is set.
      */
     requireHeader(field: string): void;
@@ -185,6 +183,9 @@ export class RouterEvent {
      * https://spacetelescope.github.io/understanding-json-schema/index.html .
      *
      * The actual implementation comes from https://github.com/tdegrunt/jsonschema .
+     *
+     * @param schema the JSON Schema to validate the body against
+     * @param options validator options for `tdegrunt/jsonschema`
      */
     validateBody(schema: jsonschema.Schema, options?: ValidateBodyOptions): void {
         const result = jsonschema.validate(this.body, schema, options);
