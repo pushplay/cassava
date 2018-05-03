@@ -351,6 +351,10 @@ export class FileSystemRoute implements Route {
             return Promise.resolve(null);
         }
 
+        if (this.config.fileExtensionBlacklist && this.config.fileExtensionBlacklist.find(ext => truePath.endsWith(ext))) {
+            return Promise.resolve(null);
+        }
+
         if (this.config.fileExtensionWhitelist && !this.config.fileExtensionWhitelist.find(ext => truePath.endsWith(ext))) {
             return Promise.resolve(null);
         }
@@ -396,8 +400,15 @@ export interface FileSystemRouteConfig {
     fsPath: string;
 
     /**
+     * Optional list of file extensions to blacklist.  If set any files
+     * with extensions in this list will not be served.  `fileExtensionWhitelist`
+     * is the more secure option.
+     */
+    fileExtensionBlacklist?: string[];
+
+    /**
      * Optional list of file extensions to whitelist.  If set any files
-     * with extensions not in this list will not be served.
+     * with extensions *not* in this list will not be served.
      */
     fileExtensionWhitelist?: string[];
 
