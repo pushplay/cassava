@@ -4,8 +4,7 @@ export {ProxyResponseCallback, ProxyResponse} from "./ProxyResponse";
 export {RestError} from "./RestError";
 export {Router} from "./Router";
 export {RouterResponse} from "./RouterResponse";
-export {RouterEvent} from "./RouterEvent";
-export {ValidateBodyOptions} from "./ValidateBodyOptions";
+export {RouterEvent, ValidateBodyOptions} from "./RouterEvent";
 
 import * as routes from "./routes";
 import * as serializers from "./serializers";

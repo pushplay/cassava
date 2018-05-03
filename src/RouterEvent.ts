@@ -1,6 +1,5 @@
 import * as jsonschema from "jsonschema";
 import {RestError} from "./RestError";
-import {ValidateBodyOptions} from "./ValidateBodyOptions";
 
 /**
  * Input to the HTTP router.  Based on the ProxyEvent but enriched.
@@ -176,9 +175,6 @@ export class RouterEvent {
      * https://spacetelescope.github.io/understanding-json-schema/index.html .
      *
      * The actual implementation comes from https://github.com/tdegrunt/jsonschema .
-     *
-     * @param schema the JSON Schema to validate the body against
-     * @param options validator options for `tdegrunt/jsonschema`
      */
     validateBody(schema: jsonschema.Schema, options?: ValidateBodyOptions): void {
         const result = jsonschema.validate(this.body, schema, options);
@@ -189,6 +185,16 @@ export class RouterEvent {
             );
         }
     }
+}
+
+/**
+ * RouterEvent.validateBody() options.  Extends jsonschema.validate() Options.
+ */
+export interface ValidateBodyOptions extends jsonschema.Options {
+    /**
+     * The HTTP status code to use for validation errors.  Defaults to 422.
+     */
+    httpStatusCode?: number;
 }
 
 function blacklistKeys(o: object, keys: string[], part: string = "member"): void {

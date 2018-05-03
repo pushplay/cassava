@@ -242,9 +242,4 @@ export class Router {
             isBase64Encoded
         };
     }
-
-
-    private isPromise<T>(res: void | T | Promise<T>): res is Promise<T> {
-        return res && typeof (res as Promise<T>).then === "function";
-    }
 }
