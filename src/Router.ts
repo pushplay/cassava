@@ -209,30 +209,25 @@ export class Router {
                 const key = cookieKeys[i];
                 const value = resp.cookies[key];
                 const cookieString = typeof value === "string" ? cookieLib.serialize(key, value) : cookieLib.serialize(key, value.value, value.options);
-                const setCookie = this.getResponseHeader(resp, "Set-Cookie");
+                const setCookie = RouterResponse.getHeader(resp, "Set-Cookie");
                 if (setCookie) {
-                    this.setResponseHeader(resp, "Set-Cookie", `${setCookie}; ${cookieString}`);
+                    RouterResponse.setHeader(resp, "Set-Cookie", `${setCookie}; ${cookieString}`);
                 } else {
-                    this.setResponseHeader(resp, "Set-Cookie", cookieString);
+                    RouterResponse.setHeader(resp, "Set-Cookie", cookieString);
                 }
             }
         }
 
         let isBase64Encoded = false;
         let body: string;
-        const contentType = this.getResponseHeader(resp, "Content-Type");
+        const contentType = RouterResponse.getHeader(resp, "Content-Type");
         if (resp.body instanceof Buffer) {
-            if (contentType && (contentType.startsWith("text/") || contentType.startsWith("application/json") || contentType.endsWith("+json") || contentType.endsWith("+xml"))) {
-                body = resp.body.toString("utf-8");
-            } else {
-                body = resp.body.toString("base64");
-                isBase64Encoded = true;
-            }
-        } else if (typeof resp.body !== "string" || !contentType || contentType === "application/json" || contentType === "text/json" || contentType === "text/x-json") {
+            body = resp.body.toString("base64");
+            isBase64Encoded = true;
+        } else if (!contentType) {
+            // Automatic serialization to JSON if Content-Type is not set.
             body = JSON.stringify(resp.body);
-            if (!contentType) {
-                this.setResponseHeader(resp, "Content-Type", "application/json");
-            }
+            RouterResponse.setHeader(resp, "Content-Type", "application/json");
         } else {
             body = resp.body;
         }
@@ -245,36 +240,6 @@ export class Router {
         };
     }
 
-    private getResponseHeader(resp: RouterResponse, field: string): string | null {
-        if (!resp.headers) {
-            return null;
-        }
-
-        const fieldLower = field.toLowerCase();
-        for (const k of Object.keys(resp.headers)) {
-            if (k.toLowerCase() === fieldLower) {
-                return resp.headers[k];
-            }
-        }
-
-        return null;
-    }
-
-    private setResponseHeader(resp: RouterResponse, field: string, value: string): void {
-        if (!resp.headers) {
-            resp.headers = {};
-        }
-
-        const fieldLower = field.toLowerCase();
-        for (const k of Object.keys(resp.headers)) {
-            if (k.toLowerCase() === fieldLower) {
-                resp.headers[k] = value;
-                return;
-            }
-        }
-
-        resp.headers[field] = value;
-    }
 
     private isPromise<T>(res: void | T | Promise<T>): res is Promise<T> {
         return res && typeof (res as Promise<T>).then === "function";

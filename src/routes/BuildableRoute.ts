@@ -11,7 +11,7 @@ export class BuildableRoute implements Route, RouteBuilder {
         pathRegex?: RegExp;
         regexGroupToPathParamMap?: string[],
         method?: string;
-        responseContentMimeTypes?: string[];
+        serializers?: { [mimeType: string]: (body: any) => Promise<string> | string }
     } = {};
 
     matches(evt: RouterEvent): boolean {
@@ -21,16 +21,16 @@ export class BuildableRoute implements Route, RouteBuilder {
         if (this.settings.pathRegex && !this.settings.pathRegex.test(evt.path)) {
             return false;
         }
-        if (this.settings.responseContentMimeTypes) {
+        if (this.settings.serializers) {
             const negotiator = new Negotiator({headers: evt._headersLowerCase});
-            if (!negotiator.mediaType(this.settings.responseContentMimeTypes)) {
+            if (!negotiator.mediaType(Object.keys(this.settings.serializers))) {
                 return false;
             }
         }
         return true;
     }
 
-    handle(evt: RouterEvent): Promise<RouterResponse> | null {
+    async handle(evt: RouterEvent): Promise<RouterResponse> | null {
         if (this.settings.handler) {
             const calculatedPathParameters = {...evt.pathParameters};
 
@@ -46,7 +46,22 @@ export class BuildableRoute implements Route, RouteBuilder {
 
             const pathedRouterEvent = Object.assign(new RouterEvent(), evt);
             pathedRouterEvent.pathParameters = calculatedPathParameters;
-            return this.settings.handler(pathedRouterEvent);
+            const resp = await this.settings.handler(pathedRouterEvent);
+            if (!resp) {
+                return resp;
+            }
+
+            if (this.settings.serializers) {
+                const negotiator = new Negotiator({headers: evt._headersLowerCase});
+                const mediaType = negotiator.mediaType(Object.keys(this.settings.serializers));
+                resp.body = await this.settings.serializers[mediaType](resp.body);
+                if (!resp.headers) {
+                    resp.headers = {};
+                }
+                RouterResponse.setHeader(resp, "Content-Type", mediaType);
+            }
+
+            return resp;
         }
         return null;
     }
@@ -101,14 +116,14 @@ export class BuildableRoute implements Route, RouteBuilder {
         return this;
     }
 
-    contentTypes(...responseContentMimeTypes: string[]): this {
-        if (!responseContentMimeTypes.length) {
-            throw new Error("contentTypes cannot be empty");
+    serializers(serializers: { [mimeType: string]: (body: any) => Promise<string> | string }): this {
+        if (!serializers) {
+            throw new Error("serializers cannot be null");
         }
-        if (this.settings.responseContentMimeTypes) {
-            throw new Error("contentTypes is already defined");
+        if (this.settings.serializers) {
+            throw new Error("serializers is already defined");
         }
-        this.settings.responseContentMimeTypes = responseContentMimeTypes;
+        this.settings.serializers = serializers;
         return this;
     }
 
@@ -148,9 +163,22 @@ export interface RouteBuilder {
     method(method: string): this;
 
     /**
-     * Match requests for clients than can accept one of the given content types.
+     * Match requests for clients than can accept one of the given mime-types
+     * and use the given serializer on the response body.  The serializer will be
+     * called with the body if the handler returns a response.  The serializer
+     * must return a string or Buffer, or Promise of such.
+     *
+     * eg:
+     * ```
+     * serializers({
+     *  "application/json": body => JSON.stringify(body),
+     *  "text/plain": body => body.toString()
+     * })
+     * ```
+     *
+     * @param serializers a map of mime-type to serializer function
      */
-    contentTypes(...responseContentMimeTypes: string[]): this;
+    serializers(serializers: { [mimeType: string]: (body: any) => Promise<string | Buffer> | string | Buffer }): this;
 
     /**
      * Set the handler for this Route.
