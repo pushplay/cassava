@@ -22,7 +22,7 @@ export class BuildableRoute implements Route, RouteBuilder {
             return false;
         }
         if (this.settings.serializers) {
-            const negotiator = new Negotiator({headers: evt._headersLowerCase});
+            const negotiator = new Negotiator({headers: evt.headersLowerCase});
             if (!negotiator.mediaType(Object.keys(this.settings.serializers))) {
                 return false;
             }
@@ -52,7 +52,7 @@ export class BuildableRoute implements Route, RouteBuilder {
             }
 
             if (this.settings.serializers) {
-                const negotiator = new Negotiator({headers: evt._headersLowerCase});
+                const negotiator = new Negotiator({headers: evt.headersLowerCase});
                 const mediaType = negotiator.mediaType(Object.keys(this.settings.serializers));
                 resp.body = await this.settings.serializers[mediaType](resp.body);
                 if (!resp.headers) {
