@@ -84,6 +84,7 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_routes_filesystemroute_.filesystemrouteconfig.html#fileextensionblacklist" class="tsd-kind-icon">file<wbr>Extension<wbr>Blacklist</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_routes_filesystemroute_.filesystemrouteconfig.html#fileextensionwhitelist" class="tsd-kind-icon">file<wbr>Extension<wbr>Whitelist</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_routes_filesystemroute_.filesystemrouteconfig.html#fspath" class="tsd-kind-icon">fs<wbr>Path</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_routes_filesystemroute_.filesystemrouteconfig.html#mimetypes" class="tsd-kind-icon">mime<wbr>Types</a></li>
@@ -96,18 +97,35 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="fileextensionblacklist" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> file<wbr>Extension<wbr>Blacklist</h3>
+					<div class="tsd-signature tsd-kind-icon">file<wbr>Extension<wbr>Blacklist<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/2127b58/src/routes/FileSystemRoute.ts#L407">routes/FileSystemRoute.ts:407</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Optional list of file extensions to blacklist.  If set any files
+								with extensions in this list will not be served.  <code>fileExtensionWhitelist</code>
+							is the more secure option.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="fileextensionwhitelist" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> file<wbr>Extension<wbr>Whitelist</h3>
 					<div class="tsd-signature tsd-kind-icon">file<wbr>Extension<wbr>Whitelist<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/4e2781f/src/routes/FileSystemRoute.ts#L402">routes/FileSystemRoute.ts:402</a></li>
+							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/2127b58/src/routes/FileSystemRoute.ts#L413">routes/FileSystemRoute.ts:413</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
 							<p>Optional list of file extensions to whitelist.  If set any files
-							with extensions not in this list will not be served.</p>
+							with extensions <em>not</em> in this list will not be served.</p>
 						</div>
 					</div>
 				</section>
@@ -117,7 +135,7 @@
 					<div class="tsd-signature tsd-kind-icon">fs<wbr>Path<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/4e2781f/src/routes/FileSystemRoute.ts#L396">routes/FileSystemRoute.ts:396</a></li>
+							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/2127b58/src/routes/FileSystemRoute.ts#L400">routes/FileSystemRoute.ts:400</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -132,7 +150,7 @@
 					<div class="tsd-signature tsd-kind-icon">mime<wbr>Types<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/4e2781f/src/routes/FileSystemRoute.ts#L410">routes/FileSystemRoute.ts:410</a></li>
+							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/2127b58/src/routes/FileSystemRoute.ts#L421">routes/FileSystemRoute.ts:421</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -157,7 +175,7 @@
 					<div class="tsd-signature tsd-kind-icon">rest<wbr>Path<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/4e2781f/src/routes/FileSystemRoute.ts#L391">routes/FileSystemRoute.ts:391</a></li>
+							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/2127b58/src/routes/FileSystemRoute.ts#L395">routes/FileSystemRoute.ts:395</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -193,9 +211,6 @@
 						<a href="../modules/_routerresponse_.html">"<wbr>Router<wbr>Response"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_validatebodyoptions_.html">"<wbr>Validate<wbr>Body<wbr>Options"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
 						<a href="../modules/_httpstatus_.html">"http<wbr>Status"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
@@ -223,6 +238,9 @@
 						<a href="../modules/_routes_index_.html">"routes/index"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
+						<a href="../modules/_serializers_.html">"serializers"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
 						<a href="../modules/_testing_createtestlambdacontext_.html">"testing/create<wbr>Test<wbr>Lambda<wbr>Context"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
@@ -243,6 +261,9 @@
 					<li class="current tsd-kind-interface tsd-parent-kind-external-module">
 						<a href="_routes_filesystemroute_.filesystemrouteconfig.html" class="tsd-kind-icon">File<wbr>System<wbr>Route<wbr>Config</a>
 						<ul>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_routes_filesystemroute_.filesystemrouteconfig.html#fileextensionblacklist" class="tsd-kind-icon">file<wbr>Extension<wbr>Blacklist</a>
+							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="_routes_filesystemroute_.filesystemrouteconfig.html#fileextensionwhitelist" class="tsd-kind-icon">file<wbr>Extension<wbr>Whitelist</a>
 							</li>

@@ -107,13 +107,14 @@
 					<div class="tsd-signature tsd-kind-icon">default<wbr>Route<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_routes_route_.route.html" class="tsd-signature-type">Route</a><span class="tsd-signature-symbol"> =&nbsp;new DefaultRoute()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/4e2781f/src/Router.ts#L23">Router.ts:23</a></li>
+							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/2127b58/src/Router.ts#L24">Router.ts:24</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
 							<p>The default route that will be matched if no other routes matched.</p>
 						</div>
+						<p>The default implementation is to return a 404 response.</p>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
@@ -122,7 +123,7 @@
 					<div class="tsd-signature tsd-kind-icon">routes<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_routes_route_.route.html" class="tsd-signature-type">Route</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/4e2781f/src/Router.ts#L18">Router.ts:18</a></li>
+							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/2127b58/src/Router.ts#L17">Router.ts:17</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -144,15 +145,15 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/4e2781f/src/Router.ts#L33">Router.ts:33</a></li>
+									<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/2127b58/src/Router.ts#L34">Router.ts:34</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>The handler that will be called when non-RestErrors are thrown.
 										The handler can return nothing, a RouterResponse, or a Promise that resolves
-										to nothing or a RouterResponse.  If a RouterResponse or Promise or RouterResponse
-									is returned that will be the response used.</p>
+										such.  If a RouterResponse or Promise of RouterResponse is returned that will
+									be the response used.</p>
 								</div>
 								<p>The default implementation is to log the error.</p>
 							</div>
@@ -176,7 +177,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/4e2781f/src/Router.ts#L63">Router.ts:63</a></li>
+									<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/2127b58/src/Router.ts#L64">Router.ts:64</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">function</span></h4>
@@ -218,7 +219,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/4e2781f/src/Router.ts#L38">Router.ts:38</a></li>
+									<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/2127b58/src/Router.ts#L39">Router.ts:39</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -237,7 +238,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/4e2781f/src/Router.ts#L43">Router.ts:43</a></li>
+									<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/2127b58/src/Router.ts#L44">Router.ts:44</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -288,9 +289,6 @@
 						<a href="../modules/_routerresponse_.html">"<wbr>Router<wbr>Response"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_validatebodyoptions_.html">"<wbr>Validate<wbr>Body<wbr>Options"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
 						<a href="../modules/_httpstatus_.html">"http<wbr>Status"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
@@ -316,6 +314,9 @@
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="../modules/_routes_index_.html">"routes/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_serializers_.html">"serializers"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="../modules/_testing_createtestlambdacontext_.html">"testing/create<wbr>Test<wbr>Lambda<wbr>Context"</a>

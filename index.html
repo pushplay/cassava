@@ -66,7 +66,7 @@
 			<div class="tsd-panel tsd-typography">
 				<h1 id="cassava">Cassava</h1>
 				<p>AWS API Gateway Router</p>
-				<p>Find the full documentation at <a href="https://giftbit.github.io/cassava/">https://giftbit.github.io/cassava/</a> </p>
+				<p>Find the full documentation at <a href="https://giftbit.github.io/cassava/">https://giftbit.github.io/cassava/</a></p>
 				<h2 id="routing">Routing</h2>
 				<p>There are two ways to add routes to Cassava.</p>
 				<ul>
@@ -85,7 +85,7 @@
 				</ul>
 				<p>Cassava processes REST events by examining installed routes from top-to-bottom.  Cassava works downwards to find the first route that matches and responds, and then works back up to do any post-processing.</p>
 				<p>A route responds when: it matches the event, has a <code>handle</code> function, and handles the event by returning a response object or Promise that resolves to a response object.</p>
-				<p>A route can post-process the response when: it matches the event, did not handle the event, and has a <code>postProcess</code> function.  Post processing can be used to modify the response or cause some side effect such as logging.</p>
+				<p>A route can post-process the response when: it matches the event, did not return a response object in <code>handle</code>, and has a <code>postProcess</code> function.  Post processing can be used to modify the response or cause some side effect such as logging.</p>
 				<h2 id="routebuilder">RouteBuilder</h2>
 				<p><a href="https://giftbit.github.io/cassava/interfaces/_routes_buildableroute_.routebuilder.html">RouteBuilder</a> is the simplest way to add a route to Cassava.  A RouteBuilder instance is started with <code>router.route(string)</code> or <code>router.route(RegExp)</code>, then with chained function calls you can specify the HTTP method, add a <code>handle</code> function or a <code>postProcess</code> function.</p>
 				<p>The details of handling and post-processing are covered later in this document.</p>
@@ -117,7 +117,7 @@ router.route(<span class="hljs-string">"/hello/{name}"</span>)
 <span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> handler = router.getLambdaHandler();
 </code></pre>
 				<h2 id="custom-routes">Custom Routes</h2>
-				<p>A custom route is one that implements the <a href="https://giftbit.github.io/cassava/interfaces/_routes_route_.route.html">Route</a> interface: it must have a <code>matches</code> function that accepts a <code>RouterEvent</code> and returns a boolean and at least one of a <code>handle</code> function and <code>postProcess</code> function.  </p>
+				<p>A custom route is one that implements the <a href="https://giftbit.github.io/cassava/interfaces/_routes_route_.route.html">Route</a> interface: it must have a <code>matches</code> function that accepts a <code>RouterEvent</code> and returns a boolean and at least one of a <code>handle</code> function and <code>postProcess</code> function.</p>
 				<p>The details of RouterEvents, handling and post-processing are covered later in this document.</p>
 				<p>For example...</p>
 				<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> cassava <span class="hljs-keyword">from</span> <span class="hljs-string">"cassava"</span>;
@@ -152,6 +152,47 @@ router.route({
 				<p>A <code>handle</code> function takes in a RouterEvent and can return the following: <code>null</code> or <code>undefined</code> to not handle the RouterEvent in which case further routes are consulted; a <a href="https://giftbit.github.io/cassava/interfaces/_routerresponse_.routerresponse.html">RouterResponse</a> that represents the response sent to the client; a Promise that resolves to <code>null</code> or <code>undefined</code> which will again let further routes handle the request; a Promise that resolves to a RouterResponse which again will be the response sent to the client.</p>
 				<p><a href="https://giftbit.github.io/cassava/interfaces/_routerresponse_.routerresponse.html">RouterResponses</a> include the body, an optional HTTP status code (defaults to 200), and optionally any headers that might be set.</p>
 				<p>A <code>postProcess</code> function takes in both the RouterEvent and the current RouterResponse.  It can return <code>null</code> or <code>undefined</code> or a Promise resolving to one of those to not affect the final response; or it can return a RouterResponse or a Promise resolving to a RouterResponse to change the response.</p>
+				<h2 id="response-serialization">Response serialization</h2>
+				<p>The default assumption is that you&#39;re building a JSON-based API so that&#39;s the simplest case.  By default the response body will be JSON stringified and the header <code>Content-Type</code> set to <code>application/json</code>.  This is true even if the body is a <code>string</code>.  If you don&#39;t want that behavior you have two options:</p>
+				<h3 id="manual-content-type">Manual Content-Type</h3>
+				<p>The first option for returning non-JSON is to set the response body to a <code>string</code> or <code>Buffer</code>, and set the <code>Content-Type</code> header.  This works when using a custom route or the route builder.  For example:</p>
+				<pre><code class="lang-typescript">router.route(<span class="hljs-string">"/robots"</span>)
+    .method(<span class="hljs-string">"GET"</span>)
+    .handler(<span class="hljs-keyword">async</span> evt =&gt; {
+        <span class="hljs-keyword">return</span> {
+            headers: {
+                <span class="hljs-string">"Content-Type"</span>: <span class="hljs-string">"text/csv"</span>
+            },
+            body: <span class="hljs-string">"robot,film\nRobby,Forbidden Planet\nGort,The Day the Earth Stood Still"</span>
+        };
+    });
+</code></pre>
+				<p>This is simple to implement but ignores the client&#39;s <code>Accept</code> header.  This endpoint will always return csv regardless of what the client asks for.</p>
+				<h3 id="routebuilder-serializers">RouteBuilder.serializers</h3>
+				<p>When using the route builder there is a second option of letting the handler return a complex object as in the JSON case, but defining serializer functions for each response mime type.  The appropriate serializer will be chosen based upon the client&#39;s <code>Accept</code> header.  In the following example the same endpoint can return one of JSON, CSV and XML.</p>
+				<pre><code class="lang-typescript">router.route(<span class="hljs-string">"/robots"</span>)
+    .method(<span class="hljs-string">"GET"</span>)
+    .serializers({
+        <span class="hljs-string">"application/json"</span>: cassava.serializers.json,
+        <span class="hljs-string">"text/csv"</span>: <span class="hljs-function"><span class="hljs-params">body</span> =&gt;</span> <span class="hljs-keyword">new</span> json2csv.Parser({fields: [<span class="hljs-string">"robot"</span>, <span class="hljs-string">"film"</span>]}).parse(body),
+        <span class="hljs-string">"application/xml"</span>: <span class="hljs-function"><span class="hljs-params">body</span> =&gt;</span> jsontoxml({robots: body})
+    })
+    .handler(<span class="hljs-keyword">async</span> evt =&gt; {
+        <span class="hljs-keyword">return</span> {
+            body: [
+              {
+                  robot: <span class="hljs-string">"Robby"</span>,
+                  film: <span class="hljs-string">"Forbidden Planet"</span>
+              },
+              {
+                  robot: <span class="hljs-string">"Gort"</span>,
+                  film: <span class="hljs-string">"The Day the Earth Stood Still"</span>
+              }
+            ]
+        };
+    });
+</code></pre>
+				<p>CSV serialization is handled by <a href="https://www.npmjs.com/package/json2csv">json2csv</a> and XML serialization by <a href="https://www.npmjs.com/package/jsontoxml">jsontoxml</a>.  These libraries are not included with Cassava and you&#39;re free to choose your own serialization library.</p>
 				<h2 id="routerevent-validation">RouterEvent Validation</h2>
 				<p><a href="https://giftbit.github.io/cassava/modules/_routerevent_.html">RouterEvent</a> comes with a number of utility functions to validate the event.</p>
 				<ul>
@@ -239,9 +280,6 @@ router.route(<span class="hljs-string">"/locations"</span>)
 						<a href="modules/_routerresponse_.html">"<wbr>Router<wbr>Response"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_validatebodyoptions_.html">"<wbr>Validate<wbr>Body<wbr>Options"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
 						<a href="modules/_httpstatus_.html">"http<wbr>Status"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
@@ -267,6 +305,9 @@ router.route(<span class="hljs-string">"/locations"</span>)
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="modules/_routes_index_.html">"routes/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_serializers_.html">"serializers"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="modules/_testing_createtestlambdacontext_.html">"testing/create<wbr>Test<wbr>Lambda<wbr>Context"</a>

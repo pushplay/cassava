@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>RouterResponse | Cassava</title>
+	<title>&quot;serializers&quot; | Cassava</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,130 +56,77 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_routerresponse_.html">&quot;RouterResponse&quot;</a>
-				</li>
-				<li>
-					<a href="_routerresponse_.routerresponse.html">RouterResponse</a>
+					<a href="_serializers_.html">&quot;serializers&quot;</a>
 				</li>
 			</ul>
-			<h1>Interface RouterResponse</h1>
+			<h1>External module &quot;serializers&quot;</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
-			<section class="tsd-panel tsd-comment">
-				<div class="tsd-comment tsd-typography">
-					<div class="lead">
-						<p>An HTTP response that will be processed into a proper AWS API Gateway
-						ProxyResponse by the Router.</p>
-					</div>
-				</div>
-			</section>
-			<section class="tsd-panel tsd-hierarchy">
-				<h3>Hierarchy</h3>
-				<ul class="tsd-hierarchy">
-					<li>
-						<span class="target">RouterResponse</span>
-					</li>
-				</ul>
-			</section>
 			<section class="tsd-panel-group tsd-index-group">
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
-							<h3>Properties</h3>
+							<h3>Functions</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_routerresponse_.routerresponse.html#body" class="tsd-kind-icon">body</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_routerresponse_.routerresponse.html#cookies" class="tsd-kind-icon">cookies</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_routerresponse_.routerresponse.html#headers" class="tsd-kind-icon">headers</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_routerresponse_.routerresponse.html#statuscode" class="tsd-kind-icon">status<wbr>Code</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module"><a href="_serializers_.html#jsonserializer" class="tsd-kind-icon">json<wbr>Serializer</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module"><a href="_serializers_.html#textserializer" class="tsd-kind-icon">text<wbr>Serializer</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="body" class="tsd-anchor"></a>
-					<h3>body</h3>
-					<div class="tsd-signature tsd-kind-icon">body<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/4e2781f/src/RouterResponse.ts#L28">RouterResponse.ts:28</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>The body of the response, which will be stringified unless
-								<code>headers[&quot;Content-Type&quot;]</code> is specified and not <code>&quot;application/json&quot;</code>
-							and the body is already a string.</p>
-						</div>
-					</div>
+				<h2>Functions</h2>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module">
+					<a name="jsonserializer" class="tsd-anchor"></a>
+					<h3>json<wbr>Serializer</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module">
+						<li class="tsd-signature tsd-kind-icon">json<wbr>Serializer<span class="tsd-signature-symbol">(</span>body<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/2127b58/src/serializers.ts#L1">serializers.ts:1</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>body: <span class="tsd-signature-type">any</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="cookies" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> cookies</h3>
-					<div class="tsd-signature tsd-kind-icon">cookies<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/4e2781f/src/RouterResponse.ts#L21">RouterResponse.ts:21</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>Optional cookies to set on the response.</p>
-						</div>
-					</div>
-					<div class="tsd-type-declaration">
-						<h4>Type declaration</h4>
-						<ul class="tsd-parameters">
-							<li class="tsd-parameter-index-signature">
-								<h5><span class="tsd-signature-symbol">[</span>key: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="_routerresponse_.routerresponsecookie.html" class="tsd-signature-type">RouterResponseCookie</a></h5>
-							</li>
-						</ul>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="headers" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> headers</h3>
-					<div class="tsd-signature tsd-kind-icon">headers<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/4e2781f/src/RouterResponse.ts#L16">RouterResponse.ts:16</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>Optional headers to set on the response.</p>
-						</div>
-					</div>
-					<div class="tsd-type-declaration">
-						<h4>Type declaration</h4>
-						<ul class="tsd-parameters">
-							<li class="tsd-parameter-index-signature">
-								<h5><span class="tsd-signature-symbol">[</span>key: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">string</span></h5>
-							</li>
-						</ul>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="statuscode" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> status<wbr>Code</h3>
-					<div class="tsd-signature tsd-kind-icon">status<wbr>Code<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/4e2781f/src/RouterResponse.ts#L11">RouterResponse.ts:11</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>The HTTP status code to respond with.  Defaults to 200.</p>
-						</div>
-					</div>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module">
+					<a name="textserializer" class="tsd-anchor"></a>
+					<h3>text<wbr>Serializer</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module">
+						<li class="tsd-signature tsd-kind-icon">text<wbr>Serializer<span class="tsd-signature-symbol">(</span>body<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/2127b58/src/serializers.ts#L5">serializers.ts:5</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>body: <span class="tsd-signature-type">any</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
 				</section>
 			</section>
 		</div>
@@ -190,89 +137,71 @@
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_proxyevent_.html">"<wbr>Proxy<wbr>Event"</a>
+						<a href="_proxyevent_.html">"<wbr>Proxy<wbr>Event"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_proxyresponse_.html">"<wbr>Proxy<wbr>Response"</a>
+						<a href="_proxyresponse_.html">"<wbr>Proxy<wbr>Response"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_resterror_.html">"<wbr>Rest<wbr>Error"</a>
+						<a href="_resterror_.html">"<wbr>Rest<wbr>Error"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_router_.html">"<wbr>Router"</a>
+						<a href="_router_.html">"<wbr>Router"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_routerevent_.html">"<wbr>Router<wbr>Event"</a>
+						<a href="_routerevent_.html">"<wbr>Router<wbr>Event"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_routerresponse_.html">"<wbr>Router<wbr>Response"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_httpstatus_.html">"http<wbr>Status"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_index_.html">"index"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_routes_buildableroute_.html">"routes/<wbr>Buildable<wbr>Route"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_routes_defaultroute_.html">"routes/<wbr>Default<wbr>Route"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_routes_filesystemroute_.html">"routes/<wbr>File<wbr>System<wbr>Route"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_routes_loggingroute_.html">"routes/<wbr>Logging<wbr>Route"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_routes_proxyroute_.html">"routes/<wbr>Proxy<wbr>Route"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_routes_route_.html">"routes/<wbr>Route"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_routes_index_.html">"routes/index"</a>
 					</li>
 					<li class="current tsd-kind-external-module">
-						<a href="../modules/_routerresponse_.html">"<wbr>Router<wbr>Response"</a>
+						<a href="_serializers_.html">"serializers"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_validatebodyoptions_.html">"<wbr>Validate<wbr>Body<wbr>Options"</a>
+						<a href="_testing_createtestlambdacontext_.html">"testing/create<wbr>Test<wbr>Lambda<wbr>Context"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_httpstatus_.html">"http<wbr>Status"</a>
+						<a href="_testing_createtestproxyevent_.html">"testing/create<wbr>Test<wbr>Proxy<wbr>Event"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_index_.html">"index"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_routes_buildableroute_.html">"routes/<wbr>Buildable<wbr>Route"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_routes_defaultroute_.html">"routes/<wbr>Default<wbr>Route"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_routes_filesystemroute_.html">"routes/<wbr>File<wbr>System<wbr>Route"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_routes_loggingroute_.html">"routes/<wbr>Logging<wbr>Route"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_routes_proxyroute_.html">"routes/<wbr>Proxy<wbr>Route"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_routes_route_.html">"routes/<wbr>Route"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_routes_index_.html">"routes/index"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_testing_createtestlambdacontext_.html">"testing/create<wbr>Test<wbr>Lambda<wbr>Context"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_testing_createtestproxyevent_.html">"testing/create<wbr>Test<wbr>Proxy<wbr>Event"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_testing_index_.html">"testing/index"</a>
+						<a href="_testing_index_.html">"testing/index"</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-				</ul>
-				<ul class="current">
-					<li class="current tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_routerresponse_.routerresponse.html" class="tsd-kind-icon">Router<wbr>Response</a>
-						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_routerresponse_.routerresponse.html#body" class="tsd-kind-icon">body</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_routerresponse_.routerresponse.html#cookies" class="tsd-kind-icon">cookies</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_routerresponse_.routerresponse.html#headers" class="tsd-kind-icon">headers</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_routerresponse_.routerresponse.html#statuscode" class="tsd-kind-icon">status<wbr>Code</a>
-							</li>
-						</ul>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module">
+						<a href="_serializers_.html#jsonserializer" class="tsd-kind-icon">json<wbr>Serializer</a>
 					</li>
-				</ul>
-				<ul class="after-current">
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_routerresponse_.routerresponsecookie.html" class="tsd-kind-icon">Router<wbr>Response<wbr>Cookie</a>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module">
+						<a href="_serializers_.html#textserializer" class="tsd-kind-icon">text<wbr>Serializer</a>
 					</li>
 				</ul>
 			</nav>

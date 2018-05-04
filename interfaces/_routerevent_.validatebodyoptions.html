@@ -56,10 +56,10 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_validatebodyoptions_.html">&quot;ValidateBodyOptions&quot;</a>
+					<a href="../modules/_routerevent_.html">&quot;RouterEvent&quot;</a>
 				</li>
 				<li>
-					<a href="_validatebodyoptions_.validatebodyoptions.html">ValidateBodyOptions</a>
+					<a href="_routerevent_.validatebodyoptions.html">ValidateBodyOptions</a>
 				</li>
 			</ul>
 			<h1>Interface ValidateBodyOptions</h1>
@@ -96,13 +96,13 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_validatebodyoptions_.validatebodyoptions.html#allowunknownattributes" class="tsd-kind-icon">allow<wbr>Unknown<wbr>Attributes</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_validatebodyoptions_.validatebodyoptions.html#base" class="tsd-kind-icon">base</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_validatebodyoptions_.validatebodyoptions.html#httpstatuscode" class="tsd-kind-icon">http<wbr>Status<wbr>Code</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_validatebodyoptions_.validatebodyoptions.html#propertyname" class="tsd-kind-icon">property<wbr>Name</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_validatebodyoptions_.validatebodyoptions.html#rewrite" class="tsd-kind-icon">rewrite</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_validatebodyoptions_.validatebodyoptions.html#skipattributes" class="tsd-kind-icon">skip<wbr>Attributes</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_validatebodyoptions_.validatebodyoptions.html#throwerror" class="tsd-kind-icon">throw<wbr>Error</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_routerevent_.validatebodyoptions.html#allowunknownattributes" class="tsd-kind-icon">allow<wbr>Unknown<wbr>Attributes</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_routerevent_.validatebodyoptions.html#base" class="tsd-kind-icon">base</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_routerevent_.validatebodyoptions.html#httpstatuscode" class="tsd-kind-icon">http<wbr>Status<wbr>Code</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_routerevent_.validatebodyoptions.html#propertyname" class="tsd-kind-icon">property<wbr>Name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_routerevent_.validatebodyoptions.html#rewrite" class="tsd-kind-icon">rewrite</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_routerevent_.validatebodyoptions.html#skipattributes" class="tsd-kind-icon">skip<wbr>Attributes</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_routerevent_.validatebodyoptions.html#throwerror" class="tsd-kind-icon">throw<wbr>Error</a></li>
 							</ul>
 						</section>
 					</div>
@@ -138,7 +138,7 @@
 					<div class="tsd-signature tsd-kind-icon">http<wbr>Status<wbr>Code<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/4e2781f/src/ValidateBodyOptions.ts#L10">ValidateBodyOptions.ts:10</a></li>
+							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/2127b58/src/RouterEvent.ts#L197">RouterEvent.ts:197</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -211,14 +211,11 @@
 					<li class=" tsd-kind-external-module">
 						<a href="../modules/_router_.html">"<wbr>Router"</a>
 					</li>
-					<li class=" tsd-kind-external-module">
+					<li class="current tsd-kind-external-module">
 						<a href="../modules/_routerevent_.html">"<wbr>Router<wbr>Event"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="../modules/_routerresponse_.html">"<wbr>Router<wbr>Response"</a>
-					</li>
-					<li class="current tsd-kind-external-module">
-						<a href="../modules/_validatebodyoptions_.html">"<wbr>Validate<wbr>Body<wbr>Options"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="../modules/_httpstatus_.html">"http<wbr>Status"</a>
@@ -248,6 +245,9 @@
 						<a href="../modules/_routes_index_.html">"routes/index"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
+						<a href="../modules/_serializers_.html">"serializers"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
 						<a href="../modules/_testing_createtestlambdacontext_.html">"testing/create<wbr>Test<wbr>Lambda<wbr>Context"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
@@ -260,36 +260,45 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="../classes/_routerevent_.routerevent.html" class="tsd-kind-icon">Router<wbr>Event</a>
+					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_validatebodyoptions_.validatebodyoptions.html" class="tsd-kind-icon">Validate<wbr>Body<wbr>Options</a>
+						<a href="_routerevent_.validatebodyoptions.html" class="tsd-kind-icon">Validate<wbr>Body<wbr>Options</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
-								<a href="_validatebodyoptions_.validatebodyoptions.html#allowunknownattributes" class="tsd-kind-icon">allow<wbr>Unknown<wbr>Attributes</a>
+								<a href="_routerevent_.validatebodyoptions.html#allowunknownattributes" class="tsd-kind-icon">allow<wbr>Unknown<wbr>Attributes</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
-								<a href="_validatebodyoptions_.validatebodyoptions.html#base" class="tsd-kind-icon">base</a>
+								<a href="_routerevent_.validatebodyoptions.html#base" class="tsd-kind-icon">base</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_validatebodyoptions_.validatebodyoptions.html#httpstatuscode" class="tsd-kind-icon">http<wbr>Status<wbr>Code</a>
+								<a href="_routerevent_.validatebodyoptions.html#httpstatuscode" class="tsd-kind-icon">http<wbr>Status<wbr>Code</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
-								<a href="_validatebodyoptions_.validatebodyoptions.html#propertyname" class="tsd-kind-icon">property<wbr>Name</a>
+								<a href="_routerevent_.validatebodyoptions.html#propertyname" class="tsd-kind-icon">property<wbr>Name</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
-								<a href="_validatebodyoptions_.validatebodyoptions.html#rewrite" class="tsd-kind-icon">rewrite</a>
+								<a href="_routerevent_.validatebodyoptions.html#rewrite" class="tsd-kind-icon">rewrite</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
-								<a href="_validatebodyoptions_.validatebodyoptions.html#skipattributes" class="tsd-kind-icon">skip<wbr>Attributes</a>
+								<a href="_routerevent_.validatebodyoptions.html#skipattributes" class="tsd-kind-icon">skip<wbr>Attributes</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
-								<a href="_validatebodyoptions_.validatebodyoptions.html#throwerror" class="tsd-kind-icon">throw<wbr>Error</a>
+								<a href="_routerevent_.validatebodyoptions.html#throwerror" class="tsd-kind-icon">throw<wbr>Error</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../modules/_routerevent_.html#blacklistkeys" class="tsd-kind-icon">blacklist<wbr>Keys</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../modules/_routerevent_.html#whitelistkeys" class="tsd-kind-icon">whitelist<wbr>Keys</a>
+					</li>
 				</ul>
 			</nav>
 		</div>
