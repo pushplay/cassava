@@ -1,3 +1,4 @@
+import Negotiator = require("negotiator");
 import {Route} from "./Route";
 import {RouterEvent} from "../RouterEvent";
 import {RouterResponse} from "../RouterResponse";
@@ -10,6 +11,7 @@ export class BuildableRoute implements Route, RouteBuilder {
         pathRegex?: RegExp;
         regexGroupToPathParamMap?: string[],
         method?: string;
+        serializers?: { [mimeType: string]: (body: any) => Promise<string> | string }
     } = {};
 
     matches(evt: RouterEvent): boolean {
@@ -19,10 +21,16 @@ export class BuildableRoute implements Route, RouteBuilder {
         if (this.settings.pathRegex && !this.settings.pathRegex.test(evt.path)) {
             return false;
         }
+        if (this.settings.serializers) {
+            const negotiator = new Negotiator({headers: evt.headersLowerCase});
+            if (!negotiator.mediaType(Object.keys(this.settings.serializers))) {
+                return false;
+            }
+        }
         return true;
     }
 
-    handle(evt: RouterEvent): Promise<RouterResponse> | null {
+    async handle(evt: RouterEvent): Promise<RouterResponse> | null {
         if (this.settings.handler) {
             const calculatedPathParameters = {...evt.pathParameters};
 
@@ -38,7 +46,22 @@ export class BuildableRoute implements Route, RouteBuilder {
 
             const pathedRouterEvent = Object.assign(new RouterEvent(), evt);
             pathedRouterEvent.pathParameters = calculatedPathParameters;
-            return this.settings.handler(pathedRouterEvent);
+            const resp = await this.settings.handler(pathedRouterEvent);
+            if (!resp) {
+                return resp;
+            }
+
+            if (this.settings.serializers) {
+                const negotiator = new Negotiator({headers: evt.headersLowerCase});
+                const mediaType = negotiator.mediaType(Object.keys(this.settings.serializers));
+                resp.body = await this.settings.serializers[mediaType](resp.body);
+                if (!resp.headers) {
+                    resp.headers = {};
+                }
+                RouterResponse.setHeader(resp, "Content-Type", mediaType);
+            }
+
+            return resp;
         }
         return null;
     }
@@ -64,8 +87,8 @@ export class BuildableRoute implements Route, RouteBuilder {
             this.settings.regexGroupToPathParamMap = [""];
             const sanitizedPathRegex = path
                 .replace(/[#-.]|[[-^]|[?|{}]/g, "\\$&")
-                .replace(/\\\{[a-zA-Z][a-zA-Z0-9]*\\\}/g, substr => {
-                    const pathParamName = substr.replace(/^\\\{/, "").replace(/\\\}/, "");
+                .replace(/\\{[a-zA-Z][a-zA-Z0-9]*\\}/g, substr => {
+                    const pathParamName = substr.replace(/^\\{/, "").replace(/\\}/, "");
                     this.settings.regexGroupToPathParamMap.push(pathParamName);
                     return "([0-9a-zA-Z\-._~!$&'()*+,;=:@%]+)";
                 });
@@ -84,12 +107,23 @@ export class BuildableRoute implements Route, RouteBuilder {
 
     method(method: string): this {
         if (!method) {
-            throw new Error("method must be set");
+            throw new Error("method cannot be null");
         }
         if (this.settings.method) {
             throw new Error("method is already defined");
         }
         this.settings.method = method;
+        return this;
+    }
+
+    serializers(serializers: { [mimeType: string]: (body: any) => Promise<string> | string }): this {
+        if (!serializers) {
+            throw new Error("serializers cannot be null");
+        }
+        if (this.settings.serializers) {
+            throw new Error("serializers is already defined");
+        }
+        this.settings.serializers = serializers;
         return this;
     }
 
@@ -129,12 +163,32 @@ export interface RouteBuilder {
     method(method: string): this;
 
     /**
+     * Match requests for clients than can accept one of the given mime-types
+     * and use the given serializer on the response body.  The serializer will be
+     * called with the body if the handler returns a response.  The serializer
+     * must return a string or Buffer, or Promise of such.
+     *
+     * eg:
+     * ```
+     * serializers({
+     *  "application/json": cassava.serializers.jsonSerializer,
+     *  "text/plain": body => body.toString()
+     * })
+     * ```
+     *
+     * @param serializers a map of mime-type to serializer function
+     */
+    serializers(serializers: { [mimeType: string]: (body: any) => Promise<string | Buffer> | string | Buffer }): this;
+
+    /**
      * Set the handler for this Route.
+     * @see routes.Route.handle
      */
     handler(handler: (evt: RouterEvent) => Promise<RouterResponse | null | void> | RouterResponse | null | void): this;
 
     /**
      * Set the post processor for this Route.
+     * @see routes.Route.postProcess
      */
     postProcessor(postProcessor: (evt: RouterEvent, resp: RouterResponse) => Promise<RouterResponse | null | void> | RouterResponse | null | void): this;
 

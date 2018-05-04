@@ -55,7 +55,7 @@ describe("RouterEvent", () => {
             A: "a",
             B: "b"
         };
-        evt._headersLowerCase = {
+        evt.headersLowerCase = {
             a: "a",
             b: "b"
         };

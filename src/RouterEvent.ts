@@ -1,12 +1,14 @@
 import * as jsonschema from "jsonschema";
 import {RestError} from "./RestError";
-import {ValidateBodyOptions} from "./ValidateBodyOptions";
 
 /**
  * Input to the HTTP router.  Based on the ProxyEvent but enriched.
  */
 export class RouterEvent {
 
+    /**
+     * API Gateway event context.
+     */
     context: {
         accountId: string,
         apiId: string,
@@ -41,16 +43,16 @@ export class RouterEvent {
     body: any;
 
     /**
-     * All headers of the request.  Header keys are case-insensitive.
-     * Use getHeader() for case-insensitive lookup.
+     * All headers of the request.  They are stored here in their original
+     * form but the spec requires that header keys are treated as case-insensitive.
+     * Use `headersLowerCase` for easier retrieval.
      */
     headers: { [key: string]: string };
 
     /**
-     * All headers of the request in lowercase keys.  Use getHeader()
-     * instead for convenience.
+     * All headers of the request with keys in lower case.
      */
-    _headersLowerCase: { [key: string]: string };
+    headersLowerCase: { [key: string]: string };
 
     /**
      * GET, POST, PUT, etc...
@@ -58,7 +60,9 @@ export class RouterEvent {
     httpMethod: string;
 
     /**
-     * A work area for Routes to add properties to.
+     * A work area for Routes to add properties to.  This can be used
+     * to sneak information from routes that preprocess to later routes;
+     * for example auth credentials.
      */
     meta: { [name: string]: any };
 
@@ -81,13 +85,6 @@ export class RouterEvent {
      * Configuration attributes associated with a deployment stage of an API.
      */
     stageVariables: { [key: string]: string };
-
-    /**
-     * Get the value for the given header key.
-     */
-    getHeader(header: string): string {
-        return this._headersLowerCase[header.toLowerCase()];
-    }
 
     /**
      * Require that the given query parameter is set.
@@ -139,13 +136,6 @@ export class RouterEvent {
     }
 
     /**
-     * @deprecated use whitelistQueryStringParameters()
-     */
-    whitelistStringQueryParameters(...params: string[]): void {
-        whitelistKeys(this.queryStringParameters || {}, params, "query parameter");
-    }
-
-    /**
      * Require that the given header field is set.
      */
     requireHeader(field: string): void;
@@ -165,14 +155,14 @@ export class RouterEvent {
     requireHeader(field: string, valuesOrValidator?: string[] | ((value: string) => boolean), explanation?: string): void {
         const fieldLowerCase = field.toLowerCase();
 
-        if (!this._headersLowerCase[fieldLowerCase]) {
+        if (!this.headersLowerCase[fieldLowerCase]) {
             throw new RestError(400, explanation || `Required header '${field}' is not set.`);
         }
-        if (valuesOrValidator && Array.isArray(valuesOrValidator) && valuesOrValidator.indexOf(this._headersLowerCase[fieldLowerCase]) === -1) {
-            throw new RestError(400, explanation || `Required header '${field}=${this._headersLowerCase[fieldLowerCase]}' must be one of: ${valuesOrValidator.join(", ")}.`);
+        if (valuesOrValidator && Array.isArray(valuesOrValidator) && valuesOrValidator.indexOf(this.headersLowerCase[fieldLowerCase]) === -1) {
+            throw new RestError(400, explanation || `Required header '${field}=${this.headersLowerCase[fieldLowerCase]}' must be one of: ${valuesOrValidator.join(", ")}.`);
         }
-        if (valuesOrValidator && typeof valuesOrValidator === "function" && !valuesOrValidator(this._headersLowerCase[fieldLowerCase])) {
-            throw new RestError(400, explanation || `Required header '${field}=${this._headersLowerCase[fieldLowerCase]}' is not a legal value.`);
+        if (valuesOrValidator && typeof valuesOrValidator === "function" && !valuesOrValidator(this.headersLowerCase[fieldLowerCase])) {
+            throw new RestError(400, explanation || `Required header '${field}=${this.headersLowerCase[fieldLowerCase]}' is not a legal value.`);
         }
     }
 
@@ -195,6 +185,16 @@ export class RouterEvent {
             );
         }
     }
+}
+
+/**
+ * RouterEvent.validateBody() options.  Extends jsonschema.validate() Options.
+ */
+export interface ValidateBodyOptions extends jsonschema.Options {
+    /**
+     * The HTTP status code to use for validation errors.  Defaults to 422.
+     */
+    httpStatusCode?: number;
 }
 
 function blacklistKeys(o: object, keys: string[], part: string = "member"): void {

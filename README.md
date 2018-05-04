@@ -2,7 +2,7 @@
 
 AWS API Gateway Router
 
-Find the full documentation at https://giftbit.github.io/cassava/ 
+Find the full documentation at https://giftbit.github.io/cassava/
 
 ## Routing
 
@@ -15,12 +15,12 @@ There are two ways to add routes to Cassava.
   - provides the most flexibility
   - can modify responses before they are sent
   - is the most work to implement
-  
+
 Cassava processes REST events by examining installed routes from top-to-bottom.  Cassava works downwards to find the first route that matches and responds, and then works back up to do any post-processing.
 
 A route responds when: it matches the event, has a `handle` function, and handles the event by returning a response object or Promise that resolves to a response object.
 
-A route can post-process the response when: it matches the event, did not handle the event, and has a `postProcess` function.  Post processing can be used to modify the response or cause some side effect such as logging.
+A route can post-process the response when: it matches the event, did not return a response object in `handle`, and has a `postProcess` function.  Post processing can be used to modify the response or cause some side effect such as logging.
 
 ## RouteBuilder
 
@@ -60,7 +60,7 @@ export const handler = router.getLambdaHandler();
 
 ## Custom Routes
 
-A custom route is one that implements the [Route](https://giftbit.github.io/cassava/interfaces/_routes_route_.route.html) interface: it must have a `matches` function that accepts a `RouterEvent` and returns a boolean and at least one of a `handle` function and `postProcess` function.  
+A custom route is one that implements the [Route](https://giftbit.github.io/cassava/interfaces/_routes_route_.route.html) interface: it must have a `matches` function that accepts a `RouterEvent` and returns a boolean and at least one of a `handle` function and `postProcess` function.
 
 The details of RouterEvents, handling and post-processing are covered later in this document.
 
@@ -104,6 +104,59 @@ A `handle` function takes in a RouterEvent and can return the following: `null` 
 [RouterResponses](https://giftbit.github.io/cassava/interfaces/_routerresponse_.routerresponse.html) include the body, an optional HTTP status code (defaults to 200), and optionally any headers that might be set.
 
 A `postProcess` function takes in both the RouterEvent and the current RouterResponse.  It can return `null` or `undefined` or a Promise resolving to one of those to not affect the final response; or it can return a RouterResponse or a Promise resolving to a RouterResponse to change the response.
+
+## Response serialization
+
+The default assumption is that you're building a JSON-based API so that's the simplest case.  By default the response body will be JSON stringified and the header `Content-Type` set to `application/json`.  This is true even if the body is a `string`.  If you don't want that behavior you have two options:
+
+### Manual Content-Type
+
+The first option for returning non-JSON is to set the response body to a `string` or `Buffer`, and set the `Content-Type` header.  This works when using a custom route or the route builder.  For example:
+
+```typescript
+router.route("/robots")
+    .method("GET")
+    .handler(async evt => {
+        return {
+            headers: {
+                "Content-Type": "text/csv"
+            },
+            body: "robot,film\nRobby,Forbidden Planet\nGort,The Day the Earth Stood Still"
+        };
+    });
+```
+
+This is simple to implement but ignores the client's `Accept` header.  This endpoint will always return csv regardless of what the client asks for.
+
+### RouteBuilder.serializers
+
+When using the route builder there is a second option of letting the handler return a complex object as in the JSON case, but defining serializer functions for each response mime type.  The appropriate serializer will be chosen based upon the client's `Accept` header.  In the following example the same endpoint can return one of JSON, CSV and XML.
+
+```typescript
+router.route("/robots")
+    .method("GET")
+    .serializers({
+        "application/json": cassava.serializers.json,
+        "text/csv": body => new json2csv.Parser({fields: ["robot", "film"]}).parse(body),
+        "application/xml": body => jsontoxml({robots: body})
+    })
+    .handler(async evt => {
+        return {
+            body: [
+              {
+                  robot: "Robby",
+                  film: "Forbidden Planet"
+              },
+              {
+                  robot: "Gort",
+                  film: "The Day the Earth Stood Still"
+              }
+            ]
+        };
+    });
+```
+
+CSV serialization is handled by [json2csv](https://www.npmjs.com/package/json2csv) and XML serialization by [jsontoxml](https://www.npmjs.com/package/jsontoxml).  These libraries are not included with Cassava and you're free to choose your own serialization library.
 
 ## RouterEvent Validation
 

@@ -22,20 +22,26 @@ export interface ProxyEvent {
     /**
      * All headers of the request.
      */
-    headers: {[key: string]: string} | null;
+    headers: { [key: string]: string } | null;
 
     /**
      * The parsed URI query parameters.
      */
-    queryStringParameters: {[key: string]: string} | null;
+    queryStringParameters: { [key: string]: string } | null;
 
     /**
      * The parsed URI path parameters.
      */
-    pathParameters: {[key: string]: string} | null;
+    pathParameters: { [key: string]: string } | null;
 
-    stageVariables: {[key: string]: string} | null;
+    /**
+     * Configuration attributes associated with a deployment stage of an API.
+     */
+    stageVariables: { [key: string]: string } | null;
 
+    /**
+     * API Gateway event context.
+     */
     context: {
         accountId: string,
         apiId: string,
@@ -64,5 +70,8 @@ export interface ProxyEvent {
      */
     body: string | null;
 
+    /**
+     * If true the body is base64 encoded.
+     */
     isBase64Encoded: boolean;
 }
