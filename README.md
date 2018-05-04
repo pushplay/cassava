@@ -156,7 +156,7 @@ router.route("/robots")
     });
 ```
 
-CSV serialization is handled by [json2csv](https://www.npmjs.com/package/json2csv) and XML serialization by [jsontoxml](https://www.npmjs.com/package/jsontoxml).  These libraries are not included with Cassava and you're free to choose your own serialization library.
+In this example CSV serialization is handled by [json2csv](https://www.npmjs.com/package/json2csv) and XML serialization by [jsontoxml](https://www.npmjs.com/package/jsontoxml).  These libraries are not included with Cassava and you're free to choose your own serialization libraries.
 
 ## RouterEvent Validation
 
