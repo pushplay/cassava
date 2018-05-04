@@ -31,8 +31,7 @@ export class Router {
      *
      * The default implementation is to log the error.
      */
-    errorHandler: (err: Error) => Promise<RouterResponse | null | void> | RouterResponse | null | void
-        = err => console.log("Error thrown during execution.\n", err);
+    errorHandler: (err: Error) => Promise<RouterResponse | null | void> | RouterResponse | null | void = err => console.log("Error thrown during execution.\n", err);
 
     /**
      * Start a BuildableRoute with the given string or regex path.
