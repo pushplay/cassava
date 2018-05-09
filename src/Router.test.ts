@@ -218,7 +218,72 @@ describe("Router", () => {
         });
     });
 
-    describe("body handling", () => {
+    describe("request body handling", () => {
+        it("parses an application/json request body", async () => {
+            const router = new cassava.Router();
+
+            router.route("/{foo}")
+                .handler(async evt => {
+                    return {
+                        body: evt.body.a,
+                        headers: {
+                            "Content-Type": "text/plain"
+                        }
+                    };
+                });
+
+            const resp = await testRouter(router, createTestProxyEvent("/foo", "POST", {
+                body: JSON.stringify({a: "alpha"}),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }));
+
+            chai.assert.isObject(resp);
+            chai.assert.equal(resp.body, "alpha");
+        });
+
+        it("throws a 400 error if the application/json body is malformed", async () => {
+            const router = new cassava.Router();
+
+            const resp = await testRouter(router, createTestProxyEvent("/foo", "POST", {
+                body: "{key: \"must be in quotes\"}",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }));
+            chai.assert.isObject(resp);
+            chai.assert.equal(resp.statusCode, 400);
+        });
+
+        it("does not parse a text/plain request body", async () => {
+            const router = new cassava.Router();
+
+            router.route("/{foo}")
+                .handler(async evt => {
+                    chai.assert.deepEqual(evt.body, body);
+                    return {
+                        body: evt.body,
+                        headers: {
+                            "Content-Type": "text/plain"
+                        }
+                    };
+                });
+
+            const body = "\"imma string\"";
+            const resp = await testRouter(router, createTestProxyEvent("/foo", "POST", {
+                body: body,
+                headers: {
+                    "Content-Type": "text/plain"
+                }
+            }));
+
+            chai.assert.isObject(resp);
+            chai.assert.deepEqual(resp.body, body);
+        });
+    });
+
+    describe("response body handling", () => {
         it("passes along a JSON body", async () => {
             const router = new cassava.Router();
 
@@ -292,32 +357,6 @@ describe("Router", () => {
 
             const body = "<html><body>Hello world!</body></html>";
             const resp = await testRouter(router, createTestProxyEvent("/foo", "GET"));
-
-            chai.assert.isObject(resp);
-            chai.assert.deepEqual(resp.body, body);
-        });
-
-        it("does not stringify a request body if the Content-Type is text/plain", async () => {
-            const router = new cassava.Router();
-
-            router.route("/{foo}")
-                .handler(async evt => {
-                    chai.assert.deepEqual(evt.body, body);
-                    return {
-                        body: evt.body,
-                        headers: {
-                            "Content-Type": "text/plain"
-                        }
-                    };
-                });
-
-            const body = "\"imma string\"";
-            const resp = await testRouter(router, createTestProxyEvent("/foo", "POST", {
-                body: body,
-                headers: {
-                    "Content-Type": "text/plain"
-                }
-            }));
 
             chai.assert.isObject(resp);
             chai.assert.deepEqual(resp.body, body);

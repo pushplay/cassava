@@ -67,8 +67,14 @@ export class Router {
                 .then(res => {
                     callback(undefined, res);
                 }, err => {
-                    console.error("Catastrophic error thrown during execution.\n", err);
-                    callback(err);
+                    this.errorToRouterResponse(err)
+                        .then(res => {
+                            callback(undefined, this.routerResponseToProxyResponse(res));
+                        })
+                        .catch(err2 => {
+                            console.error("Catastrophic error thrown during execution.\n", err);
+                            callback(err);
+                        });
                 });
         };
     }
