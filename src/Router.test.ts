@@ -1,7 +1,6 @@
 import * as chai from "chai";
 import * as cassava from "./";
-import {createTestProxyEvent} from "./testing/createTestProxyEvent";
-import {testRouter} from "./testing/index";
+import {createTestProxyEvent, testRouter} from "./testing";
 import {httpStatusString} from "./httpStatus";
 import {RestError} from "./RestError";
 
@@ -76,6 +75,19 @@ describe("Router", () => {
             processor1: "done",
             processor2: "done"
         });
+    });
+
+    it("returns a response when useLegacyCallbackHandler = true", async () => {
+        const router = new cassava.Router();
+        router.useLegacyCallbackHandler = true;
+
+        router.route("/foo/bar")
+            .handler(async evt => ({body: {success: true}}));
+
+        const resp = await testRouter(router, createTestProxyEvent("/foo/bar"));
+
+        chai.assert.isObject(resp);
+        chai.assert.equal(resp.statusCode, 200, JSON.stringify(resp));
     });
 
     describe("path resolution", async () => {

@@ -12,6 +12,14 @@ import {httpStatusCode, httpStatusString} from "./httpStatus";
 export class Router {
 
     /**
+     * Both node 4.3 and 6.10 use the callback parameter to return a result.
+     * The ability to create new functions using Node.js 4.3 will be disabled July 31, 2018.
+     * Code updates to existing functions using Node.js v4.3 will be disabled on October 31, 2018.
+     * When the ability to update code in node 6.10 functions is disabled this can be removed.
+     */
+    useLegacyCallbackHandler = process.version.startsWith("v4.3") || process.version.startsWith("v6.10");
+
+    /**
      * Routes that will be tested against in order.
      */
     readonly routes: Route[] = [];
@@ -61,22 +69,32 @@ export class Router {
         throw new Error("Input must be a string or regex to create a new RouteBuilder, or an instance of Route.");
     }
 
-    getLambdaHandler(): (evt: ProxyEvent, ctx: awslambda.Context, callback: ProxyResponseCallback) => void {
-        return (evt: ProxyEvent, ctx: awslambda.Context, callback: ProxyResponseCallback) => {
-            this.routeProxyEvent(evt)
-                .then(res => {
-                    callback(undefined, res);
-                }, err => {
-                    this.errorToRouterResponse(err)
-                        .then(res => {
-                            callback(undefined, this.routerResponseToProxyResponse(res));
-                        })
-                        .catch(err2 => {
-                            console.error("Catastrophic error thrown during execution.\n", err);
-                            callback(err);
-                        });
-                });
-        };
+    getLambdaHandler(): (evt: ProxyEvent, ctx: awslambda.Context, callback: ProxyResponseCallback) => void | Promise<ProxyResponse> {
+        if (this.useLegacyCallbackHandler) {
+            return (evt: ProxyEvent, ctx: awslambda.Context, callback: ProxyResponseCallback) => {
+                this.routeProxyEvent(evt)
+                    .then(res => {
+                        callback(undefined, res);
+                    }, err => {
+                        this.errorToRouterResponse(err)
+                            .then(res => {
+                                callback(undefined, this.routerResponseToProxyResponse(res));
+                            })
+                            .catch(() => {
+                                console.error("Catastrophic error thrown during execution.\n", err);
+                                callback(err);
+                            });
+                    });
+            };
+        } else {
+            return (evt: ProxyEvent) => {
+                return this.routeProxyEvent(evt)
+                    .catch(err => {
+                        return this.errorToRouterResponse(err)
+                            .then(res => this.routerResponseToProxyResponse(res));
+                    });
+            };
+        }
     }
 
     private async routeProxyEvent(pevt: ProxyEvent): Promise<ProxyResponse> {

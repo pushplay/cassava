@@ -2,6 +2,7 @@ import {ProxyResponse} from "../ProxyResponse";
 import {ProxyEvent} from "../ProxyEvent";
 import {createTestLambdaContext} from "./createTestLambdaContext";
 import {Router} from "../Router";
+
 export {createTestProxyEvent} from "./createTestProxyEvent";
 
 /**
@@ -15,12 +16,16 @@ export function testRouter(router: Router, proxyEvent: ProxyEvent): Promise<Prox
             reject("router must be an instance of Router");
         }
 
-        router.getLambdaHandler()(proxyEvent, createTestLambdaContext(proxyEvent), (err, res) => {
+        const responsePromise = router.getLambdaHandler()(proxyEvent, createTestLambdaContext(proxyEvent), (err, res) => {
             if (err) {
                 reject(err);
             } else {
                 resolve(res);
             }
         });
+
+        if (responsePromise) {
+            responsePromise.then(res => resolve(res), err => reject(err));
+        }
     });
 }
