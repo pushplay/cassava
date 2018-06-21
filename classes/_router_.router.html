@@ -86,6 +86,7 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_router_.router.html#defaultroute" class="tsd-kind-icon">default<wbr>Route</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_router_.router.html#routes" class="tsd-kind-icon">routes</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_router_.router.html#uselegacycallbackhandler" class="tsd-kind-icon">use<wbr>Legacy<wbr>Callback<wbr>Handler</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -107,7 +108,7 @@
 					<div class="tsd-signature tsd-kind-icon">default<wbr>Route<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_routes_route_.route.html" class="tsd-signature-type">Route</a><span class="tsd-signature-symbol"> =&nbsp;new DefaultRoute()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/f42dd3a/src/Router.ts#L24">Router.ts:24</a></li>
+							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/4e9c449/src/Router.ts#L32">Router.ts:32</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -123,12 +124,30 @@
 					<div class="tsd-signature tsd-kind-icon">routes<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_routes_route_.route.html" class="tsd-signature-type">Route</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/f42dd3a/src/Router.ts#L17">Router.ts:17</a></li>
+							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/4e9c449/src/Router.ts#L25">Router.ts:25</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
 							<p>Routes that will be tested against in order.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="uselegacycallbackhandler" class="tsd-anchor"></a>
+					<h3>use<wbr>Legacy<wbr>Callback<wbr>Handler</h3>
+					<div class="tsd-signature tsd-kind-icon">use<wbr>Legacy<wbr>Callback<wbr>Handler<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;process.version.startsWith(&quot;v4.3&quot;) || process.version.startsWith(&quot;v6.10&quot;)</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/4e9c449/src/Router.ts#L20">Router.ts:20</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Both node 4.3 and 6.10 use the callback parameter to return a result.
+								The ability to create new functions using Node.js 4.3 will be disabled July 31, 2018.
+								Code updates to existing functions using Node.js v4.3 will be disabled on October 31, 2018.
+							When the ability to update code in node 6.10 functions is disabled this can be removed.</p>
 						</div>
 					</div>
 				</section>
@@ -145,7 +164,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/f42dd3a/src/Router.ts#L34">Router.ts:34</a></li>
+									<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/4e9c449/src/Router.ts#L42">Router.ts:42</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -177,14 +196,14 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/f42dd3a/src/Router.ts#L64">Router.ts:64</a></li>
+									<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/4e9c449/src/Router.ts#L72">Router.ts:72</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">function</span></h4>
 							<ul class="tsd-parameters">
 								<li class="tsd-parameter-siganture">
 									<ul class="tsd-signatures tsd-kind-type-literal tsd-is-not-exported">
-										<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>evt<span class="tsd-signature-symbol">: </span><a href="../interfaces/_proxyevent_.proxyevent.html" class="tsd-signature-type">ProxyEvent</a>, ctx<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Context</span>, callback<span class="tsd-signature-symbol">: </span><a href="../modules/_proxyresponse_.html#proxyresponsecallback" class="tsd-signature-type">ProxyResponseCallback</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+										<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>evt<span class="tsd-signature-symbol">: </span><a href="../interfaces/_proxyevent_.proxyevent.html" class="tsd-signature-type">ProxyEvent</a>, ctx<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Context</span>, callback<span class="tsd-signature-symbol">: </span><a href="../modules/_proxyresponse_.html#proxyresponsecallback" class="tsd-signature-type">ProxyResponseCallback</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_proxyresponse_.proxyresponse.html" class="tsd-signature-type">ProxyResponse</a><span class="tsd-signature-symbol">&gt;</span></li>
 									</ul>
 									<ul class="tsd-descriptions">
 										<li class="tsd-description">
@@ -200,7 +219,10 @@
 													<h5>callback: <a href="../modules/_proxyresponse_.html#proxyresponsecallback" class="tsd-signature-type">ProxyResponseCallback</a></h5>
 												</li>
 											</ul>
-											<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+											<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span>
+												<span class="tsd-signature-symbol"> | </span>
+												<span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_proxyresponse_.proxyresponse.html" class="tsd-signature-type">ProxyResponse</a><span class="tsd-signature-symbol">&gt;</span>
+											</h4>
 										</li>
 									</ul>
 								</li>
@@ -219,7 +241,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/f42dd3a/src/Router.ts#L39">Router.ts:39</a></li>
+									<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/4e9c449/src/Router.ts#L47">Router.ts:47</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -238,7 +260,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/f42dd3a/src/Router.ts#L44">Router.ts:44</a></li>
+									<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/4e9c449/src/Router.ts#L52">Router.ts:52</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -341,6 +363,9 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="_router_.router.html#routes" class="tsd-kind-icon">routes</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_router_.router.html#uselegacycallbackhandler" class="tsd-kind-icon">use<wbr>Legacy<wbr>Callback<wbr>Handler</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_router_.router.html#errorhandler" class="tsd-kind-icon">error<wbr>Handler</a>
