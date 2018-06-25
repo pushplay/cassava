@@ -675,7 +675,7 @@ describe("Router", () => {
         });
 
         describe("custom error handling", () => {
-            it("RestResponse is returned", async () => {
+            it("gets called on non-RestErrors", async () => {
                 const router = new cassava.Router();
 
                 router.route("/foo")
@@ -684,7 +684,33 @@ describe("Router", () => {
                     });
 
                 let errorHandlerCalled = false;
-                router.errorHandler = err => {
+                router.errorHandler = (err, evt, ctx) => {
+                    chai.assert.isObject(evt);
+                    chai.assert.equal(evt.httpMethod, "GET");
+                    chai.assert.equal(evt.path, "/foo");
+                    chai.assert.isObject(ctx);
+                    chai.assert.isString(ctx.functionName);
+                    errorHandlerCalled = true;
+                };
+
+                await testRouter(router, createTestProxyEvent("/foo"));
+                chai.assert.isTrue(errorHandlerCalled);
+            });
+
+            it("can return a RestResponse", async () => {
+                const router = new cassava.Router();
+
+                router.route("/foo")
+                    .handler(async () => {
+                        throw new Error("Everything was beautiful and nothing hurt.")
+                    });
+
+                let errorHandlerCalled = false;
+                router.errorHandler = (err, evt, ctx) => {
+                    chai.assert.isObject(evt);
+                    chai.assert.equal(evt.httpMethod, "GET");
+                    chai.assert.isObject(ctx);
+                    chai.assert.isString(ctx.functionName);
                     errorHandlerCalled = true;
                     return {
                         statusCode: 503,
@@ -705,7 +731,7 @@ describe("Router", () => {
                 });
             });
 
-            it("Promise<RestResponse> is returned", async () => {
+            it("can return a Promise<RestResponse>", async () => {
                 const router = new cassava.Router();
 
                 router.route("/foo")

@@ -37,9 +37,12 @@ export class Router {
      * such.  If a RouterResponse or Promise of RouterResponse is returned that will
      * be the response used.
      *
+     * The handler will be called with: the Error thrown, the input ProxyEvent that
+     * caused the error and the Lambda context.
+     *
      * The default implementation is to log the error.
      */
-    errorHandler: (err: Error) => Promise<RouterResponse | null | void> | RouterResponse | null | void = err => console.log("Error thrown during execution.\n", err);
+    errorHandler: (err: Error, evt: ProxyEvent, ctx: awslambda.Context) => Promise<RouterResponse | null | void> | RouterResponse | null | void = err => console.log("Error thrown during execution.\n", err);
 
     /**
      * Start a BuildableRoute with the given string or regex path.
@@ -72,11 +75,11 @@ export class Router {
     getLambdaHandler(): (evt: ProxyEvent, ctx: awslambda.Context, callback: ProxyResponseCallback) => void | Promise<ProxyResponse> {
         if (this.useLegacyCallbackHandler) {
             return (evt: ProxyEvent, ctx: awslambda.Context, callback: ProxyResponseCallback) => {
-                this.routeProxyEvent(evt)
+                this.routeProxyEvent(evt, ctx)
                     .then(res => {
                         callback(undefined, res);
                     }, err => {
-                        this.errorToRouterResponse(err)
+                        this.errorToRouterResponse(err, evt, ctx)
                             .then(res => {
                                 callback(undefined, this.routerResponseToProxyResponse(res));
                             })
@@ -87,17 +90,17 @@ export class Router {
                     });
             };
         } else {
-            return (evt: ProxyEvent) => {
-                return this.routeProxyEvent(evt)
+            return (evt: ProxyEvent, ctx: awslambda.Context) => {
+                return this.routeProxyEvent(evt, ctx)
                     .catch(err => {
-                        return this.errorToRouterResponse(err)
+                        return this.errorToRouterResponse(err, evt, ctx)
                             .then(res => this.routerResponseToProxyResponse(res));
                     });
             };
         }
     }
 
-    private async routeProxyEvent(pevt: ProxyEvent): Promise<ProxyResponse> {
+    private async routeProxyEvent(pevt: ProxyEvent, ctx: awslambda.Context): Promise<ProxyResponse> {
         // Non-functional programming for speeeeed.
 
         const evt = this.proxyEventToRouterEvent(pevt);
@@ -114,7 +117,7 @@ export class Router {
                     try {
                         resp = await route.handle(evt);
                     } catch (err) {
-                        resp = await this.errorToRouterResponse(err);
+                        resp = await this.errorToRouterResponse(err, pevt, ctx);
                     }
                 }
             }
@@ -129,7 +132,7 @@ export class Router {
                     throw new Error("Router's defaultRoute.handle() did not return a response.");
                 }
             } catch (err) {
-                resp = await this.errorToRouterResponse(err);
+                resp = await this.errorToRouterResponse(err, pevt, ctx);
             }
         }
 
@@ -138,7 +141,7 @@ export class Router {
             try {
                 resp = await route.postProcess(evt, resp) || resp;
             } catch (err) {
-                resp = await this.errorToRouterResponse(err);
+                resp = await this.errorToRouterResponse(err, pevt, ctx);
             }
         }
 
@@ -178,11 +181,7 @@ export class Router {
 
         r.cookies = {};
         if (r.headersLowerCase["cookie"]) {
-            try {
-                r.cookies = cookieLib.parse(r.headersLowerCase["cookie"]);
-            } catch (e) {
-                throw new RestError(httpStatusCode.clientError.BAD_REQUEST, `Unable to parse cookies: ${e.message}`);
-            }
+            r.cookies = cookieLib.parse(r.headersLowerCase["cookie"]);
         }
 
         return r;
@@ -200,7 +199,7 @@ export class Router {
         }
     }
 
-    private async errorToRouterResponse(err: Error): Promise<RouterResponse> {
+    private async errorToRouterResponse(err: Error, pevt: ProxyEvent, ctx: awslambda.Context): Promise<RouterResponse> {
         if (err && (err as RestError).isRestError) {
             return {
                 statusCode: (err as RestError).statusCode,
@@ -213,7 +212,7 @@ export class Router {
         }
 
         if (this.errorHandler) {
-            const resp = await this.errorHandler(err);
+            const resp = await this.errorHandler(err, pevt, ctx);
             if (resp) {
                 return resp;
             }
