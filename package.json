@@ -1,6 +1,6 @@
 {
   "name": "cassava",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "description": "AWS API Gateway Router",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -58,6 +58,6 @@
     "cookie": "^0.3.1",
     "jsonschema": "^1.2.4",
     "negotiator": "^0.6.1",
-    "uuid": "3.3.2"
+    "uuid": "^3.3.2"
   }
 }

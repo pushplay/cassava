@@ -334,5 +334,137 @@ describe("BuildableRoute", () => {
             chai.assert.isObject(resp);
             chai.assert.equal(resp.statusCode, 404, JSON.stringify(resp));
         });
+
+        describe("charset handling", () => {
+            it("defaults the serializer charset to UTF-8 for text/plain", async () => {
+                const router = new cassava.Router();
+
+                router.route("/path")
+                    .serializers({
+                        "text/plain": csvSerializer
+                    })
+                    .handler(async evt => {
+                        return {
+                            body: content
+                        };
+                    });
+
+                const resp = await testRouter(router, createTestProxyEvent("/path", "GET", {headers: {Accept: "text/plain; charset=UTF-8"}}));
+                chai.assert.isObject(resp);
+                chai.assert.equal(resp.statusCode, 200, JSON.stringify(resp));
+                chai.assert.equal(resp.body, csvContent);
+                chai.assert.equal(resp.headers["Content-Type"], "text/plain; charset=utf-8");
+
+                const resp2 = await testRouter(router, createTestProxyEvent("/path", "GET", {headers: {Accept: "text/plain;charset=utf-8"}}));
+                chai.assert.isObject(resp2);
+                chai.assert.equal(resp2.statusCode, 200, JSON.stringify(resp2));
+                chai.assert.equal(resp2.body, csvContent);
+                chai.assert.equal(resp2.headers["Content-Type"], "text/plain; charset=utf-8");
+
+                const resp3 = await testRouter(router, createTestProxyEvent("/path", "GET", {headers: {Accept: "text/plain;charset=utf-16"}}));
+                chai.assert.isObject(resp3);
+                chai.assert.equal(resp3.statusCode, 404, JSON.stringify(resp3));
+            });
+
+            it("defaults the serializer charset to UTF-8 for text/*", async () => {
+                const router = new cassava.Router();
+
+                router.route("/path")
+                    .serializers({
+                        "text/csv": csvSerializer
+                    })
+                    .handler(async evt => {
+                        return {
+                            body: content
+                        };
+                    });
+
+                const resp = await testRouter(router, createTestProxyEvent("/path", "GET", {headers: {Accept: "text/csv; charset=UTF-8"}}));
+                chai.assert.isObject(resp);
+                chai.assert.equal(resp.statusCode, 200, JSON.stringify(resp));
+                chai.assert.equal(resp.body, csvContent);
+                chai.assert.equal(resp.headers["Content-Type"], "text/csv; charset=utf-8");
+
+                const resp2 = await testRouter(router, createTestProxyEvent("/path", "GET", {headers: {Accept: "text/csv;charset=utf-8"}}));
+                chai.assert.isObject(resp2);
+                chai.assert.equal(resp2.statusCode, 200, JSON.stringify(resp2));
+                chai.assert.equal(resp2.body, csvContent);
+                chai.assert.equal(resp2.headers["Content-Type"], "text/csv; charset=utf-8");
+
+                const resp3 = await testRouter(router, createTestProxyEvent("/path", "GET", {headers: {Accept: "text/csv;charset=utf-16"}}));
+                chai.assert.isObject(resp3);
+                chai.assert.equal(resp3.statusCode, 404, JSON.stringify(resp3));
+            });
+
+            it("defaults the serializer charset to UTF-8 for application/json", async () => {
+                const router = new cassava.Router();
+
+                router.route("/path")
+                    .serializers({
+                        "application/json": jsonSerializer
+                    })
+                    .handler(async evt => {
+                        return {
+                            body: content
+                        };
+                    });
+
+                const resp = await testRouter(router, createTestProxyEvent("/path", "GET", {headers: {Accept: "application/json; charset=UTF-8"}}));
+                chai.assert.isObject(resp);
+                chai.assert.equal(resp.statusCode, 200, JSON.stringify(resp));
+                chai.assert.equal(resp.body, jsonContent);
+                chai.assert.equal(resp.headers["Content-Type"], "application/json; charset=utf-8");
+
+                const resp2 = await testRouter(router, createTestProxyEvent("/path", "GET", {headers: {Accept: "application/json;charset=utf-8"}}));
+                chai.assert.isObject(resp2);
+                chai.assert.equal(resp2.statusCode, 200, JSON.stringify(resp2));
+                chai.assert.equal(resp2.body, jsonContent);
+                chai.assert.equal(resp2.headers["Content-Type"], "application/json; charset=utf-8");
+
+                const resp3 = await testRouter(router, createTestProxyEvent("/path", "GET", {headers: {Accept: "application/json;charset=utf-16"}}));
+                chai.assert.isObject(resp3);
+                chai.assert.equal(resp3.statusCode, 404, JSON.stringify(resp3));
+            });
+
+            it("does not match when the charset does not match", async () => {
+                const router = new cassava.Router();
+
+                router.route("/path")
+                    .serializers({
+                        "application/json;charset=utf-8": jsonSerializer
+                    })
+                    .handler(async evt => {
+                        return {
+                            body: content
+                        };
+                    });
+
+                const resp = await testRouter(router, createTestProxyEvent("/path", "GET", {headers: {Accept: "application/json;charset=utf-16"}}));
+                chai.assert.isObject(resp);
+                chai.assert.equal(resp.statusCode, 404, JSON.stringify(resp));
+            });
+
+            it("picks the best match when multiple charsets are available", async () => {
+                const router = new cassava.Router();
+
+                router.route("/path")
+                    .serializers({
+                        "text/plain": () => "I am default charset",
+                        "text/plain;charset=utf-8": () => "I am utf-8",
+                        "text/plain;charset=ascii": () => "I am ascii"
+                    })
+                    .handler(async evt => {
+                        return {
+                            body: content
+                        };
+                    });
+
+                const resp = await testRouter(router, createTestProxyEvent("/path", "GET", {headers: {Accept: "text/plain; charset=ascii"}}));
+                chai.assert.isObject(resp);
+                chai.assert.equal(resp.statusCode, 200, JSON.stringify(resp));
+                chai.assert.equal(resp.body, "I am ascii");
+                chai.assert.equal(resp.headers["Content-Type"], "text/plain;charset=ascii");
+            });
+        });
     });
 });

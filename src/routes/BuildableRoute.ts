@@ -123,7 +123,16 @@ export class BuildableRoute implements Route, RouteBuilder {
         if (this.settings.serializers) {
             throw new Error("serializers is already defined");
         }
-        this.settings.serializers = serializers;
+
+        // For text mime-types without a charset specified add a default utf-8 version.
+        const serializersWithCharsets = {...serializers};
+        for (const type in serializers) {
+            if (serializers.hasOwnProperty(type) && /^(text\/[^;]+|application\/json)$/.test(type)) {
+                serializersWithCharsets[`${type}; charset=utf-8`] = serializers[type];
+            }
+        }
+
+        this.settings.serializers = serializersWithCharsets;
         return this;
     }
 
