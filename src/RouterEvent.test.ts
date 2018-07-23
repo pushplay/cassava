@@ -200,5 +200,32 @@ describe("RouterEvent", () => {
             chai.assert.isDefined(error, "expected error to be thrown");
             chai.assert.equal(error.statusCode, 432);
         });
+
+        it("defaults 'propertyName' to 'requestBody'", () => {
+            const evt = new RouterEvent();
+            evt.body = ["49.2391", "-124.0227"];
+            let error: RestError;
+            try {
+                evt.validateBody(coordinateSchema);
+            } catch (e) {
+                error = e;
+            }
+            chai.assert.isTrue(/\brequestBody\b/.test(error.message));
+            chai.assert.isFalse(/\binstance\b/.test(error.message));
+        });
+
+        it("can override 'propertyName'", () => {
+            const evt = new RouterEvent();
+            evt.body = ["49.2391", "-124.0227"];
+            let error: RestError;
+            try {
+                evt.validateBody(coordinateSchema, {propertyName: "coordinate"});
+            } catch (e) {
+                error = e;
+            }
+            chai.assert.isTrue(/\bcoordinate\b/.test(error.message));
+            chai.assert.isFalse(/\brequestBody\b/.test(error.message));
+            chai.assert.isFalse(/\binstance\b/.test(error.message));
+        });
     });
 });

@@ -178,7 +178,7 @@ export class RouterEvent {
      * The actual implementation comes from https://github.com/tdegrunt/jsonschema .
      */
     validateBody(schema: jsonschema.Schema, options?: ValidateBodyOptions): void {
-        const result = jsonschema.validate(this.body, schema, options);
+        const result = jsonschema.validate(this.body, schema, {propertyName: "requestBody", ...options} as jsonschema.Options);
         if (result.errors.length) {
             throw new RestError(
                 options && typeof options.httpStatusCode === "number" ? options.httpStatusCode : 422,
