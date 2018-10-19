@@ -153,16 +153,23 @@ export class Router {
 
         r.context = evt.context;
         r.headers = evt.headers || {};
+        r.multiValueHeaders = evt.multiValueHeaders || {};
         r.httpMethod = evt.httpMethod;
         r.meta = {};
         r.path = this.proxyPathToRouterPath(evt.path);
         r.queryStringParameters = evt.queryStringParameters || {};
+        r.multiValueQueryStringParameters = evt.multiValueQueryStringParameters || {};
         r.pathParameters = evt.pathParameters || {};
         r.stageVariables = evt.stageVariables || {};
 
         r.headersLowerCase = {};
         for (const headerKey of Object.keys(r.headers)) {
             r.headersLowerCase[headerKey.toLowerCase()] = r.headers[headerKey];
+        }
+
+        r.multiValueHeadersLowerCase = {};
+        for (const headerKey of Object.keys(r.multiValueHeaders)) {
+            r.multiValueHeadersLowerCase[headerKey.toLowerCase()] = r.multiValueHeaders[headerKey];
         }
 
         if (typeof evt.body === "string" && (!r.headersLowerCase["content-type"] || /(application|text)\/(x-)?json/.test(r.headersLowerCase["content-type"]))) {

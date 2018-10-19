@@ -18,7 +18,9 @@ const defaultTestProxyEvent: ProxyEvent = {
     path: "/",
     httpMethod: "GET",
     headers: null,
+    multiValueHeaders: null,
     queryStringParameters: null,
+    multiValueQueryStringParameters: null,
     pathParameters: null,
     stageVariables: null,
     context: {
@@ -53,6 +55,7 @@ const defaultTestProxyEvent: ProxyEvent = {
  */
 export function createTestProxyEvent(url: string = "/", method: string = "GET", overrides: Partial<ProxyEvent> = {}): ProxyEvent {
     const heavyUrl = new URL(url, "https://example.org/");
+    const mixedQueryStringParams: { [key: string]: string | string[] } = heavyUrl.search ? querystring.parse(heavyUrl.search.substring(1)) : null;
 
     return {
         ...defaultTestProxyEvent,
@@ -65,16 +68,17 @@ export function createTestProxyEvent(url: string = "/", method: string = "GET", 
         },
         httpMethod: method,
         path: heavyUrl.pathname,
-        queryStringParameters: deduplicateQueryStringParameters(heavyUrl.search ? querystring.parse(heavyUrl.search.substring(1)) : null)
+        queryStringParameters: deduplicateQueryStringParameters(mixedQueryStringParams),
+        multiValueQueryStringParameters: normalizeMMultiValueQueryStringParameters(mixedQueryStringParams)
     };
 }
 
 /**
  * Turn a query params object that allows for duplicate query string values into one that doesn't.
- * see: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-known-issues.html
+ * Empirically API Gateway takes the last version on duplicates.
  */
 function deduplicateQueryStringParameters(params: { [key: string]: string | string[] }): { [key: string]: string } {
-    if (!params) {
+    if (params == null) {
         return null;
     }
 
@@ -88,4 +92,21 @@ function deduplicateQueryStringParameters(params: { [key: string]: string | stri
         }
     }
     return queryStringParameters;
+}
+
+function normalizeMMultiValueQueryStringParameters(params: { [key: string]: string | string[] }): { [key: string]: string[] } {
+    if (params == null) {
+        return null;
+    }
+
+    const multiValueQueryStringParameters: { [key: string]: string[] } = {};
+    for (const key in params) {
+        const value = params[key];
+        if (Array.isArray(value)) {
+            multiValueQueryStringParameters[key] = value;
+        } else {
+            multiValueQueryStringParameters[key] = [value];
+        }
+    }
+    return multiValueQueryStringParameters;
 }

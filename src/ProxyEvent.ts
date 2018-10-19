@@ -20,14 +20,24 @@ export interface ProxyEvent {
     httpMethod: string;
 
     /**
-     * All headers of the request.
+     * All headers of the request with only their first value.
      */
     headers: { [key: string]: string } | null;
 
     /**
-     * The parsed URI query parameters.
+     * All headers of the request including all values.
+     */
+    multiValueHeaders: { [key: string]: string[] } | null;
+
+    /**
+     * The parsed URI query parameters with only their first value.
      */
     queryStringParameters: { [key: string]: string } | null;
+
+    /**
+     * The parsed URI query parameters including all values.
+     */
+    multiValueQueryStringParameters: { [key: string]: string[] } | null;
 
     /**
      * The parsed URI path parameters.
