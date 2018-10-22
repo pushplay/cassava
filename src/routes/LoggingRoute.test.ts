@@ -45,6 +45,11 @@ describe("LoggingRoute", () => {
                 Accept: "text/plain",
                 Host: "www.example.com",
                 Origin: "http://www.example.com"
+            },
+            multiValueHeaders: {
+                Accept: ["text/plain"],
+                Host: ["www.example.com"],
+                Origin: ["http://www.example.com"]
             }
         }));
         chai.assert.equal(msgs.length, 2);
@@ -70,6 +75,11 @@ describe("LoggingRoute", () => {
                 Accept: "text/plain",
                 Host: "www.example.com",
                 Origin: "http://www.example.com"
+            },
+            multiValueHeaders: {
+                Accept: ["text/plain"],
+                Host: ["www.example.com"],
+                Origin: ["http://www.example.com"]
             }
         }));
         chai.assert.equal(msgs.length, 2);

@@ -51,8 +51,8 @@ export class ProxyRoute implements Route {
             headers: {...evt.headers, ...this.config.additionalHeaders},
             path: this.parsedDest.path + evt.path.substr(this.config.srcPath.length)
         };
-        if (evt.queryStringParameters) {
-            const q = querystring.stringify(evt.queryStringParameters);
+        if (evt.multiValueQueryStringParameters) {
+            const q = querystring.stringify(evt.multiValueQueryStringParameters);
             if (q.length) {
                 reqArgs.path += "?" + q;
             }

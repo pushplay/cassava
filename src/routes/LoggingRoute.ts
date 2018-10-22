@@ -25,12 +25,12 @@ export class LoggingRoute implements Route {
     }
 
     requestToString(evt: RouterEvent): string {
-        let msg = `${evt.httpMethod} ${evt.path}${this.queryMapToString(evt.queryStringParameters)}`;
+        let msg = `${evt.httpMethod} ${evt.path}${this.queryMapToString(evt.multiValueQueryStringParameters || evt.queryStringParameters)}`;
         if (!this.options.hideRequestBody && evt.body != null) {
             msg += ` reqbody=${JSON.stringify(evt.body)}`;
         }
         if (this.options.logRequestHeaders) {
-            msg += ` reqheaders={${this.headersToString(evt.headers, this.options.logRequestHeaders)}}`;
+            msg += ` reqheaders={${this.headersToString(evt.multiValueHeaders || evt.headers, this.options.logRequestHeaders)}}`;
         }
         return msg;
     }
@@ -46,7 +46,7 @@ export class LoggingRoute implements Route {
         return msg;
     }
 
-    queryMapToString(queryStringParameters: { [key: string]: string } | null): string {
+    queryMapToString(queryStringParameters: { [key: string]: string | string[] } | null): string {
         if (!queryStringParameters) {
             return "";
         }
@@ -54,17 +54,30 @@ export class LoggingRoute implements Route {
         if (!keys.length) {
             return "";
         }
-        return "?" + keys.map(key => `${encodeURIComponent(key)}=${encodeURIComponent(queryStringParameters[key])}`).join("&");
+
+        return "?" + keys.map(key => {
+            const value = queryStringParameters[key];
+            if (Array.isArray(value)) {
+                return value.map(value => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join("&");
+            }
+            return `${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
+        }).join("&");
     }
 
-    headersToString(headers: { [key: string]: string }, headersFilter: true | string[]): string {
+    headersToString(headers: { [key: string]: string | string[] }, headersFilter: true | string[]): string {
         let keys = Object.keys(headers);
         if (Array.isArray(headersFilter)) {
             const filterLowerCase = headersFilter.map(h => h.toLowerCase());
             keys = keys.filter(key => filterLowerCase ? filterLowerCase.indexOf(key.toLowerCase()) !== -1 : true);
         }
 
-        return keys.map(key => `${key}=${headers[key]}`).join(", ");
+        return keys.map(key => {
+            const value = headers[key];
+            if (Array.isArray(value)) {
+                return value.map(value => `${key}=${value}`).join(", ");
+            }
+            return `${key}=${value}`;
+        }).join(", ");
     }
 
     log(msg: string): void {
