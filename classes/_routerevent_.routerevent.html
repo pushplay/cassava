@@ -98,6 +98,9 @@
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_routerevent_.routerevent.html#headerslowercase" class="tsd-kind-icon">headers<wbr>Lower<wbr>Case</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_routerevent_.routerevent.html#httpmethod-1" class="tsd-kind-icon">http<wbr>Method</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_routerevent_.routerevent.html#meta" class="tsd-kind-icon">meta</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_routerevent_.routerevent.html#multivalueheaders" class="tsd-kind-icon">multi<wbr>Value<wbr>Headers</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_routerevent_.routerevent.html#multivalueheaderslowercase" class="tsd-kind-icon">multi<wbr>Value<wbr>Headers<wbr>Lower<wbr>Case</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_routerevent_.routerevent.html#multivaluequerystringparameters" class="tsd-kind-icon">multi<wbr>Value<wbr>Query<wbr>String<wbr>Parameters</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_routerevent_.routerevent.html#path" class="tsd-kind-icon">path</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_routerevent_.routerevent.html#pathparameters" class="tsd-kind-icon">path<wbr>Parameters</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_routerevent_.routerevent.html#querystringparameters" class="tsd-kind-icon">query<wbr>String<wbr>Parameters</a></li>
@@ -125,7 +128,7 @@
 					<div class="tsd-signature tsd-kind-icon">body<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/6bf0112/src/RouterEvent.ts#L44">RouterEvent.ts:44</a></li>
+							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/5a0859a/src/RouterEvent.ts#L44">RouterEvent.ts:44</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -140,7 +143,7 @@
 					<div class="tsd-signature tsd-kind-icon">context<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/6bf0112/src/RouterEvent.ts#L13">RouterEvent.ts:13</a></li>
+							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/5a0859a/src/RouterEvent.ts#L13">RouterEvent.ts:13</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -224,7 +227,7 @@
 					<div class="tsd-signature tsd-kind-icon">cookies<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/6bf0112/src/RouterEvent.ts#L39">RouterEvent.ts:39</a></li>
+							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/5a0859a/src/RouterEvent.ts#L39">RouterEvent.ts:39</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -247,12 +250,12 @@
 					<div class="tsd-signature tsd-kind-icon">headers<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/6bf0112/src/RouterEvent.ts#L51">RouterEvent.ts:51</a></li>
+							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/5a0859a/src/RouterEvent.ts#L51">RouterEvent.ts:51</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>All headers of the request.  They are stored here in their original
+							<p>All headers of the request with only the first value.  They are stored here in their original
 								form but the spec requires that header keys are treated as case-insensitive.
 							Use <code>headersLowerCase</code> for easier retrieval.</p>
 						</div>
@@ -272,12 +275,12 @@
 					<div class="tsd-signature tsd-kind-icon">headers<wbr>Lower<wbr>Case<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/6bf0112/src/RouterEvent.ts#L56">RouterEvent.ts:56</a></li>
+							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/5a0859a/src/RouterEvent.ts#L56">RouterEvent.ts:56</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>All headers of the request with keys in lower case.</p>
+							<p>All headers of the request with only the first value, keys in lower case.</p>
 						</div>
 					</div>
 					<div class="tsd-type-declaration">
@@ -295,7 +298,7 @@
 					<div class="tsd-signature tsd-kind-icon">http<wbr>Method<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/6bf0112/src/RouterEvent.ts#L61">RouterEvent.ts:61</a></li>
+							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/5a0859a/src/RouterEvent.ts#L73">RouterEvent.ts:73</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -310,7 +313,7 @@
 					<div class="tsd-signature tsd-kind-icon">meta<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/6bf0112/src/RouterEvent.ts#L68">RouterEvent.ts:68</a></li>
+							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/5a0859a/src/RouterEvent.ts#L80">RouterEvent.ts:80</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -330,12 +333,83 @@
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="multivalueheaders" class="tsd-anchor"></a>
+					<h3>multi<wbr>Value<wbr>Headers</h3>
+					<div class="tsd-signature tsd-kind-icon">multi<wbr>Value<wbr>Headers<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/5a0859a/src/RouterEvent.ts#L63">RouterEvent.ts:63</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>All headers of the request including all values.  They are stored here in their original
+								form but the spec requires that header keys are treated as case-insensitive.
+							Use <code>multiValueHeadersLowerCase</code> for easier retrieval.</p>
+						</div>
+					</div>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-index-signature">
+								<h5><span class="tsd-signature-symbol">[</span>key: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
+							</li>
+						</ul>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="multivalueheaderslowercase" class="tsd-anchor"></a>
+					<h3>multi<wbr>Value<wbr>Headers<wbr>Lower<wbr>Case</h3>
+					<div class="tsd-signature tsd-kind-icon">multi<wbr>Value<wbr>Headers<wbr>Lower<wbr>Case<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/5a0859a/src/RouterEvent.ts#L68">RouterEvent.ts:68</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>All headers of the request including all values, keys in lower case.</p>
+						</div>
+					</div>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-index-signature">
+								<h5><span class="tsd-signature-symbol">[</span>key: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
+							</li>
+						</ul>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="multivaluequerystringparameters" class="tsd-anchor"></a>
+					<h3>multi<wbr>Value<wbr>Query<wbr>String<wbr>Parameters</h3>
+					<div class="tsd-signature tsd-kind-icon">multi<wbr>Value<wbr>Query<wbr>String<wbr>Parameters<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/5a0859a/src/RouterEvent.ts#L100">RouterEvent.ts:100</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The parsed URI query parameters including all values.</p>
+						</div>
+					</div>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-index-signature">
+								<h5><span class="tsd-signature-symbol">[</span>key: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
+							</li>
+						</ul>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="path" class="tsd-anchor"></a>
 					<h3>path</h3>
 					<div class="tsd-signature tsd-kind-icon">path<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/6bf0112/src/RouterEvent.ts#L73">RouterEvent.ts:73</a></li>
+							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/5a0859a/src/RouterEvent.ts#L85">RouterEvent.ts:85</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -350,7 +424,7 @@
 					<div class="tsd-signature tsd-kind-icon">path<wbr>Parameters<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/6bf0112/src/RouterEvent.ts#L78">RouterEvent.ts:78</a></li>
+							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/5a0859a/src/RouterEvent.ts#L90">RouterEvent.ts:90</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -373,12 +447,12 @@
 					<div class="tsd-signature tsd-kind-icon">query<wbr>String<wbr>Parameters<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/6bf0112/src/RouterEvent.ts#L83">RouterEvent.ts:83</a></li>
+							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/5a0859a/src/RouterEvent.ts#L95">RouterEvent.ts:95</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>The parsed URI query parameters.</p>
+							<p>The parsed URI query parameters with only their first value.</p>
 						</div>
 					</div>
 					<div class="tsd-type-declaration">
@@ -396,7 +470,7 @@
 					<div class="tsd-signature tsd-kind-icon">stage<wbr>Variables<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/6bf0112/src/RouterEvent.ts#L88">RouterEvent.ts:88</a></li>
+							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/5a0859a/src/RouterEvent.ts#L105">RouterEvent.ts:105</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -426,7 +500,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/6bf0112/src/RouterEvent.ts#L126">RouterEvent.ts:126</a></li>
+									<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/5a0859a/src/RouterEvent.ts#L143">RouterEvent.ts:143</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -457,7 +531,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/6bf0112/src/RouterEvent.ts#L142">RouterEvent.ts:142</a></li>
+									<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/5a0859a/src/RouterEvent.ts#L159">RouterEvent.ts:159</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -476,7 +550,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/6bf0112/src/RouterEvent.ts#L148">RouterEvent.ts:148</a></li>
+									<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/5a0859a/src/RouterEvent.ts#L165">RouterEvent.ts:165</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -502,7 +576,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/6bf0112/src/RouterEvent.ts#L154">RouterEvent.ts:154</a></li>
+									<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/5a0859a/src/RouterEvent.ts#L171">RouterEvent.ts:171</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -557,7 +631,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/6bf0112/src/RouterEvent.ts#L94">RouterEvent.ts:94</a></li>
+									<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/5a0859a/src/RouterEvent.ts#L111">RouterEvent.ts:111</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -577,7 +651,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/6bf0112/src/RouterEvent.ts#L101">RouterEvent.ts:101</a></li>
+									<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/5a0859a/src/RouterEvent.ts#L118">RouterEvent.ts:118</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -604,7 +678,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/6bf0112/src/RouterEvent.ts#L108">RouterEvent.ts:108</a></li>
+									<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/5a0859a/src/RouterEvent.ts#L125">RouterEvent.ts:125</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -658,7 +732,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/6bf0112/src/RouterEvent.ts#L180">RouterEvent.ts:180</a></li>
+									<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/5a0859a/src/RouterEvent.ts#L197">RouterEvent.ts:197</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -694,7 +768,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/6bf0112/src/RouterEvent.ts#L135">RouterEvent.ts:135</a></li>
+									<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/5a0859a/src/RouterEvent.ts#L152">RouterEvent.ts:152</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -808,6 +882,15 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="_routerevent_.routerevent.html#meta" class="tsd-kind-icon">meta</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_routerevent_.routerevent.html#multivalueheaders" class="tsd-kind-icon">multi<wbr>Value<wbr>Headers</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_routerevent_.routerevent.html#multivalueheaderslowercase" class="tsd-kind-icon">multi<wbr>Value<wbr>Headers<wbr>Lower<wbr>Case</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_routerevent_.routerevent.html#multivaluequerystringparameters" class="tsd-kind-icon">multi<wbr>Value<wbr>Query<wbr>String<wbr>Parameters</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="_routerevent_.routerevent.html#path" class="tsd-kind-icon">path</a>
