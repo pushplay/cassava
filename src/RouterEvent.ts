@@ -44,16 +44,28 @@ export class RouterEvent {
     body: any;
 
     /**
-     * All headers of the request.  They are stored here in their original
+     * All headers of the request with only the first value.  They are stored here in their original
      * form but the spec requires that header keys are treated as case-insensitive.
      * Use `headersLowerCase` for easier retrieval.
      */
     headers: { [key: string]: string };
 
     /**
-     * All headers of the request with keys in lower case.
+     * All headers of the request with only the first value, keys in lower case.
      */
     headersLowerCase: { [key: string]: string };
+
+    /**
+     * All headers of the request including all values.  They are stored here in their original
+     * form but the spec requires that header keys are treated as case-insensitive.
+     * Use `multiValueHeadersLowerCase` for easier retrieval.
+     */
+    multiValueHeaders: { [key: string]: string[] };
+
+    /**
+     * All headers of the request including all values, keys in lower case.
+     */
+    multiValueHeadersLowerCase: { [key: string]: string[] };
 
     /**
      * GET, POST, PUT, etc...
@@ -78,9 +90,14 @@ export class RouterEvent {
     pathParameters: { [key: string]: string };
 
     /**
-     * The parsed URI query parameters.
+     * The parsed URI query parameters with only their first value.
      */
     queryStringParameters: { [key: string]: string };
+
+    /**
+     * The parsed URI query parameters including all values.
+     */
+    multiValueQueryStringParameters: { [key: string]: string[] };
 
     /**
      * Configuration attributes associated with a deployment stage of an API.
