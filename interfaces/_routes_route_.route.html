@@ -116,7 +116,7 @@
 					<div class="tsd-signature tsd-kind-icon">enabled<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/5a0859a/src/routes/Route.ts#L34">routes/Route.ts:34</a></li>
+							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/516a71f/src/routes/Route.ts#L34">routes/Route.ts:34</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -131,7 +131,7 @@
 					<div class="tsd-signature tsd-kind-icon">handle<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/5a0859a/src/routes/Route.ts#L20">routes/Route.ts:20</a></li>
+							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/516a71f/src/routes/Route.ts#L20">routes/Route.ts:20</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -178,15 +178,15 @@
 					<div class="tsd-signature tsd-kind-icon">post<wbr>Process<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/5a0859a/src/routes/Route.ts#L29">routes/Route.ts:29</a></li>
+							<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/516a71f/src/routes/Route.ts#L29">routes/Route.ts:29</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
 							<p>Post-process the response before it is sent.</p>
 						</div>
-						<p>Return a RouterResponse object or a Promise that resoles to a RouterResponse
-							object to change the response to that.  Modifying the object in place will
+						<p>Return a RouterResponse object or a Promise that resolves to a RouterResponse
+							object to change the response.  Modifying the object in place will
 						also change the response.</p>
 					</div>
 					<div class="tsd-type-declaration">
@@ -194,7 +194,7 @@
 						<ul class="tsd-parameters">
 							<li class="tsd-parameter-siganture">
 								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-property tsd-is-not-exported">
-									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>evt<span class="tsd-signature-symbol">: </span><a href="../classes/_routerevent_.routerevent.html" class="tsd-signature-type">RouterEvent</a>, resp<span class="tsd-signature-symbol">: </span><a href="../modules/_routerresponse_.routerresponse.html" class="tsd-signature-type">RouterResponse</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../modules/_routerresponse_.routerresponse.html" class="tsd-signature-type">RouterResponse</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><a href="../modules/_routerresponse_.routerresponse.html" class="tsd-signature-type">RouterResponse</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">void</span></li>
+									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>evt<span class="tsd-signature-symbol">: </span><a href="../classes/_routerevent_.routerevent.html" class="tsd-signature-type">RouterEvent</a>, resp<span class="tsd-signature-symbol">: </span><a href="../modules/_routerresponse_.routerresponse.html" class="tsd-signature-type">RouterResponse</a>, handlingRoutes<span class="tsd-signature-symbol">: </span><a href="_routes_route_.route.html" class="tsd-signature-type">Route</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../modules/_routerresponse_.routerresponse.html" class="tsd-signature-type">RouterResponse</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><a href="../modules/_routerresponse_.routerresponse.html" class="tsd-signature-type">RouterResponse</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">void</span></li>
 								</ul>
 								<ul class="tsd-descriptions">
 									<li class="tsd-description">
@@ -205,6 +205,9 @@
 											</li>
 											<li>
 												<h5>resp: <a href="../modules/_routerresponse_.routerresponse.html" class="tsd-signature-type">RouterResponse</a></h5>
+											</li>
+											<li>
+												<h5>handlingRoutes: <a href="_routes_route_.route.html" class="tsd-signature-type">Route</a><span class="tsd-signature-symbol">[]</span></h5>
 											</li>
 										</ul>
 										<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../modules/_routerresponse_.routerresponse.html" class="tsd-signature-type">RouterResponse</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span>
@@ -234,7 +237,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/5a0859a/src/routes/Route.ts#L9">routes/Route.ts:9</a></li>
+									<li>Defined in <a href="https://github.com/Giftbit/cassava/blob/516a71f/src/routes/Route.ts#L9">routes/Route.ts:9</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
