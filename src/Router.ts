@@ -105,17 +105,21 @@ export class Router {
 
         const evt = this.proxyEventToRouterEvent(pevt);
         let resp: RouterResponse | void = null;
+        let handlingRoute: Route;
         const postProcessors: Route[] = [];
 
         for (let routeIx = 0; routeIx < this.routes.length && !resp; routeIx++) {
             const route = this.routes[routeIx];
-            if (route.matches(evt)) {
+            if (route.enabled !== false && route.matches(evt)) {
                 if (route.postProcess) {
                     postProcessors.push(route);
                 }
                 if (route.handle) {
                     try {
                         resp = await route.handle(evt);
+                        if (resp) {
+                            handlingRoute = route;
+                        }
                     } catch (err) {
                         resp = await this.errorToRouterResponse(err, pevt, ctx);
                     }
@@ -136,12 +140,16 @@ export class Router {
             }
         }
 
+        const handlingRoutes: Route[] = [handlingRoute];
         while (postProcessors.length) {
             const route = postProcessors.pop();
             try {
-                resp = await route.postProcess(evt, resp) || resp;
+                resp = await route.postProcess(evt, resp, handlingRoutes) || resp;
             } catch (err) {
                 resp = await this.errorToRouterResponse(err, pevt, ctx);
+            }
+            if (handlingRoutes[handlingRoutes.length - 1] !== route) {
+                handlingRoutes.push(route);
             }
         }
 

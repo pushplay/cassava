@@ -7,7 +7,7 @@ export class BuildableRoute implements Route, RouteBuilder {
 
     private settings: {
         handler?: (evt: RouterEvent) => Promise<RouterResponse>;
-        postProcessor?: (evt: RouterEvent, resp: RouterResponse) => Promise<RouterResponse>;
+        postProcessor?: (evt: RouterEvent, resp: RouterResponse, handlingRoutes: Route[]) => Promise<RouterResponse>;
         pathRegex?: RegExp;
         regexGroupToPathParamMap?: string[],
         method?: string;
@@ -66,9 +66,9 @@ export class BuildableRoute implements Route, RouteBuilder {
         return null;
     }
 
-    postProcess(evt: RouterEvent, resp: RouterResponse): Promise<RouterResponse> | null {
+    postProcess(evt: RouterEvent, resp: RouterResponse, handlingRoutes: Route[]): Promise<RouterResponse> | null {
         if (this.settings.postProcessor) {
-            return this.settings.postProcessor(evt, resp);
+            return this.settings.postProcessor(evt, resp, handlingRoutes);
         }
         return null;
     }
@@ -147,7 +147,7 @@ export class BuildableRoute implements Route, RouteBuilder {
         return this;
     }
 
-    postProcessor(postProcessor: (evt: RouterEvent, resp: RouterResponse) => Promise<RouterResponse>): this {
+    postProcessor(postProcessor: (evt: RouterEvent, resp: RouterResponse, handlingRoutes: Route[]) => Promise<RouterResponse>): this {
         if (!postProcessor) {
             throw new Error("postProcessor cannot be null");
         }
@@ -199,6 +199,6 @@ export interface RouteBuilder {
      * Set the post processor for this Route.
      * @see routes.Route.postProcess
      */
-    postProcessor(postProcessor: (evt: RouterEvent, resp: RouterResponse) => Promise<RouterResponse | null | void> | RouterResponse | null | void): this;
+    postProcessor(postProcessor: (evt: RouterEvent, resp: RouterResponse, handlingRoutes: Route[]) => Promise<RouterResponse | null | void> | RouterResponse | null | void): this;
 
 }

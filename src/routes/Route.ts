@@ -22,11 +22,11 @@ export interface Route {
     /**
      * Post-process the response before it is sent.
      *
-     * Return a RouterResponse object or a Promise that resoles to a RouterResponse
-     * object to change the response to that.  Modifying the object in place will
+     * Return a RouterResponse object or a Promise that resolves to a RouterResponse
+     * object to change the response.  Modifying the object in place will
      * also change the response.
      */
-    postProcess?: (evt: RouterEvent, resp: RouterResponse) => Promise<RouterResponse | null | void> | RouterResponse | null | void;
+    postProcess?: (evt: RouterEvent, resp: RouterResponse, handlingRoutes: Route[]) => Promise<RouterResponse | null | void> | RouterResponse | null | void;
 
     /**
      * Whether the route is enabled.  Set to `false` to disable.

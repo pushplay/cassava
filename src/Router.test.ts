@@ -46,13 +46,15 @@ describe("Router", () => {
             });
 
         router.route("/foo/bar")
-            .postProcessor(async (evt, resp) => {
+            .postProcessor(async (evt, resp, handlers) => {
+                chai.assert.lengthOf(handlers, 2);
                 resp.body.processor1 = "done";
                 return resp;
             });
 
         router.route("/foo/bar")
-            .postProcessor(async (evt, resp) => {
+            .postProcessor(async (evt, resp, handlers) => {
+                chai.assert.lengthOf(handlers, 1);
                 resp.body.processor1 = "not done";
                 resp.body.processor2 = "done";
                 return resp;
