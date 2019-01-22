@@ -115,11 +115,9 @@ export class Router {
                     postProcessors.push(route);
                 }
                 if (route.handle) {
+                    handlingRoute = route;
                     try {
                         resp = await route.handle(evt);
-                        if (resp) {
-                            handlingRoute = route;
-                        }
                     } catch (err) {
                         resp = await this.errorToRouterResponse(err, pevt, ctx);
                     }

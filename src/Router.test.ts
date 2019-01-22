@@ -37,45 +37,78 @@ describe("Router", () => {
         chai.assert.equal(resp.statusCode, 200, JSON.stringify(resp));
     });
 
-    it("calls all matching, earlier post processors", async () => {
-        const router = new cassava.Router();
+    describe("calling post processors", () => {
+        it("calls all matching, earlier post processors", async () => {
+            const router = new cassava.Router();
 
-        router.route("/foo/baz")
-            .postProcessor(() => {
-                throw new Error("don't post process");
+            router.route("/foo/baz")
+                .postProcessor(() => {
+                    throw new Error("don't post process");
+                });
+
+            router.route("/foo/bar")
+                .postProcessor(async (evt, resp, handlers) => {
+                    chai.assert.lengthOf(handlers, 2);
+                    resp.body.processor1 = "done";
+                    return resp;
+                });
+
+            router.route("/foo/bar")
+                .postProcessor(async (evt, resp, handlers) => {
+                    chai.assert.lengthOf(handlers, 1);
+                    resp.body.processor1 = "not done";
+                    resp.body.processor2 = "done";
+                    return resp;
+                });
+
+            router.route("/foo/bar")
+                .handler(async evt => ({body: {success: true}}));
+
+            router.route("/foo/bar")
+                .postProcessor(() => {
+                    throw new Error("don't post process either");
+                });
+
+            const resp = await testRouter(router, createTestProxyEvent("/foo/bar"));
+
+            chai.assert.isObject(resp);
+            chai.assert.equal(resp.statusCode, 200, JSON.stringify(resp));
+            chai.assert.deepEqual(JSON.parse(resp.body), {
+                success: true,
+                processor1: "done",
+                processor2: "done"
             });
+        });
 
-        router.route("/foo/bar")
-            .postProcessor(async (evt, resp, handlers) => {
-                chai.assert.lengthOf(handlers, 2);
-                resp.body.processor1 = "done";
-                return resp;
-            });
+        it("returns handlers array even when error thrown", async () => {
+            const router = new cassava.Router();
 
-        router.route("/foo/bar")
-            .postProcessor(async (evt, resp, handlers) => {
-                chai.assert.lengthOf(handlers, 1);
-                resp.body.processor1 = "not done";
-                resp.body.processor2 = "done";
-                return resp;
-            });
+            router.route("/foo/bar")
+                .postProcessor(async (evt, resp, handlers) => {
+                    chai.assert.lengthOf(handlers, 3);
+                });
 
-        router.route("/foo/bar")
-            .handler(async evt => ({body: {success: true}}));
+            router.route("/foo/bar")
+                .postProcessor((evt, resp, handlers) => {
+                    chai.assert.lengthOf(handlers, 2);
+                    throw new RestError(500, "Same error, different day");
+                });
 
-        router.route("/foo/bar")
-            .postProcessor(() => {
-                throw new Error("don't post process either");
-            });
+            router.route("/foo/bar")
+                .postProcessor(async (evt, resp, handlers) => {
+                    chai.assert.lengthOf(handlers, 1);
+                    return resp;
+                });
 
-        const resp = await testRouter(router, createTestProxyEvent("/foo/bar"));
+            router.route("/foo/bar")
+                .handler(async (evt) => {
+                    throw new cassava.RestError(500, "Something happened here");
+                });
 
-        chai.assert.isObject(resp);
-        chai.assert.equal(resp.statusCode, 200, JSON.stringify(resp));
-        chai.assert.deepEqual(JSON.parse(resp.body), {
-            success: true,
-            processor1: "done",
-            processor2: "done"
+            const resp = await testRouter(router, createTestProxyEvent("/foo/bar"));
+
+            chai.assert.isObject(resp);
+            chai.assert.equal(resp.statusCode, 500, JSON.stringify(resp));
         });
     });
 
