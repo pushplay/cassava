@@ -37,45 +37,94 @@ describe("Router", () => {
         chai.assert.equal(resp.statusCode, 200, JSON.stringify(resp));
     });
 
-    it("calls all matching, earlier post processors", async () => {
-        const router = new cassava.Router();
+    describe("calling post processors", () => {
+        it("calls all matching, earlier post processors", async () => {
+            const router = new cassava.Router();
 
-        router.route("/foo/baz")
-            .postProcessor(() => {
-                throw new Error("don't post process");
+            router.route("/foo/baz")
+                .postProcessor(() => {
+                    throw new Error("don't post process");
+                });
+
+            router.route("/foo/bar")
+                .postProcessor(async (evt, resp, handlers) => {
+                    chai.assert.lengthOf(handlers, 2);
+                    resp.body.processor1 = "done";
+                    return resp;
+                });
+
+            router.route("/foo/bar")
+                .postProcessor(async (evt, resp, handlers) => {
+                    chai.assert.lengthOf(handlers, 1);
+                    resp.body.processor1 = "not done";
+                    resp.body.processor2 = "done";
+                    return resp;
+                });
+
+            router.route("/foo/bar")
+                .handler(async evt => ({body: {success: true}}));
+
+            router.route("/foo/bar")
+                .postProcessor(() => {
+                    throw new Error("don't post process either");
+                });
+
+            const resp = await testRouter(router, createTestProxyEvent("/foo/bar"));
+
+            chai.assert.isObject(resp);
+            chai.assert.equal(resp.statusCode, 200, JSON.stringify(resp));
+            chai.assert.deepEqual(JSON.parse(resp.body), {
+                success: true,
+                processor1: "done",
+                processor2: "done"
             });
+        });
 
-        router.route("/foo/bar")
-            .postProcessor(async (evt, resp, handlers) => {
-                chai.assert.lengthOf(handlers, 2);
-                resp.body.processor1 = "done";
-                return resp;
-            });
+        it("returns handlers array even when error thrown", async () => {
+            const router = new cassava.Router();
 
-        router.route("/foo/bar")
-            .postProcessor(async (evt, resp, handlers) => {
-                chai.assert.lengthOf(handlers, 1);
-                resp.body.processor1 = "not done";
-                resp.body.processor2 = "done";
-                return resp;
-            });
+            router.route("/foo/bar")
+                .postProcessor(async (evt, resp, handlers) => {
+                    chai.assert.lengthOf(handlers, 3);
+                });
 
-        router.route("/foo/bar")
-            .handler(async evt => ({body: {success: true}}));
+            router.route("/foo/bar")
+                .postProcessor((evt, resp, handlers) => {
+                    chai.assert.lengthOf(handlers, 2);
+                    throw new RestError(500, "Same error, different day");
+                });
 
-        router.route("/foo/bar")
-            .postProcessor(() => {
-                throw new Error("don't post process either");
-            });
+            router.route("/foo/bar")
+                .postProcessor(async (evt, resp, handlers) => {
+                    chai.assert.lengthOf(handlers, 1);
+                    return resp;
+                });
 
-        const resp = await testRouter(router, createTestProxyEvent("/foo/bar"));
+            router.route("/foo/bar")
+                .handler(async (evt) => {
+                    throw new cassava.RestError(500, "Something happened here");
+                });
 
-        chai.assert.isObject(resp);
-        chai.assert.equal(resp.statusCode, 200, JSON.stringify(resp));
-        chai.assert.deepEqual(JSON.parse(resp.body), {
-            success: true,
-            processor1: "done",
-            processor2: "done"
+            const resp = await testRouter(router, createTestProxyEvent("/foo/bar"));
+
+            chai.assert.isObject(resp);
+            chai.assert.equal(resp.statusCode, 500, JSON.stringify(resp));
+        });
+
+        it("returns defaultRoute in handlers array if no other routes handle event", async () => {
+            const router = new cassava.Router();
+
+            router.route(/.*/)
+                .postProcessor(async (evt, resp, handlers) => {
+                    chai.assert.lengthOf(handlers, 1);
+                    chai.assert.deepEqual(handlers[0], router.defaultRoute);
+                    return resp;
+                });
+
+            const resp = await testRouter(router, createTestProxyEvent("/path/less/taken"));
+
+            chai.assert.isObject(resp);
+            chai.assert.equal(resp.statusCode, 404, JSON.stringify(resp));
         });
     });
 
@@ -164,7 +213,7 @@ describe("Router", () => {
                         body: {
                             drum: "bass"
                         }
-                    }
+                    };
                 });
 
             const resp = await testRouter(router, createTestProxyEvent("/foo"));
@@ -219,7 +268,7 @@ describe("Router", () => {
                         body: {
                             hip: "hop"
                         }
-                    }
+                    };
                 });
 
             const resp = await testRouter(router, createTestProxyEvent("/foo"));
@@ -384,7 +433,7 @@ describe("Router", () => {
 
                 router.route("/foo")
                     .handler(async evt => {
-                        throw new cassava.RestError(400, "This is my custom error message")
+                        throw new cassava.RestError(400, "This is my custom error message");
                     });
 
                 const resp = await testRouter(router, createTestProxyEvent("/foo"));
@@ -404,7 +453,7 @@ describe("Router", () => {
                 router.route({
                     matches: () => true,
                     postProcess: () => {
-                        throw new RestError(418, "I'm a teapot.")
+                        throw new RestError(418, "I'm a teapot.");
                     }
                 });
 
@@ -428,7 +477,7 @@ describe("Router", () => {
                 router.defaultRoute = {
                     matches: () => true,
                     handle: () => {
-                        throw new RestError(403, "You have 15 seconds to comply.")
+                        throw new RestError(403, "You have 15 seconds to comply.");
                     }
                 };
 
@@ -448,7 +497,7 @@ describe("Router", () => {
 
                 router.route("/foo")
                     .handler(async evt => {
-                        throw new cassava.RestError(400, "This is my custom error message")
+                        throw new cassava.RestError(400, "This is my custom error message");
                     });
 
                 let errorHandlerCalled = false;
@@ -459,7 +508,7 @@ describe("Router", () => {
                         body: {
                             fruit: "loops"
                         }
-                    }
+                    };
                 };
 
                 const resp = await testRouter(router, createTestProxyEvent("/foo"));
@@ -484,7 +533,7 @@ describe("Router", () => {
 
                 router.route("/foo")
                     .handler(async evt => {
-                        throw new cassava.RestError(400, "This is my custom error message")
+                        throw new cassava.RestError(400, "This is my custom error message");
                     });
 
                 const resp = await testRouter(router, createTestProxyEvent("/foo"));
@@ -501,7 +550,7 @@ describe("Router", () => {
 
                     router.route("/foo")
                         .handler(async evt => {
-                            throw new cassava.RestError(400, "This is my custom error message", {a: "alpha", b: "beta"})
+                            throw new cassava.RestError(400, "This is my custom error message", {a: "alpha", b: "beta"});
                         });
 
                     const resp = await testRouter(router, createTestProxyEvent("/foo"));
@@ -525,7 +574,7 @@ describe("Router", () => {
                             throw new cassava.RestError(400, "This is my custom error message", {
                                 statusCode: 123,
                                 message: "pretty sneaky, sis"
-                            })
+                            });
                         });
 
                     const resp = await testRouter(router, createTestProxyEvent("/foo"));
@@ -544,7 +593,7 @@ describe("Router", () => {
 
                     router.route("/foo")
                         .handler(async evt => {
-                            throw new cassava.RestError(400, "This is my custom error message", {})
+                            throw new cassava.RestError(400, "This is my custom error message", {});
                         });
 
                     const resp = await testRouter(router, createTestProxyEvent("/foo"));
@@ -564,7 +613,7 @@ describe("Router", () => {
 
                         router.route("/foo")
                             .handler(async evt => {
-                                throw new cassava.RestError(400, "This is my custom error message", value as any)
+                                throw new cassava.RestError(400, "This is my custom error message", value as any);
                             });
 
                         const resp = await testRouter(router, createTestProxyEvent("/foo"));
@@ -588,7 +637,7 @@ describe("Router", () => {
 
                 router.route("/foo")
                     .handler(async () => {
-                        throw new Error("This error message should not be leaked")
+                        throw new Error("This error message should not be leaked");
                     });
 
                 const resp = await testRouter(router, createTestProxyEvent("/foo"));
@@ -609,7 +658,7 @@ describe("Router", () => {
                 router.route({
                     matches: () => true,
                     postProcess: () => {
-                        throw new Error("I'm the world's angriest teapot and I will kill your whole family.")
+                        throw new Error("I'm the world's angriest teapot and I will kill your whole family.");
                     }
                 });
 
@@ -634,7 +683,7 @@ describe("Router", () => {
                 router.defaultRoute = {
                     matches: () => true,
                     handle: () => {
-                        throw new Error("I apologize for the previous teapot.")
+                        throw new Error("I apologize for the previous teapot.");
                     }
                 };
 
@@ -664,7 +713,7 @@ describe("Router", () => {
 
                 router.route("/foo")
                     .handler(async evt => {
-                        throw new Error("All teapots report for sensitivity training.")
+                        throw new Error("All teapots report for sensitivity training.");
                     });
 
                 const resp = await testRouter(router, createTestProxyEvent("/foo"));
@@ -682,7 +731,7 @@ describe("Router", () => {
 
                 router.route("/foo")
                     .handler(async () => {
-                        throw new Error("Everything was beautiful and nothing hurt.")
+                        throw new Error("Everything was beautiful and nothing hurt.");
                     });
 
                 let errorHandlerCalled = false;
@@ -704,7 +753,7 @@ describe("Router", () => {
 
                 router.route("/foo")
                     .handler(async () => {
-                        throw new Error("Everything was beautiful and nothing hurt.")
+                        throw new Error("Everything was beautiful and nothing hurt.");
                     });
 
                 let errorHandlerCalled = false;
@@ -719,7 +768,7 @@ describe("Router", () => {
                         body: {
                             errMessage: err.message
                         }
-                    }
+                    };
                 };
 
                 const resp = await testRouter(router, createTestProxyEvent("/foo"));
@@ -738,7 +787,7 @@ describe("Router", () => {
 
                 router.route("/foo")
                     .handler(async () => {
-                        throw new Error("So it goes.")
+                        throw new Error("So it goes.");
                     });
 
                 let errorHandlerCalled = false;
@@ -749,7 +798,7 @@ describe("Router", () => {
                         body: {
                             errMessage: err.message
                         }
-                    }
+                    };
                 };
 
                 const resp = await testRouter(router, createTestProxyEvent("/foo"));
@@ -769,7 +818,7 @@ describe("Router", () => {
 
                 router.route("/foo")
                     .handler(async () => {
-                        throw new Error("This error message should not be leaked")
+                        throw new Error("This error message should not be leaked");
                     });
 
                 let errorHandlerCalled = false;
@@ -795,7 +844,7 @@ describe("Router", () => {
 
                 router.route("/foo")
                     .handler(async () => {
-                        throw new Error("This error message should not be leaked")
+                        throw new Error("This error message should not be leaked");
                     });
 
                 let errorHandlerCalled = false;
@@ -822,7 +871,7 @@ describe("Router", () => {
 
                 router.route("/foo")
                     .handler(async () => {
-                        throw new Error("This error message should not be leaked")
+                        throw new Error("This error message should not be leaked");
                     });
 
                 let errorHandlerCalled = false;
@@ -848,7 +897,7 @@ describe("Router", () => {
 
                 router.route("/foo")
                     .handler(async () => {
-                        throw new Error("This error message should not be leaked")
+                        throw new Error("This error message should not be leaked");
                     });
 
                 let errorHandlerCalled = false;
@@ -890,7 +939,7 @@ describe("Router", () => {
 
                 router.route("/foo")
                     .handler(async evt => {
-                        throw new Error("All teapots report for sensitivity training.")
+                        throw new Error("All teapots report for sensitivity training.");
                     });
 
                 const resp = await testRouter(router, createTestProxyEvent("/foo"));

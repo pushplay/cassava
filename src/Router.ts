@@ -115,11 +115,9 @@ export class Router {
                     postProcessors.push(route);
                 }
                 if (route.handle) {
+                    handlingRoute = route;
                     try {
                         resp = await route.handle(evt);
-                        if (resp) {
-                            handlingRoute = route;
-                        }
                     } catch (err) {
                         resp = await this.errorToRouterResponse(err, pevt, ctx);
                     }
@@ -131,6 +129,7 @@ export class Router {
                 if (!this.defaultRoute.handle) {
                     throw new Error("Router's defaultRoute.handle is not defined.");
                 }
+                handlingRoute = this.defaultRoute;
                 resp = await this.defaultRoute.handle(evt);
                 if (!resp) {
                     throw new Error("Router's defaultRoute.handle() did not return a response.");
@@ -159,7 +158,7 @@ export class Router {
     private proxyEventToRouterEvent(evt: ProxyEvent): RouterEvent {
         const r = new RouterEvent();
 
-        r.context = evt.context;
+        r.requestContext = evt.requestContext;
         r.headers = evt.headers || {};
         r.multiValueHeaders = evt.multiValueHeaders || {};
         r.httpMethod = evt.httpMethod;

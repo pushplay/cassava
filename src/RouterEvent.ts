@@ -10,24 +10,29 @@ export class RouterEvent {
      * API Gateway event context.
      * @link https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html#api-gateway-simple-proxy-for-lambda-input-format
      */
-    context: {
+    requestContext: {
         accountId: string,
         apiId: string,
+        authorizer?: { [name: string]: any, },
         httpMethod: string,
         identity: {
             accessKey: string,
             apiKey: string,
             accountId: string,
+            apiKeyId: string,
             caller: string,
             cognitoAuthenticationProvider: string,
             cognitoAuthenticationType: string,
+            cognitoIdentityId: string,
             cognitoIdentityPoolId: string,
             sourceIp: string,
             user: string,
             userAgent: string,
             userArn: string
         },
+        path: string,
         requestId: string,
+        requestTimeEpoch: number,
         resourceId: string,
         resourcePath: string,
         stage: string
