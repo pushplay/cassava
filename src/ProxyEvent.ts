@@ -2,6 +2,7 @@
  * API Gateway proxy object.
  * see: http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-set-up-simple-proxy.html#api-gateway-simple-proxy-for-lambda-input-format
  */
+
 export interface ProxyEvent {
 
     /**
@@ -56,20 +57,27 @@ export interface ProxyEvent {
         accountId: string,
         apiId: string,
         httpMethod: string,
+        authorizer?: {
+            [name: string]: any,
+        },
         identity: {
             accessKey: string,
             apiKey: string,
             accountId: string,
+            apiKeyId: string,
             caller: string,
             cognitoAuthenticationProvider: string,
             cognitoAuthenticationType: string,
+            cognitoIdentityId: string,
             cognitoIdentityPoolId: string,
             sourceIp: string,
             user: string,
             userAgent: string,
             userArn: string
         },
+        path: string,
         requestId: string,
+        requestTimeEpoch: number,
         resourceId: string,
         resourcePath: string,
         stage: string

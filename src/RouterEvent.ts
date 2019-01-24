@@ -14,20 +14,27 @@ export class RouterEvent {
         accountId: string,
         apiId: string,
         httpMethod: string,
+        authorizer?: {
+            [name: string]: any,
+        },
         identity: {
             accessKey: string,
             apiKey: string,
             accountId: string,
+            apiKeyId: string,
             caller: string,
             cognitoAuthenticationProvider: string,
             cognitoAuthenticationType: string,
+            cognitoIdentityId: string,
             cognitoIdentityPoolId: string,
             sourceIp: string,
             user: string,
             userAgent: string,
             userArn: string
         },
+        path: string,
         requestId: string,
+        requestTimeEpoch: number,
         resourceId: string,
         resourcePath: string,
         stage: string
