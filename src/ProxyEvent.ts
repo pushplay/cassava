@@ -60,8 +60,8 @@ export interface ProxyEvent {
         httpMethod: string,
         identity: {
             accessKey: string,
-            apiKey: string,
             accountId: string,
+            apiKey: string,
             apiKeyId: string,
             caller: string,
             cognitoAuthenticationProvider: string,

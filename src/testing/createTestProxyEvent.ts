@@ -14,39 +14,43 @@ function randomString(length: number): string {
 }
 
 const defaultTestProxyEvent: ProxyEvent = {
-    resource: "/{proxy+}",
-    path: "/",
-    httpMethod: "GET",
+    body: null,
     headers: null,
+    httpMethod: "GET",
+    isBase64Encoded: false,
     multiValueHeaders: null,
-    queryStringParameters: null,
     multiValueQueryStringParameters: null,
+    path: "/",
     pathParameters: null,
-    stageVariables: null,
-    context: {
+    queryStringParameters: null,
+    requestContext: {
         accountId: "12345678912",
-        resourceId: randomString(6),
-        stage: "testStage",
-        requestId: "",
+        apiId: randomString(10),
+        httpMethod: "GET",
         identity: {
             accessKey: "abcdefg",
-            cognitoIdentityPoolId: null,
             accountId: null,
-            caller: null,
             apiKey: null,
-            sourceIp: "192.168.0.0",
-            cognitoAuthenticationType: null,
+            apiKeyId: null,
+            caller: null,
             cognitoAuthenticationProvider: null,
-            userArn: null,
+            cognitoAuthenticationType: null,
+            cognitoIdentityId: null,
+            cognitoIdentityPoolId: null,
+            sourceIp: "192.168.0.0",
+            user: null,
             userAgent: "PostmanRuntime/2.4.5",
-            user: null
+            userArn: null
         },
+        path: "/",
+        requestId: "",
+        resourceId: randomString(6),
         resourcePath: "/{proxy+}",
-        httpMethod: "GET",
-        apiId: randomString(10)
+        requestTimeEpoch: Date.now(),
+        stage: "testStage"
     },
-    body: null,
-    isBase64Encoded: false
+    resource: "/{proxy+}",
+    stageVariables: null
 };
 
 /**
@@ -60,9 +64,9 @@ export function createTestProxyEvent(url: string = "/", method: string = "GET", 
     return {
         ...defaultTestProxyEvent,
         ...overrides,
-        context: {
-            ...defaultTestProxyEvent.context,
-            ...overrides.context ? overrides.context : {},
+        requestContext: {
+            ...defaultTestProxyEvent.requestContext,
+            ...overrides.requestContext ? overrides.requestContext : {},
             httpMethod: method,
             requestId: uuid()
         },

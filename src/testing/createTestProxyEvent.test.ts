@@ -7,7 +7,7 @@ describe("createTestProxyEvent", () => {
 
         chai.assert.equal(evt.httpMethod, "GET");
         chai.assert.equal(evt.path, "/");
-        chai.assert.equal(evt.context.httpMethod, "GET");
+        chai.assert.equal(evt.requestContext.httpMethod, "GET");
     });
 
     it("can override the method and path", () => {
@@ -15,7 +15,7 @@ describe("createTestProxyEvent", () => {
 
         chai.assert.equal(evt.httpMethod, "HEAD");
         chai.assert.equal(evt.path, "/foo/bar");
-        chai.assert.equal(evt.context.httpMethod, "HEAD");
+        chai.assert.equal(evt.requestContext.httpMethod, "HEAD");
     });
 
     it("generates null queryStringParams where there is no query string", () => {
@@ -40,7 +40,7 @@ describe("createTestProxyEvent", () => {
             d: ["2017-06-29T18:58:56.832Z"],
             exp: ["a && (b || c) == d"]
         });
-        chai.assert.equal(evt.context.httpMethod, "GET");
+        chai.assert.equal(evt.requestContext.httpMethod, "GET");
     });
 
     it("correctly generates multiValueQueryStringParameters", async () => {
@@ -62,6 +62,6 @@ describe("createTestProxyEvent", () => {
         const evt1 = createTestProxyEvent();
         const evt2 = createTestProxyEvent();
 
-        chai.assert.notEqual(evt1.context.requestId, evt2.context.requestId);
+        chai.assert.notEqual(evt1.requestContext.requestId, evt2.requestContext.requestId);
     });
 });

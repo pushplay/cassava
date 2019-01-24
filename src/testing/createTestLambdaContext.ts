@@ -1,6 +1,7 @@
 import * as awslambda from "aws-lambda";
 import * as uuid from "uuid/v4";
 import {ProxyEvent} from "../ProxyEvent";
+
 export {createTestProxyEvent} from "./createTestProxyEvent";
 
 const defaultContext: awslambda.Context = {
@@ -25,8 +26,8 @@ export function createTestLambdaContext(proxyEvent: ProxyEvent, overrides: Parti
     const date = new Date();
     return {
         ...defaultContext,
-        awsRequestId: proxyEvent.context.requestId,
-        invokedFunctionArn: `arn:aws:lambda:us-east-1:${proxyEvent.context.accountId}:function:lambdafunction`,
+        awsRequestId: proxyEvent.requestContext.requestId,
+        invokedFunctionArn: `arn:aws:lambda:us-east-1:${proxyEvent.requestContext.accountId}:function:lambdafunction`,
         logStreamName: `${date.getFullYear()}/${date.getMonth()}/${date.getDay()}/[$LATEST]${uuid().replace("-", "")}`,
         ...overrides
     };
