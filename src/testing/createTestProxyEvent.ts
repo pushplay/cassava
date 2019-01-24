@@ -73,7 +73,7 @@ export function createTestProxyEvent(url: string = "/", method: string = "GET", 
         httpMethod: method,
         path: heavyUrl.pathname,
         queryStringParameters: deduplicateQueryStringParameters(mixedQueryStringParams),
-        multiValueQueryStringParameters: normalizeMMultiValueQueryStringParameters(mixedQueryStringParams)
+        multiValueQueryStringParameters: normalizeMultiValueQueryStringParameters(mixedQueryStringParams)
     };
 }
 
@@ -98,7 +98,7 @@ function deduplicateQueryStringParameters(params: { [key: string]: string | stri
     return queryStringParameters;
 }
 
-function normalizeMMultiValueQueryStringParameters(params: { [key: string]: string | string[] }): { [key: string]: string[] } {
+function normalizeMultiValueQueryStringParameters(params: { [key: string]: string | string[] }): { [key: string]: string[] } {
     if (params == null) {
         return null;
     }
