@@ -157,7 +157,7 @@ export class Router {
     private proxyEventToRouterEvent(evt: ProxyEvent): RouterEvent {
         const r = new RouterEvent();
 
-        r.context = evt.context;
+        r.requestContext = evt.requestContext;
         r.headers = evt.headers || {};
         r.multiValueHeaders = evt.multiValueHeaders || {};
         r.httpMethod = evt.httpMethod;

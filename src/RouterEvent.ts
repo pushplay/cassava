@@ -10,13 +10,11 @@ export class RouterEvent {
      * API Gateway event context.
      * @link https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html#api-gateway-simple-proxy-for-lambda-input-format
      */
-    context: {
+    requestContext: {
         accountId: string,
         apiId: string,
+        authorizer?: { [name: string]: any, },
         httpMethod: string,
-        authorizer?: {
-            [name: string]: any,
-        },
         identity: {
             accessKey: string,
             apiKey: string,

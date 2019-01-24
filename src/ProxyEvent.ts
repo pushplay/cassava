@@ -53,13 +53,11 @@ export interface ProxyEvent {
     /**
      * API Gateway event context.
      */
-    context: {
+    requestContext: {
         accountId: string,
         apiId: string,
+        authorizer?: { [name: string]: any },
         httpMethod: string,
-        authorizer?: {
-            [name: string]: any,
-        },
         identity: {
             accessKey: string,
             apiKey: string,
