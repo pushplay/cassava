@@ -129,6 +129,7 @@ export class Router {
                 if (!this.defaultRoute.handle) {
                     throw new Error("Router's defaultRoute.handle is not defined.");
                 }
+                handlingRoute = this.defaultRoute;
                 resp = await this.defaultRoute.handle(evt);
                 if (!resp) {
                     throw new Error("Router's defaultRoute.handle() did not return a response.");

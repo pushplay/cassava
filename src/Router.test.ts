@@ -110,6 +110,22 @@ describe("Router", () => {
             chai.assert.isObject(resp);
             chai.assert.equal(resp.statusCode, 500, JSON.stringify(resp));
         });
+
+        it("returns defaultRoute in handlers array if no other routes handle event", async () => {
+            const router = new cassava.Router();
+
+            router.route(/.*/)
+                .postProcessor(async (evt, resp, handlers) => {
+                    chai.assert.lengthOf(handlers, 1);
+                    chai.assert.deepEqual(handlers[0], router.defaultRoute);
+                    return resp;
+                });
+
+            const resp = await testRouter(router, createTestProxyEvent("/path/less/taken"));
+
+            chai.assert.isObject(resp);
+            chai.assert.equal(resp.statusCode, 404, JSON.stringify(resp));
+        });
     });
 
     it("returns a response when useLegacyCallbackHandler = true", async () => {
