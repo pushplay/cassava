@@ -306,6 +306,35 @@ describe("Router", () => {
             chai.assert.equal(resp.body, "alpha");
         });
 
+        it("passes the raw request body to the handler", async () => {
+            const body = JSON.stringify({
+                a: "alpha",
+                b: "beta"
+            });
+
+            const router = new cassava.Router();
+
+            router.route("/{foo}")
+                .handler(async evt => {
+                    chai.assert.isString(evt.bodyRaw);
+                    chai.assert.strictEqual(evt.bodyRaw, body);
+
+                    return {
+                        body: evt.body
+                    };
+                });
+
+            const resp = await testRouter(router, createTestProxyEvent("/foo", "POST", {
+                body: body,
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }));
+
+            chai.assert.isObject(resp);
+            chai.assert.deepEqual(JSON.parse(resp.body), JSON.parse(body));
+        });
+
         it("throws a 400 error if the application/json body is malformed", async () => {
             const router = new cassava.Router();
 

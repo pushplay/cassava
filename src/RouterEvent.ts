@@ -49,6 +49,11 @@ export class RouterEvent {
     body: any;
 
     /**
+     * Unparsed request body.
+     */
+    bodyRaw: any;
+
+    /**
      * All headers of the request with only the first value.  They are stored here in their original
      * form but the spec requires that header keys are treated as case-insensitive.
      * Use `headersLowerCase` for easier retrieval.

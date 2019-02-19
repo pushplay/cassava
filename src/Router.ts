@@ -168,6 +168,7 @@ export class Router {
         r.multiValueQueryStringParameters = evt.multiValueQueryStringParameters || {};
         r.pathParameters = evt.pathParameters || {};
         r.stageVariables = evt.stageVariables || {};
+        r.bodyRaw = evt.body;
 
         r.headersLowerCase = {};
         for (const headerKey of Object.keys(r.headers)) {
