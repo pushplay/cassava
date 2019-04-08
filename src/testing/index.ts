@@ -13,7 +13,7 @@ export {createTestProxyEvent} from "./createTestProxyEvent";
 export function testRouter(router: Router, proxyEvent: ProxyEvent): Promise<ProxyResponse> {
     return new Promise<ProxyResponse>((resolve, reject) => {
         if (!router || !router.getLambdaHandler) {
-            reject("router must be an instance of Router");
+            reject(new Error("router must be an instance of Router"));
         }
 
         const responsePromise = router.getLambdaHandler()(proxyEvent, createTestLambdaContext(proxyEvent), (err, res) => {
