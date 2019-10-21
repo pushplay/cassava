@@ -60,7 +60,7 @@ export const handler = router.getLambdaHandler();
 
 ## Custom Routes
 
-A custom route is one that implements the [Route](https://giftbit.github.io/cassava/interfaces/_routes_route_.route.html) interface: it must have a `matches` function that accepts a `RouterEvent` and returns a boolean and at least one of a `handle` function and `postProcess` function.
+A custom route is one that implements the [Route](https://giftbit.github.io/cassava/interfaces/_routes_route_.route.html) interface: it must have a `matches` function that accepts a `RouterEvent` and returns a boolean and at least one of: a `handle` function or `postProcess` function.
 
 The details of RouterEvents, handling and post-processing are covered later in this document.
 
