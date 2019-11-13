@@ -37,7 +37,7 @@ export class LoggingRoute implements Route {
 
     responseToString(resp: RouterResponse): string {
         let msg = `status=${resp.statusCode || 200}`;
-        if (!this.options.hideResponseBody && resp.body != null) {
+        if (!this.options.hideResponseBody) {
             msg += ` respbody=${JSON.stringify(resp.body)}`;
         }
         if (this.options.logResponseHeaders) {
