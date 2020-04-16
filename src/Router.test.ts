@@ -4,6 +4,10 @@ import {createTestProxyEvent, testRouter} from "./testing";
 import {httpStatusString} from "./httpStatus";
 import {RestError} from "./RestError";
 
+// This rule is broken in ways that affect this file.
+// see https://github.com/typescript-eslint/typescript-eslint/issues/1856
+/*eslint @typescript-eslint/no-use-before-define: ["off"]*/
+
 describe("Router", () => {
 
     it("calls the default route", async () => {
@@ -579,7 +583,10 @@ describe("Router", () => {
 
                     router.route("/foo")
                         .handler(async evt => {
-                            throw new cassava.RestError(400, "This is my custom error message", {a: "alpha", b: "beta"});
+                            throw new cassava.RestError(400, "This is my custom error message", {
+                                a: "alpha",
+                                b: "beta"
+                            });
                         });
 
                     const resp = await testRouter(router, createTestProxyEvent("/foo"));

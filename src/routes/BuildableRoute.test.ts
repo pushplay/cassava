@@ -174,7 +174,7 @@ describe("BuildableRoute", () => {
         it("routes regex paths and fills in the matching groups", async () => {
             const router = new cassava.Router();
 
-            router.route(/\/foo\/([^\/]*)\/(.*)/)
+            router.route(/\/foo\/([^/]*)\/(.*)/)
                 .handler(async evt => {
                     return {
                         body: evt.pathParameters["1"] + "-" + evt.pathParameters["2"] + "!"
@@ -194,8 +194,8 @@ describe("BuildableRoute", () => {
         const jsonContent = JSON.stringify(content);
         const xmlContent = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<a>alpha</a><b>bravo</b>";
         const csvContent = "a,b\nalpha,bravo";
-        const xmlSerializer = (body: any) => xmlContent;
-        const csvSerializer = (body: any) => csvContent;
+        const xmlSerializer = (body: any): string => xmlContent;
+        const csvSerializer = (body: any): string => csvContent;
 
         it("matches when there is no Accept header", async () => {
             const router = new cassava.Router();

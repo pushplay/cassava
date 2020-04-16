@@ -9,9 +9,9 @@ export class BuildableRoute implements Route, RouteBuilder {
         handler?: (evt: RouterEvent) => Promise<RouterResponse>;
         postProcessor?: (evt: RouterEvent, resp: RouterResponse, handlingRoutes: Route[]) => Promise<RouterResponse>;
         pathRegex?: RegExp;
-        regexGroupToPathParamMap?: string[],
+        regexGroupToPathParamMap?: string[];
         method?: string;
-        serializers?: { [mimeType: string]: (body: any) => Promise<string> | string }
+        serializers?: { [mimeType: string]: (body: any) => Promise<string> | string };
     } = {};
 
     matches(evt: RouterEvent): boolean {
@@ -90,7 +90,7 @@ export class BuildableRoute implements Route, RouteBuilder {
                 .replace(/\\{[a-zA-Z][a-zA-Z0-9]*\\}/g, substr => {
                     const pathParamName = substr.replace(/^\\{/, "").replace(/\\}/, "");
                     this.settings.regexGroupToPathParamMap.push(pathParamName);
-                    return "([0-9a-zA-Z\-._~!$&'()*+,;=:@%]+)";
+                    return "([0-9a-zA-Z._~!$&'()*+,;=:@%-]+)";
                 });
 
             path = new RegExp(`^${sanitizedPathRegex}$`, "i");
@@ -127,7 +127,7 @@ export class BuildableRoute implements Route, RouteBuilder {
         // For text mime-types without a charset specified add a default utf-8 version.
         const serializersWithCharsets = {...serializers};
         for (const type in serializers) {
-            if (serializers.hasOwnProperty(type) && /^(text\/[^;]+|application\/json)$/.test(type)) {
+            if (typeof serializers[type] === "function" && /^(text\/[^;]+|application\/json)$/.test(type)) {
                 serializersWithCharsets[`${type}; charset=utf-8`] = serializers[type];
             }
         }

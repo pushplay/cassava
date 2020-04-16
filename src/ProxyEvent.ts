@@ -54,31 +54,31 @@ export interface ProxyEvent {
      * API Gateway event context.
      */
     requestContext: {
-        accountId: string,
-        apiId: string,
-        authorizer?: { [name: string]: any },
-        httpMethod: string,
+        accountId: string;
+        apiId: string;
+        authorizer?: { [name: string]: any };
+        httpMethod: string;
         identity: {
-            accessKey: string,
-            accountId: string,
-            apiKey: string,
-            apiKeyId: string,
-            caller: string,
-            cognitoAuthenticationProvider: string,
-            cognitoAuthenticationType: string,
-            cognitoIdentityId: string,
-            cognitoIdentityPoolId: string,
-            sourceIp: string,
-            user: string,
-            userAgent: string,
-            userArn: string
-        },
-        path: string,
-        requestId: string,
-        requestTimeEpoch: number,
-        resourceId: string,
-        resourcePath: string,
-        stage: string
+            accessKey: string;
+            accountId: string;
+            apiKey: string;
+            apiKeyId: string;
+            caller: string;
+            cognitoAuthenticationProvider: string;
+            cognitoAuthenticationType: string;
+            cognitoIdentityId: string;
+            cognitoIdentityPoolId: string;
+            sourceIp: string;
+            user: string;
+            userAgent: string;
+            userArn: string;
+        };
+        path: string;
+        requestId: string;
+        requestTimeEpoch: number;
+        resourceId: string;
+        resourcePath: string;
+        stage: string;
     };
 
     /**

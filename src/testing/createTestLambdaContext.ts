@@ -1,5 +1,5 @@
 import * as awslambda from "aws-lambda";
-import * as uuid from "uuid/v4";
+import * as uuid from "uuid";
 import {ProxyEvent} from "../ProxyEvent";
 
 export {createTestProxyEvent} from "./createTestProxyEvent";
@@ -9,7 +9,7 @@ const defaultContext: awslambda.Context = {
     functionName: "lambdafunction",
     functionVersion: "1.0",
     invokedFunctionArn: "",
-    memoryLimitInMB: 128,
+    memoryLimitInMB: "128",
     awsRequestId: "",
     logGroupName: "/aws/lambda/lambdafunction",
     logStreamName: "",
@@ -28,7 +28,7 @@ export function createTestLambdaContext(proxyEvent: ProxyEvent, overrides: Parti
         ...defaultContext,
         awsRequestId: proxyEvent.requestContext.requestId,
         invokedFunctionArn: `arn:aws:lambda:us-east-1:${proxyEvent.requestContext.accountId}:function:lambdafunction`,
-        logStreamName: `${date.getFullYear()}/${date.getMonth()}/${date.getDay()}/[$LATEST]${uuid().replace("-", "")}`,
+        logStreamName: `${date.getFullYear()}/${date.getMonth()}/${date.getDay()}/[$LATEST]${uuid.v4().replace("-", "")}`,
         ...overrides
     };
 }

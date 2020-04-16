@@ -377,7 +377,7 @@ export class FileSystemRoute implements Route {
     }
 
     private getMimeType(filePath: string): string {
-        let ext = path.extname(filePath);
+        const ext = path.extname(filePath);
         if (this.config.mimeTypes && this.config.mimeTypes[ext]) {
             return this.config.mimeTypes[ext];
         }

@@ -1,9 +1,9 @@
 import * as querystring from "querystring";
-import * as uuid from "uuid/v4";
+import * as uuid from "uuid";
 import {URL} from "url";
 import {ProxyEvent} from "../ProxyEvent";
 
-const randomableCharacters: string = "abcdefghijklmnopqrstuvwxyz0123456789";
+const randomableCharacters = "abcdefghijklmnopqrstuvwxyz0123456789";
 
 function randomString(length: number): string {
     let text = "";
@@ -68,7 +68,7 @@ export function createTestProxyEvent(url: string = "/", method: string = "GET", 
             ...defaultTestProxyEvent.requestContext,
             ...overrides.requestContext ? overrides.requestContext : {},
             httpMethod: method,
-            requestId: uuid()
+            requestId: uuid.v4()
         },
         httpMethod: method,
         path: heavyUrl.pathname,
