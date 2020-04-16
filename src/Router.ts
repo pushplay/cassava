@@ -244,17 +244,10 @@ export class Router {
 
     private routerResponseToProxyResponse(resp: RouterResponse): ProxyResponse {
         if (resp.cookies) {
-            const cookieKeys = Object.keys(resp.cookies);
-            for (let i = 0, length = cookieKeys.length; i < length; i++) {
-                const key = cookieKeys[i];
+            for (const key of Object.keys(resp.cookies)) {
                 const value = resp.cookies[key];
                 const cookieString = typeof value === "string" ? cookieLib.serialize(key, value) : cookieLib.serialize(key, value.value, value.options);
-                const setCookie = RouterResponse.getHeader(resp, "Set-Cookie");
-                if (setCookie) {
-                    RouterResponse.setHeader(resp, "Set-Cookie", `${setCookie}; ${cookieString}`);
-                } else {
-                    RouterResponse.setHeader(resp, "Set-Cookie", cookieString);
-                }
+                RouterResponse.setHeader(resp, "Set-Cookie", cookieString);
             }
         }
 
@@ -275,6 +268,7 @@ export class Router {
         return {
             statusCode: resp.statusCode || httpStatusCode.success.OK,
             headers: resp.headers || {},
+            multiValueHeaders: resp.multiValueHeaders || {},
             body,
             isBase64Encoded
         };

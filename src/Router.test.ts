@@ -459,6 +459,86 @@ describe("Router", () => {
         });
     });
 
+    describe("response header handling", () => {
+        it("turns a cookie string into a Set-Cookie header", async () => {
+            const router = new cassava.Router();
+            router.route("/foo")
+                .handler(async evt => {
+                    return {
+                        body: {},
+                        cookies: {
+                            "foo": "bar"
+                        }
+                    };
+                });
+
+            const resp = await testRouter(router, createTestProxyEvent("/foo", "GET"));
+
+            chai.assert.deepEqual(resp.headers, {
+                "Content-Type": "application/json",
+                "Set-Cookie": "foo=bar"
+            });
+        });
+
+        it("turns a cookie object with options into a Set-Cookie header", async () => {
+            const router = new cassava.Router();
+            router.route("/foo")
+                .handler(async evt => {
+                    return {
+                        body: {},
+                        cookies: {
+                            "foo": {
+                                value: "bar",
+                                options: {
+                                    httpOnly: true,
+                                    maxAge: 600
+                                }
+                            }
+                        }
+                    };
+                });
+
+            const resp = await testRouter(router, createTestProxyEvent("/foo", "GET"));
+
+            chai.assert.deepEqual(resp.headers, {
+                "Content-Type": "application/json",
+                "Set-Cookie": "foo=bar; Max-Age=600; HttpOnly"
+            });
+        });
+
+        it("supports multiple cookies", async () => {
+            const router = new cassava.Router();
+            router.route("/foo")
+                .handler(async evt => {
+                    return {
+                        body: {},
+                        cookies: {
+                            "foo": {
+                                value: "bar",
+                                options: {
+                                    httpOnly: true,
+                                    maxAge: 600
+                                }
+                            },
+                            "baz": "qux"
+                        }
+                    };
+                });
+
+            const resp = await testRouter(router, createTestProxyEvent("/foo", "GET"));
+
+            chai.assert.deepEqual(resp.headers, {
+                "Content-Type": "application/json"
+            });
+            chai.assert.deepEqual(resp.multiValueHeaders, {
+                "Set-Cookie": [
+                    "foo=bar; Max-Age=600; HttpOnly",
+                    "baz=qux"
+                ]
+            })
+        });
+    });
+
     describe("error handling", () => {
         describe("RestError handling", () => {
             it("RestErrors thrown from handle() are returned", async () => {

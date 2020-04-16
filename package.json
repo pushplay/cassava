@@ -1,6 +1,6 @@
 {
   "name": "cassava",
-  "version": "2.5.2",
+  "version": "2.6.0",
   "description": "AWS API Gateway Router",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

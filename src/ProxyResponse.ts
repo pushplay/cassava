@@ -14,6 +14,16 @@ export interface ProxyResponse {
     headers: { [key: string]: string };
 
     /**
+     * Headers to set on the response.  Can contain multi-value headers
+     * as well as single-value headers.
+     *
+     * If you specify values for both headers and multiValueHeaders, API Gateway
+     * merges them into a single list. If the same key-value pair is specified in
+     * both, only the values from multiValueHeaders will appear in the merged list.
+     */
+    multiValueHeaders: { [header: string]: string[] };
+
+    /**
      * The string representation of the JSON to respond with.
      */
     body: string;

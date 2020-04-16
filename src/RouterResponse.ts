@@ -16,6 +16,12 @@ export interface RouterResponse {
     headers?: { [key: string]: string };
 
     /**
+     * Optional headers to set on the response but allowing multiple
+     * values.
+     */
+    multiValueHeaders?: { [header: string]: string[] };
+
+    /**
      * Optional cookies to set on the response.
      */
     cookies?: { [key: string]: string | RouterResponseCookie };
@@ -34,15 +40,26 @@ export interface RouterResponseCookie {
 }
 
 export namespace RouterResponse {
-    export function getHeader(resp: RouterResponse, field: string): string | null {
-        if (!resp.headers) {
-            return null;
+    export function getHeader(resp: RouterResponse, field: string): string | string[] | null {
+        const fieldLower = field.toLowerCase();
+
+        if (resp.multiValueHeaders) {
+            for (const k of Object.keys(resp.multiValueHeaders)) {
+                if (k.toLowerCase() === fieldLower) {
+                    if (resp.multiValueHeaders[k].length === 1) {
+                        return resp.multiValueHeaders[k][0];
+                    } else {
+                        return resp.multiValueHeaders[k];
+                    }
+                }
+            }
         }
 
-        const fieldLower = field.toLowerCase();
-        for (const k of Object.keys(resp.headers)) {
-            if (k.toLowerCase() === fieldLower) {
-                return resp.headers[k];
+        if (resp.headers) {
+            for (const k of Object.keys(resp.headers)) {
+                if (k.toLowerCase() === fieldLower) {
+                    return resp.headers[k];
+                }
             }
         }
 
@@ -50,6 +67,11 @@ export namespace RouterResponse {
     }
 
     export function setHeader(resp: RouterResponse, field: string, value: string): void {
+        if (resp.multiValueHeaders?.[field]) {
+            setMultiValueHeader(resp, field, [value]);
+            return;
+        }
+
         if (!resp.headers) {
             resp.headers = {};
         }
@@ -57,11 +79,28 @@ export namespace RouterResponse {
         const fieldLower = field.toLowerCase();
         for (const k of Object.keys(resp.headers)) {
             if (k.toLowerCase() === fieldLower) {
-                resp.headers[k] = value;
+                setMultiValueHeader(resp, field, [resp.headers[k], value]);
+                delete resp.headers[k];
                 return;
             }
         }
 
         resp.headers[field] = value;
+    }
+
+    function setMultiValueHeader(resp: RouterResponse, field: string, value: string[]): void {
+        if (!resp.multiValueHeaders) {
+            resp.multiValueHeaders = {};
+        }
+
+        const fieldLower = field.toLowerCase();
+        for (const k of Object.keys(resp.multiValueHeaders)) {
+            if (k.toLowerCase() === fieldLower) {
+                resp.multiValueHeaders[k].push(...value);
+                return;
+            }
+        }
+
+        resp.multiValueHeaders[field] = value;
     }
 }
