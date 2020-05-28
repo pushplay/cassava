@@ -182,7 +182,19 @@ describe("RouterEvent", () => {
                 latitude: "49.2391",
                 longitude: "-124.0227"
             };
-            chai.assert.throws(() => evt.validateBody(coordinateSchema));
+            chai.assert.throws(() => evt.validateBody(coordinateSchema), RestError);
+        });
+
+        it("throws a RestError on undefined body", () => {
+            const evt = new RouterEvent();
+            evt.body = undefined;
+            chai.assert.throws(() => evt.validateBody(coordinateSchema), RestError);
+        });
+
+        it("throws a RestError on null body", () => {
+            const evt = new RouterEvent();
+            evt.body = null;
+            chai.assert.throws(() => evt.validateBody(coordinateSchema), RestError);
         });
 
         it("allows customization of the RestError status code", () => {
