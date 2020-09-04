@@ -43,7 +43,7 @@ describe("createTestProxyEvent", () => {
         chai.assert.equal(evt.requestContext.httpMethod, "GET");
     });
 
-    it("correctly generates multiValueQueryStringParameters", async () => {
+    it("correctly generates multiValueQueryStringParameters", () => {
         const evt = createTestProxyEvent("https://www.example.com/foo?a=1&a=2&a=3&b=four");
 
         chai.assert.equal(evt.httpMethod, "GET");
@@ -56,6 +56,15 @@ describe("createTestProxyEvent", () => {
             a: ["1", "2", "3"],
             b: ["four"]
         });
+    });
+
+    it("correctly generates headers['X-Forwarded-For']", () => {
+        const evt = createTestProxyEvent("https://www.example.com/");
+
+        chai.assert.isString(evt.headers["X-Forwarded-For"]);
+        chai.assert.include(evt.headers["X-Forwarded-For"], evt.requestContext.identity.sourceIp);
+        chai.assert.isFalse(evt.headers["X-Forwarded-For"].startsWith(evt.requestContext.identity.sourceIp), "X-Forwarded-For should not start with the sourceIp because the sourceIp is an ApiGateway proxy")
+        chai.assert.equal(evt.headers["X-Forwarded-For"], evt.multiValueHeaders["X-Forwarded-For"][0]);
     });
 
     it("generates a different requestId each time", () => {
