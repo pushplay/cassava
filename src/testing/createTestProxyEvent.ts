@@ -108,6 +108,14 @@ export function createTestProxyEvent(url: string = "/", method: string = "GET", 
     return {
         ...defaultTestProxyEvent,
         ...overrides,
+        headers: {
+            ...defaultTestProxyEvent.headers,
+            ...overrides?.headers
+        },
+        multiValueHeaders: {
+            ...defaultTestProxyEvent.multiValueHeaders,
+            ...overrides?.multiValueHeaders
+        },
         requestContext: {
             ...defaultTestProxyEvent.requestContext,
             ...overrides.requestContext ? overrides.requestContext : {},

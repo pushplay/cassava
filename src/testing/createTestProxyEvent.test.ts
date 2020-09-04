@@ -67,6 +67,20 @@ describe("createTestProxyEvent", () => {
         chai.assert.equal(evt.headers["X-Forwarded-For"], evt.multiValueHeaders["X-Forwarded-For"][0]);
     });
 
+    it("merges custom headers", () => {
+        const evt = createTestProxyEvent("https://www.example.com/", "GET", {
+            headers: {
+                "Foo": "Bar"
+            },
+            multiValueHeaders: {
+                "Foo": ["Bar"]
+            }
+        });
+
+        chai.assert.containsAllKeys(evt.headers, ["Foo", "Accept", "User-Agent"]);
+        chai.assert.containsAllKeys(evt.multiValueHeaders, ["Foo", "Accept", "User-Agent"]);
+    });
+
     it("generates a different requestId each time", () => {
         const evt1 = createTestProxyEvent();
         const evt2 = createTestProxyEvent();
