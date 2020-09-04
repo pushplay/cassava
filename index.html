@@ -96,26 +96,26 @@
 				<p><a href="https://giftbit.github.io/cassava/interfaces/_routes_buildableroute_.routebuilder.html">RouteBuilder</a> is the simplest way to add a route to Cassava.  A RouteBuilder instance is started with <code>router.route(string)</code> or <code>router.route(RegExp)</code>, then with chained function calls you can specify the HTTP method, add a <code>handle</code> function or a <code>postProcess</code> function.</p>
 				<p>The details of handling and post-processing are covered later in this document.</p>
 				<p>For example...</p>
-				<pre><code class="language-typescript"><span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> cassava <span class="hljs-keyword">from</span> <span class="hljs-string">"cassava"</span>;
+				<pre><code class="language-typescript"><span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> cassava <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;cassava&quot;</span>;
 
 <span class="hljs-keyword">const</span> router = <span class="hljs-keyword">new</span> cassava.Router();
 
 <span class="hljs-comment">// A simple route that only handles GET on /helloWorld</span>
-router.route(<span class="hljs-string">"/helloWorld"</span>)
-    .method(<span class="hljs-string">"GET"</span>)
+router.route(<span class="hljs-string">&quot;/helloWorld&quot;</span>)
+    .method(<span class="hljs-string">&quot;GET&quot;</span>)
     .handler(<span class="hljs-keyword">async</span> evt =&gt; {
         <span class="hljs-keyword">return</span> {
-            body: <span class="hljs-string">"Hello world!"</span>
+            body: <span class="hljs-string">&quot;Hello world!&quot;</span>
         };
     });
 
 <span class="hljs-comment">// A fancier route with a path parameter `name`.</span>
 <span class="hljs-comment">// match egs: `/hello/jeff` or `/Hello/Jeffery`</span>
-router.route(<span class="hljs-string">"/hello/{name}"</span>)
-    .method(<span class="hljs-string">"GET"</span>)
+router.route(<span class="hljs-string">&quot;/hello/{name}&quot;</span>)
+    .method(<span class="hljs-string">&quot;GET&quot;</span>)
     .handler(<span class="hljs-keyword">async</span> evt =&gt; {
         <span class="hljs-keyword">return</span> {
-            body: <span class="hljs-string">`Hello <span class="hljs-subst">${evt.pathParameters[<span class="hljs-string">"name"</span>]}</span>!`</span>
+            body: <span class="hljs-string">`Hello <span class="hljs-subst">${evt.pathParameters[<span class="hljs-string">&quot;name&quot;</span>]}</span>!`</span>
         };
     });
 
@@ -127,7 +127,7 @@ router.route(<span class="hljs-string">"/hello/{name}"</span>)
 				<p>A custom route is one that implements the <a href="https://giftbit.github.io/cassava/interfaces/_routes_route_.route.html">Route</a> interface: it must have a <code>matches</code> function that accepts a <code>RouterEvent</code> and returns a boolean and at least one of: a <code>handle</code> function or <code>postProcess</code> function.</p>
 				<p>The details of RouterEvents, handling and post-processing are covered later in this document.</p>
 				<p>For example...</p>
-				<pre><code class="language-typescript"><span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> cassava <span class="hljs-keyword">from</span> <span class="hljs-string">"cassava"</span>;
+				<pre><code class="language-typescript"><span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> cassava <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;cassava&quot;</span>;
 
 <span class="hljs-keyword">const</span> router = <span class="hljs-keyword">new</span> cassava.Router();
 
@@ -138,11 +138,11 @@ router.route(<span class="hljs-keyword">new</span> cassava.routes.LoggingRoute()
 <span class="hljs-comment">// A custom Route that handles PUT or PATCH on any path starting with /upload/</span>
 router.route({
     matches: <span class="hljs-function"><span class="hljs-params">evt</span> =&gt;</span> {
-        <span class="hljs-keyword">return</span> (evt.httpMethod === <span class="hljs-string">"PUT"</span> || evt.httpMethod === <span class="hljs-string">"PATCH"</span>) &amp;&amp;
-            evt.path.startsWith(<span class="hljs-string">"/upload/"</span>);
+        <span class="hljs-keyword">return</span> (evt.httpMethod === <span class="hljs-string">&quot;PUT&quot;</span> || evt.httpMethod === <span class="hljs-string">&quot;PATCH&quot;</span>) &amp;&amp;
+            evt.path.startsWith(<span class="hljs-string">&quot;/upload/&quot;</span>);
     },
     handle: <span class="hljs-keyword">async</span> evt =&gt; {
-        <span class="hljs-keyword">const</span> fileName = evt.path.substring(<span class="hljs-string">"/upload/"</span>.length);
+        <span class="hljs-keyword">const</span> fileName = evt.path.substring(<span class="hljs-string">&quot;/upload/&quot;</span>.length);
         <span class="hljs-keyword">const</span> fileContents = evt.body;
         <span class="hljs-comment">// ... store fileContents with fileName</span>
         <span class="hljs-keyword">return</span> {
@@ -168,14 +168,14 @@ router.route({
 					<h3>Manual Content-Type</h3>
 				</a>
 				<p>The first option for returning non-JSON is to set the response body to a <code>string</code> or <code>Buffer</code>, and set the <code>Content-Type</code> header.  This works when using a custom route or the route builder.  For example:</p>
-				<pre><code class="language-typescript">router.route(<span class="hljs-string">"/robots"</span>)
-    .method(<span class="hljs-string">"GET"</span>)
+				<pre><code class="language-typescript">router.route(<span class="hljs-string">&quot;/robots&quot;</span>)
+    .method(<span class="hljs-string">&quot;GET&quot;</span>)
     .handler(<span class="hljs-keyword">async</span> evt =&gt; {
         <span class="hljs-keyword">return</span> {
             headers: {
-                <span class="hljs-string">"Content-Type"</span>: <span class="hljs-string">"text/csv"</span>
+                <span class="hljs-string">&quot;Content-Type&quot;</span>: <span class="hljs-string">&quot;text/csv&quot;</span>
             },
-            body: <span class="hljs-string">"robot,film\nRobby,Forbidden Planet\nGort,The Day the Earth Stood Still"</span>
+            body: <span class="hljs-string">&quot;robot,film\nRobby,Forbidden Planet\nGort,The Day the Earth Stood Still&quot;</span>
         };
     });</code></pre>
 				<p>This is simple to implement but ignores the client&#39;s <code>Accept</code> header.  This endpoint will always return csv regardless of what the client asks for.</p>
@@ -183,23 +183,23 @@ router.route({
 					<h3>RouteBuilder.serializers</h3>
 				</a>
 				<p>When using the route builder there is a second option of letting the handler return a complex object as in the JSON case, but defining serializer functions for each response mime type.  The appropriate serializer will be chosen based upon the client&#39;s <code>Accept</code> header.  In the following example the same endpoint can return one of JSON, CSV and XML.</p>
-				<pre><code class="language-typescript">router.route(<span class="hljs-string">"/robots"</span>)
-    .method(<span class="hljs-string">"GET"</span>)
+				<pre><code class="language-typescript">router.route(<span class="hljs-string">&quot;/robots&quot;</span>)
+    .method(<span class="hljs-string">&quot;GET&quot;</span>)
     .serializers({
-        <span class="hljs-string">"application/json"</span>: cassava.serializers.json,
-        <span class="hljs-string">"text/csv"</span>: <span class="hljs-function"><span class="hljs-params">body</span> =&gt;</span> <span class="hljs-keyword">new</span> json2csv.Parser({fields: [<span class="hljs-string">"robot"</span>, <span class="hljs-string">"film"</span>]}).parse(body),
-        <span class="hljs-string">"application/xml"</span>: <span class="hljs-function"><span class="hljs-params">body</span> =&gt;</span> jsontoxml({robots: body})
+        <span class="hljs-string">&quot;application/json&quot;</span>: cassava.serializers.json,
+        <span class="hljs-string">&quot;text/csv&quot;</span>: <span class="hljs-function"><span class="hljs-params">body</span> =&gt;</span> <span class="hljs-keyword">new</span> json2csv.Parser({fields: [<span class="hljs-string">&quot;robot&quot;</span>, <span class="hljs-string">&quot;film&quot;</span>]}).parse(body),
+        <span class="hljs-string">&quot;application/xml&quot;</span>: <span class="hljs-function"><span class="hljs-params">body</span> =&gt;</span> jsontoxml({robots: body})
     })
     .handler(<span class="hljs-keyword">async</span> evt =&gt; {
         <span class="hljs-keyword">return</span> {
             body: [
               {
-                  robot: <span class="hljs-string">"Robby"</span>,
-                  film: <span class="hljs-string">"Forbidden Planet"</span>
+                  robot: <span class="hljs-string">&quot;Robby&quot;</span>,
+                  film: <span class="hljs-string">&quot;Forbidden Planet&quot;</span>
               },
               {
-                  robot: <span class="hljs-string">"Gort"</span>,
-                  film: <span class="hljs-string">"The Day the Earth Stood Still"</span>
+                  robot: <span class="hljs-string">&quot;Gort&quot;</span>,
+                  film: <span class="hljs-string">&quot;The Day the Earth Stood Still&quot;</span>
               }
             ]
         };
@@ -221,31 +221,31 @@ router.route({
 					<li><code>whitelistQueryStringParameters(...params: string[])</code> disallow any query parameters other than the ones set</li>
 				</ul>
 				<p>An example:</p>
-				<pre><code class="language-typescript"><span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> cassava <span class="hljs-keyword">from</span> <span class="hljs-string">"cassava"</span>;
+				<pre><code class="language-typescript"><span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> cassava <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;cassava&quot;</span>;
 
 <span class="hljs-keyword">const</span> router = <span class="hljs-keyword">new</span> cassava.Router();
 
 <span class="hljs-comment">// Get a location</span>
-router.route(<span class="hljs-string">"/locations/{locationId}"</span>)
-    .method(<span class="hljs-string">"GET"</span>)
+router.route(<span class="hljs-string">&quot;/locations/{locationId}&quot;</span>)
+    .method(<span class="hljs-string">&quot;GET&quot;</span>)
     .handler(<span class="hljs-keyword">async</span> evt =&gt; {
-        evt.whitelistQueryStringParameters();   <span class="hljs-comment">// don't allow any query params</span>
+        evt.whitelistQueryStringParameters();   <span class="hljs-comment">// don&#x27;t allow any query params</span>
         <span class="hljs-keyword">return</span> {
             body: getLocationById(evt.pathParameters.locationId)
         };
     });
 
 <span class="hljs-comment">// Set a location</span>
-router.route(<span class="hljs-string">"/locations/{locationId}"</span>)
-    .method(<span class="hljs-string">"POST"</span>)
+router.route(<span class="hljs-string">&quot;/locations/{locationId}&quot;</span>)
+    .method(<span class="hljs-string">&quot;POST&quot;</span>)
     .handler(<span class="hljs-keyword">async</span> evt =&gt; {
         evt.validateBody({
-             <span class="hljs-keyword">type</span>: <span class="hljs-string">"object"</span>,
+             <span class="hljs-keyword">type</span>: <span class="hljs-string">&quot;object&quot;</span>,
              properties: {
-                 latitude: { <span class="hljs-string">"type"</span>: <span class="hljs-string">"number"</span> },
-                 longitude: { <span class="hljs-string">"type"</span>: <span class="hljs-string">"number"</span> }
+                 latitude: { <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;number&quot;</span> },
+                 longitude: { <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;number&quot;</span> }
              },
-             required: [<span class="hljs-string">"latitude"</span>, <span class="hljs-string">"longitude"</span>]
+             required: [<span class="hljs-string">&quot;latitude&quot;</span>, <span class="hljs-string">&quot;longitude&quot;</span>]
          });
         <span class="hljs-keyword">return</span> {
             body: setLocationId(evt.pathParameters.locationId, evt.body)
@@ -253,10 +253,10 @@ router.route(<span class="hljs-string">"/locations/{locationId}"</span>)
     });
 
 <span class="hljs-comment">// Query for locations</span>
-router.route(<span class="hljs-string">"/locations"</span>)
-    .method(<span class="hljs-string">"GET"</span>)
+router.route(<span class="hljs-string">&quot;/locations&quot;</span>)
+    .method(<span class="hljs-string">&quot;GET&quot;</span>)
     .handler(<span class="hljs-keyword">async</span> evt =&gt; {
-        evt.requireQueryStringParameter(<span class="hljs-string">"query"</span>);
+        evt.requireQueryStringParameter(<span class="hljs-string">&quot;query&quot;</span>);
         <span class="hljs-keyword">return</span> {
             body: getLocationsByQuery(evt.queryStringParameters.query)
         };
@@ -367,6 +367,5 @@ router.route(<span class="hljs-string">"/locations"</span>)
 </div>
 <div class="overlay"></div>
 <script src="assets/js/main.js"></script>
-<script>if (location.protocol == 'file:') document.write('<script src="assets/js/search.js"><' + '/script>');</script>
 </body>
 </html>
