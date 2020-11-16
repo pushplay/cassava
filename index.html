@@ -68,7 +68,7 @@
 					<h1>Cassava</h1>
 				</a>
 				<p>AWS API Gateway Router</p>
-				<p>Find the full documentation at <a href="https://giftbit.github.io/cassava/">https://giftbit.github.io/cassava/</a></p>
+				<p>Find the full documentation at <a href="https://pushplay.github.io/cassava/">https://pushplay.github.io/cassava/</a></p>
 				<a href="#routing" id="routing" style="color: inherit; text-decoration: none;">
 					<h2>Routing</h2>
 				</a>
@@ -93,7 +93,7 @@
 				<a href="#routebuilder" id="routebuilder" style="color: inherit; text-decoration: none;">
 					<h2>RouteBuilder</h2>
 				</a>
-				<p><a href="https://giftbit.github.io/cassava/interfaces/_routes_buildableroute_.routebuilder.html">RouteBuilder</a> is the simplest way to add a route to Cassava.  A RouteBuilder instance is started with <code>router.route(string)</code> or <code>router.route(RegExp)</code>, then with chained function calls you can specify the HTTP method, add a <code>handle</code> function or a <code>postProcess</code> function.</p>
+				<p><a href="https://pushplay.github.io/cassava/interfaces/_routes_buildableroute_.routebuilder.html">RouteBuilder</a> is the simplest way to add a route to Cassava.  A RouteBuilder instance is started with <code>router.route(string)</code> or <code>router.route(RegExp)</code>, then with chained function calls you can specify the HTTP method, add a <code>handle</code> function or a <code>postProcess</code> function.</p>
 				<p>The details of handling and post-processing are covered later in this document.</p>
 				<p>For example...</p>
 				<pre><code class="language-typescript"><span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> cassava <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;cassava&quot;</span>;
@@ -124,7 +124,7 @@ router.route(<span class="hljs-string">&quot;/hello/{name}&quot;</span>)
 				<a href="#custom-routes" id="custom-routes" style="color: inherit; text-decoration: none;">
 					<h2>Custom Routes</h2>
 				</a>
-				<p>A custom route is one that implements the <a href="https://giftbit.github.io/cassava/interfaces/_routes_route_.route.html">Route</a> interface: it must have a <code>matches</code> function that accepts a <code>RouterEvent</code> and returns a boolean and at least one of: a <code>handle</code> function or <code>postProcess</code> function.</p>
+				<p>A custom route is one that implements the <a href="https://pushplay.github.io/cassava/interfaces/_routes_route_.route.html">Route</a> interface: it must have a <code>matches</code> function that accepts a <code>RouterEvent</code> and returns a boolean and at least one of: a <code>handle</code> function or <code>postProcess</code> function.</p>
 				<p>The details of RouterEvents, handling and post-processing are covered later in this document.</p>
 				<p>For example...</p>
 				<pre><code class="language-typescript"><span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> cassava <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;cassava&quot;</span>;
@@ -156,9 +156,9 @@ router.route({
 				<a href="#routerevents-routerresponses-handling-and-postprocessing" id="routerevents-routerresponses-handling-and-postprocessing" style="color: inherit; text-decoration: none;">
 					<h2>RouterEvents, RouterResponses, handling and postProcessing</h2>
 				</a>
-				<p><a href="https://giftbit.github.io/cassava/modules/_routerevent_.html">RouterEvents</a> are the input to <code>matches</code> and <code>handle</code> functions.  They fully describe all information about the REST request including the full body as streaming is not supported.</p>
-				<p>A <code>handle</code> function takes in a RouterEvent and can return the following: <code>null</code> or <code>undefined</code> to not handle the RouterEvent in which case further routes are consulted; a <a href="https://giftbit.github.io/cassava/interfaces/_routerresponse_.routerresponse.html">RouterResponse</a> that represents the response sent to the client; a Promise that resolves to <code>null</code> or <code>undefined</code> which will again let further routes handle the request; a Promise that resolves to a RouterResponse which again will be the response sent to the client.</p>
-				<p><a href="https://giftbit.github.io/cassava/interfaces/_routerresponse_.routerresponse.html">RouterResponses</a> include the body, an optional HTTP status code (defaults to 200), and optionally any headers that might be set.</p>
+				<p><a href="https://pushplay.github.io/cassava/modules/_routerevent_.html">RouterEvents</a> are the input to <code>matches</code> and <code>handle</code> functions.  They fully describe all information about the REST request including the full body as streaming is not supported.</p>
+				<p>A <code>handle</code> function takes in a RouterEvent and can return the following: <code>null</code> or <code>undefined</code> to not handle the RouterEvent in which case further routes are consulted; a <a href="https://pushplay.github.io/cassava/interfaces/_routerresponse_.routerresponse.html">RouterResponse</a> that represents the response sent to the client; a Promise that resolves to <code>null</code> or <code>undefined</code> which will again let further routes handle the request; a Promise that resolves to a RouterResponse which again will be the response sent to the client.</p>
+				<p><a href="https://pushplay.github.io/cassava/interfaces/_routerresponse_.routerresponse.html">RouterResponses</a> include the body, an optional HTTP status code (defaults to 200), and optionally any headers that might be set.</p>
 				<p>A <code>postProcess</code> function takes in both the RouterEvent and the current RouterResponse.  It can return <code>null</code> or <code>undefined</code> or a Promise resolving to one of those to not affect the final response; or it can return a RouterResponse or a Promise resolving to a RouterResponse to change the response.</p>
 				<a href="#response-serialization" id="response-serialization" style="color: inherit; text-decoration: none;">
 					<h2>Response serialization</h2>
@@ -208,7 +208,7 @@ router.route({
 				<a href="#routerevent-validation" id="routerevent-validation" style="color: inherit; text-decoration: none;">
 					<h2>RouterEvent Validation</h2>
 				</a>
-				<p><a href="https://giftbit.github.io/cassava/modules/_routerevent_.html">RouterEvent</a> comes with a number of utility functions to validate the event.</p>
+				<p><a href="https://pushplay.github.io/cassava/modules/_routerevent_.html">RouterEvent</a> comes with a number of utility functions to validate the event.</p>
 				<ul>
 					<li><code>blacklistQueryStringParameters(...params: string[])</code> disallow any of the given query parameters</li>
 					<li><code>requireHeader(field: string)</code> require that a header is set</li>
