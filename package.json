@@ -18,7 +18,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Giftbit/cassava.git"
+    "url": "git+https://github.com/pushplay/cassava.git"
   },
   "keywords": [
     "routing",
@@ -33,9 +33,9 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Giftbit/cassava/issues"
+    "url": "https://github.com/pushplay/cassava/issues"
   },
-  "homepage": "https://github.com/Giftbit/cassava#readme",
+  "homepage": "https://github.com/pushplay/cassava#readme",
   "devDependencies": {
     "@types/aws-lambda": "^8.10.61",
     "@types/chai": "^4.2.12",
