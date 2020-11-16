@@ -81,7 +81,7 @@
 				<ul>
 					<li><code>route(string|RegExp)</code><ul>
 							<li>simplest method that handles most cases</li>
-							<li>string routes are case insensitive and support path parameters</li>
+							<li>string routes are case insensitive and support path parameters (read on for more details)</li>
 							<li>RegExp routes place matching groups in the path parameters</li>
 						</ul>
 					</li>
@@ -121,6 +121,16 @@ router.route(<span class="hljs-string">&quot;/hello/{name}&quot;</span>)
     .handler(<span class="hljs-keyword">async</span> evt =&gt; {
         <span class="hljs-keyword">return</span> {
             body: <span class="hljs-string">`Hello <span class="hljs-subst">${evt.pathParameters[<span class="hljs-string">&quot;name&quot;</span>]}</span>!`</span>
+        };
+    });
+
+<span class="hljs-comment">// A very fancy route using regex.</span>
+<span class="hljs-comment">// Matches all paths that start with `/hello` and more non-slash characters.</span>
+router.route(<span class="hljs-regexp">/\/hello([^/]+)/</span>)
+    .method(<span class="hljs-string">&quot;GET&quot;</span>)
+    .handler(<span class="hljs-keyword">async</span> evt =&gt; {
+        <span class="hljs-keyword">return</span> {
+            body: <span class="hljs-string">`Hello <span class="hljs-subst">${evt.pathParameters[<span class="hljs-string">&quot;2&quot;</span>]}</span>!`</span>
         };
     });
 
