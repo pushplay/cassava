@@ -22,6 +22,9 @@
   },
   "keywords": [
     "routing",
+    "router",
+    "routebuilder",
+    "route-builder",
     "apigateway",
     "lambda",
     "serverless",

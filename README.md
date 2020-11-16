@@ -2,14 +2,22 @@
 
 AWS API Gateway Router
 
-Find the full documentation at https://giftbit.github.io/cassava/
+Find the full documentation at https://pushplay.github.io/cassava/
+
+## Installation
+
+Cassava is your typical NPM package.
+
+```bash
+npm install --save cassava
+```
 
 ## Routing
 
 There are two ways to add routes to Cassava.
 - `route(string|RegExp)`
   - simplest method that handles most cases
-  - string routes are case insensitive and support path parameters
+  - string routes are case insensitive and support path parameters (read on for more details)
   - RegExp routes place matching groups in the path parameters
 - `route(Route)`
   - provides the most flexibility
@@ -24,7 +32,7 @@ A route can post-process the response when: it matches the event, did not return
 
 ## RouteBuilder
 
-[RouteBuilder](https://giftbit.github.io/cassava/interfaces/_routes_buildableroute_.routebuilder.html) is the simplest way to add a route to Cassava.  A RouteBuilder instance is started with `router.route(string)` or `router.route(RegExp)`, then with chained function calls you can specify the HTTP method, add a `handle` function or a `postProcess` function.
+[RouteBuilder](https://pushplay.github.io/cassava/interfaces/_routes_buildableroute_.routebuilder.html) is the simplest way to add a route to Cassava.  A RouteBuilder instance is started with `router.route(string)` or `router.route(RegExp)`, then with chained function calls you can specify the HTTP method, add a `handle` function or a `postProcess` function.
 
 The details of handling and post-processing are covered later in this document.
 
@@ -54,13 +62,23 @@ router.route("/hello/{name}")
         };
     });
 
+// A very fancy route using regex.
+// Matches all paths that start with `/hello` and more non-slash characters.
+router.route(/\/hello([^/]+)/)
+    .method("GET")
+    .handler(async evt => {
+        return {
+            body: `Hello ${evt.pathParameters["2"]}!`
+        };
+    });
+
 // Install the router as the handler for this lambda.
 export const handler = router.getLambdaHandler();
 ```
 
 ## Custom Routes
 
-A custom route is one that implements the [Route](https://giftbit.github.io/cassava/interfaces/_routes_route_.route.html) interface: it must have a `matches` function that accepts a `RouterEvent` and returns a boolean and at least one of: a `handle` function or `postProcess` function.
+A custom route is one that implements the [Route](https://pushplay.github.io/cassava/interfaces/_routes_route_.route.html) interface: it must have a `matches` function that accepts a `RouterEvent` and returns a boolean and at least one of: a `handle` function or `postProcess` function.
 
 The details of RouterEvents, handling and post-processing are covered later in this document.
 
@@ -97,11 +115,11 @@ export const handler = router.getLambdaHandler();
 
 ## RouterEvents, RouterResponses, handling and postProcessing
 
-[RouterEvents](https://giftbit.github.io/cassava/modules/_routerevent_.html) are the input to `matches` and `handle` functions.  They fully describe all information about the REST request including the full body as streaming is not supported.
+[RouterEvents](https://pushplay.github.io/cassava/modules/_routerevent_.html) are the input to `matches` and `handle` functions.  They fully describe all information about the REST request including the full body as streaming is not supported.
 
-A `handle` function takes in a RouterEvent and can return the following: `null` or `undefined` to not handle the RouterEvent in which case further routes are consulted; a [RouterResponse](https://giftbit.github.io/cassava/interfaces/_routerresponse_.routerresponse.html) that represents the response sent to the client; a Promise that resolves to `null` or `undefined` which will again let further routes handle the request; a Promise that resolves to a RouterResponse which again will be the response sent to the client.
+A `handle` function takes in a RouterEvent and can return the following: `null` or `undefined` to not handle the RouterEvent in which case further routes are consulted; a [RouterResponse](https://pushplay.github.io/cassava/interfaces/_routerresponse_.routerresponse.html) that represents the response sent to the client; a Promise that resolves to `null` or `undefined` which will again let further routes handle the request; a Promise that resolves to a RouterResponse which again will be the response sent to the client.
 
-[RouterResponses](https://giftbit.github.io/cassava/interfaces/_routerresponse_.routerresponse.html) include the body, an optional HTTP status code (defaults to 200), and optionally any headers that might be set.
+[RouterResponses](https://pushplay.github.io/cassava/interfaces/_routerresponse_.routerresponse.html) include the body, an optional HTTP status code (defaults to 200), and optionally any headers that might be set.
 
 A `postProcess` function takes in both the RouterEvent and the current RouterResponse.  It can return `null` or `undefined` or a Promise resolving to one of those to not affect the final response; or it can return a RouterResponse or a Promise resolving to a RouterResponse to change the response.
 
@@ -160,7 +178,7 @@ In this example CSV serialization is handled by [json2csv](https://www.npmjs.com
 
 ## RouterEvent Validation
 
-[RouterEvent](https://giftbit.github.io/cassava/modules/_routerevent_.html) comes with a number of utility functions to validate the event.
+[RouterEvent](https://pushplay.github.io/cassava/modules/_routerevent_.html) comes with a number of utility functions to validate the event.
 
 - `blacklistQueryStringParameters(...params: string[])` disallow any of the given query parameters
 - `requireHeader(field: string)` require that a header is set
